@@ -3,7 +3,6 @@ package src;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import javax.swing.JPanel;
 
@@ -16,8 +15,8 @@ public class GamePanel extends JPanel implements Runnable {
 
     // Parallax background variables
     private final int maxBackground = 3;
-    private Image[] volcanicImages = new Image[maxBackground];
     private final BufferedImage image;
+    private BackgroundManager backgroundManager;
 
     // Thread variables
     private Thread gameThread;
@@ -27,8 +26,6 @@ public class GamePanel extends JPanel implements Runnable {
     public GamePanel()
     {
         setPreferredSize(new Dimension(baseWidth * scale, baseHeight * scale));
-
-        volcanicImages[0] = ImageManager.loadImage("../gfx/images/volcanic/lava.png");
 
         image = new BufferedImage(baseWidth, baseHeight, BufferedImage.TYPE_INT_RGB);
     }
@@ -51,8 +48,6 @@ public class GamePanel extends JPanel implements Runnable {
     private void doubleBufferBackground()
     {
         Graphics2D imageContext = (Graphics2D) image.getGraphics();
-
-        imageContext.drawImage(volcanicImages[0], 0, 0, 640, 360, null);
         // repaint();
     }
 
@@ -62,6 +57,8 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void createGameEntities()
     {
+        backgroundManager = new BackgroundManager(this);
+
         repaint();
     }
 

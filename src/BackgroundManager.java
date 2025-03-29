@@ -6,9 +6,9 @@ public class BackgroundManager {
 
 	private String bgImages[] =
 	{
-		"images/layer1-sky.png",
-		"images/layer2-mountain.png",
-		"images/layer3-ground.png"
+		// "images/layer1-sky.png",
+		// "images/layer2-mountain.png",
+		"../gfx/images/volcanic/lava.png"
 	};
 
 	// a move amount of 0 would make a background stationary
@@ -25,6 +25,8 @@ public class BackgroundManager {
 
 		numBackgrounds = bgImages.length;
 		backgrounds = new Background[numBackgrounds];
+
+		System.out.println("\n Total: " + numBackgrounds);
 
 		for (int i = 0; i < numBackgrounds; i++)
 			backgrounds[i] = new Background(panel, bgImages[i], moveAmount[i]);

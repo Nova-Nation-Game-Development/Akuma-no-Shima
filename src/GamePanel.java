@@ -23,6 +23,10 @@ public class GamePanel extends JPanel implements Runnable {
     private final int FPS = 120;
     private final double frameTimePacing = 8.33f; // milliseconds
 
+    // Entity Variables
+    private Player playerEntity;
+    private InputHandler playerInput;
+
     public GamePanel(GameWindow window)
     {
         setPreferredSize(new Dimension(baseWidth * 3, baseHeight * 3));
@@ -49,16 +53,27 @@ public class GamePanel extends JPanel implements Runnable {
         if (backgroundManager != null)
             backgroundManager.draw(imageContext);
 
-        // imageContext.dispose();
+        if (playerEntity != null)
+            playerEntity.draw(imageContext);
     }
 
-    public void updateEntityCalculations() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void updateEntityCalculations()
+    {
+        playerEntity.setHeight((window.getHeight() / 164) * 40);
+        playerEntity.setWidth(playerEntity.getHeight() / 2);
     }
 
     public void createGameEntities()
     {
         backgroundManager = new BackgroundManager(this, window);
+
+        int playerHeight = (window.getHeight() / 164) * 20;
+        int playerWidth = (playerHeight / 3);
+
+        playerEntity = new Player(10, 30, playerWidth, playerHeight);
+        playerInput = new InputHandler(playerEntity);
+
+        addKeyListener(playerInput);
 
         repaint();
     }
@@ -89,7 +104,7 @@ public class GamePanel extends JPanel implements Runnable {
             // Update the game according to match the FTP of 60FPS
 			if(timeDelta >= frameTimePacing)
             {
-                // updateEntityCalculations();
+                updateEntityCalculations();
                 repaint();
 				timeDelta -= frameTimePacing;
 		    }

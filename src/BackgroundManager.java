@@ -8,8 +8,8 @@ public class BackgroundManager {
 	{
 		"/gfx/images/forest/forest_night_1.png",
 		"/gfx/images/forest/forest_night_2.png",
-		// "/gfx/images/forest/forest_night_3.png",
-		// "/gfx/images/forest/forest_night_4.png",
+		"/gfx/images/forest/forest_night_3.png",
+		"/gfx/images/forest/forest_night_4.png",
 		"/gfx/images/forest/forest_night_5.png"
 	};
 

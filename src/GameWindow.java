@@ -1,8 +1,8 @@
 package src;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.FlowLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -18,23 +18,23 @@ public class GameWindow extends JFrame {
         // Setup window
         setTitle("Akuma no Shima");
         setSize(640, 360);
-
+        setLocationRelativeTo(null);
         setResizable(true);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-
-        setLocationRelativeTo(null);
 
         // Setup panels
 
         // Game Panel
-        gamePanel = new GamePanel();
+        gamePanel = new GamePanel(this);
         gamePanel.setBackground(Color.WHITE);
 
         // Main Panel
         mainPanel = new JPanel();
-        mainPanel.setLayout(new BorderLayout());
+
+        FlowLayout flowLayout = new FlowLayout(FlowLayout.LEFT, 0, 0);
+		mainPanel.setLayout(flowLayout);
         mainPanel.setBackground(Color.BLUE);
-        mainPanel.add(gamePanel, BorderLayout.CENTER);
+        mainPanel.add(gamePanel);
 
         // Container
         container = getContentPane();

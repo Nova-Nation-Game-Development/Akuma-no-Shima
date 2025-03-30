@@ -23,7 +23,7 @@ public class Background {
 		this.bgImage = ImageManager.loadImage(imageFile);
 		bgImageWidth = bgImage.getWidth(null);	// get width of the background
 
-		System.out.println ("bgImageWidth = " + bgImageWidth);
+		System.out.println ("\n bgImageWidth = " + bgImageWidth);
 
 		if (bgImageWidth < panel.getWidth())
 			System.out.println("Background width < panel width");
@@ -55,12 +55,12 @@ public class Background {
 		String mess = "Moving background left: bgX=" + bgX + " bg1X=" + bg1X + " bg2X=" + bg2X;
 		System.out.println (mess);
 
-		if (bg1X < (bgImageWidth * -1)) {
+		if (bg1X < (bgImageWidth * -1))
+		{
 			System.out.println ("Background change: bgX = " + bgX); 
 			bg1X = 0;
 			bg2X = bgImageWidth;
 		}
-
 	}
 
 	public void moveRight()
@@ -81,9 +81,12 @@ public class Background {
 		}
 	}
 
-	public void draw (Graphics2D g2)
+	public void draw (Graphics2D g2, GameWindow window)
 	{
-		g2.drawImage(bgImage, bg1X, 0, null);
-		g2.drawImage(bgImage, bg2X, 0, null);
+		if (window.getWidth() < 1000)
+			g2.drawImage(bgImage, bg1X, 0, (bgImageWidth / window.getWidth()) * 320, window.getHeight() - 35, null);
+		else
+			g2.drawImage(bgImage, bg1X, 0, bgImageWidth, window.getHeight() - 35, null);
+		// g2.drawImage(bgImage, bg2X, 0, null);
 	}
 }

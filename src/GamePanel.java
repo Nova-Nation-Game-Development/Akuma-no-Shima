@@ -8,9 +8,6 @@ import javax.swing.JPanel;
 
 public class GamePanel extends JPanel implements Runnable {
 
-    // Set game resolution and upscaling factor
-    private final int baseWidth = 640;
-    private final int baseHeight = 360;
     // private final int scale = 3;
     private final GameWindow window;
 
@@ -29,10 +26,10 @@ public class GamePanel extends JPanel implements Runnable {
 
     public GamePanel(GameWindow window)
     {
-        setPreferredSize(new Dimension(baseWidth * 3, baseHeight * 3));
-
         this.window = window;
-        image = new BufferedImage(baseWidth * 3, baseHeight * 3, BufferedImage.TYPE_INT_RGB);
+        setPreferredSize(new Dimension(this.window.getWidth(), this.window.getHeight()));
+
+        image = new BufferedImage(this.window.getWidth(), this.window.getHeight(), BufferedImage.TYPE_INT_RGB);
     }
 
     @Override
@@ -55,6 +52,8 @@ public class GamePanel extends JPanel implements Runnable {
 
         if (playerEntity != null)
             playerEntity.draw(imageContext);
+
+        imageContext.dispose();
     }
 
     public void updateEntityCalculations()
@@ -70,8 +69,8 @@ public class GamePanel extends JPanel implements Runnable {
         int playerHeight = (window.getHeight() / 164) * 20;
         int playerWidth = (playerHeight / 3);
 
-        playerEntity = new Player(10, 30, playerWidth, playerHeight);
-        playerInput = new InputHandler(playerEntity);
+        playerEntity = new Player(this, 10, window.getHeight() - 264, playerWidth, playerHeight);
+        playerInput = new InputHandler(playerEntity, backgroundManager);
 
         addKeyListener(playerInput);
 

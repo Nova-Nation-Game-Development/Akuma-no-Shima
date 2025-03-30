@@ -46,8 +46,6 @@ public class BackgroundManager {
 	{
 		for (int i=0; i<numBackgrounds; i++)
       		backgrounds[i].move(direction);
-		
-		System.out.println();
 	}
 
   	// The draw method draws the backgrounds on the screen. The

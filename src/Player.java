@@ -17,13 +17,18 @@ public class Player implements Entity {
     private int height;
     private Image playerImage;
 
-    public Player(int x, int y, int width, int height)
+    // Game Panel
+    private GamePanel panel;
+
+    public Player(GamePanel panel, int x, int y, int width, int height)
     {
         this.width = width;
         this.height = height;
 
         this.x = x;
         this.y = y;
+
+        this.panel = panel;
 
         playerImage = ImageManager.loadImage("/gfx/characters/frames/char_noroi_idle.png");
     }
@@ -46,10 +51,15 @@ public class Player implements Entity {
     public int getHeight() { return height; }
 
     @Override
-    public void move() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'move'");
+    public void move(int direction)
+    {
+        dx = direction;
+
+        if (x + dx > 0 && x + dx < panel.getWidth() - width)
+            x += dx;
     }
+
+    public void stopMoving() { dx = 0; }
 
     @Override
     public void jump() {
@@ -67,5 +77,4 @@ public class Player implements Entity {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'performAction'");
     }
-    
 }

@@ -17,9 +17,9 @@ public class GameWindow extends JFrame {
     {
         // Setup window
         setTitle("Akuma no Shima");
-        setSize(640, 360);
+        setSize(1366, 768);
         setLocationRelativeTo(null);
-        setResizable(true);
+        setResizable(false);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         // Setup panels

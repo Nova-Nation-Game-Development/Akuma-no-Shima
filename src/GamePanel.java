@@ -8,8 +8,12 @@ import javax.swing.JPanel;
 
 public class GamePanel extends JPanel implements Runnable {
 
-    // private final int scale = 3;
     private final GameWindow window;
+    private final int worldLength = 16; // 64 x 16 = 1024 pixels
+
+    private final int finalLevel = 10;
+    private int currentLevel = 1;
+    private boolean isEndless = false;
 
     // Parallax background variables
     private final BufferedImage image;
@@ -74,6 +78,14 @@ public class GamePanel extends JPanel implements Runnable {
 
         addKeyListener(playerInput);
 
+        WorldType world = WorldGeneration.getRandomWorld();
+
+        if (currentLevel == finalLevel && !isEndless)
+            WorldGeneration.generateLevel(worldLength, WorldType.END);
+        else
+            WorldGeneration.generateLevel(worldLength, world);
+
+        currentLevel++; // Create entities will only be called at the start of a new level
         repaint();
     }
 

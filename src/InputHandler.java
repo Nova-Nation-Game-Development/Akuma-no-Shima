@@ -9,6 +9,7 @@ public class InputHandler implements KeyListener {
     private final BackgroundManager backgroundManager;
 
     private final int dx = 10;
+    private final int worldSpeed = 5;
 
     public InputHandler(Player player, BackgroundManager backgroundManager)
     {
@@ -29,12 +30,16 @@ public class InputHandler implements KeyListener {
                 {
                     playerEntity.move(-dx);
                     backgroundManager.move(-1);
+                    WorldGeneration.move(-worldSpeed);
                 }
             }
             case KeyEvent.VK_D -> {
                  // Prevent the background from scrolling too much
                 if (playerEntity.getX() + dx < 1000)
+                {
                     backgroundManager.move(1);
+                    WorldGeneration.move(worldSpeed);
+                }
 
                 playerEntity.move(dx);
             }

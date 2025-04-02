@@ -1,50 +1,71 @@
 package src;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Random;
 
 public class WorldGeneration {
 
-    private static Tile[] tiles;
-    private static final HashMap<Integer, Tile> tileMap = new HashMap<>();
+    private static HashMap<Integer, Tile> tileMap = new HashMap<>();
+    private static HashMap<Integer, Tile> tileDepthMap = new HashMap<>();
     
-    public static void generateLevel(int worldLength, WorldType world)
+    public static void generateLevel(GamePanel panel, WorldType world)
     {
-        
+        switch (world) {
+            case WorldType.FOREST -> {
+                Level forestLevel = new ForestLevel(panel);
+                forestLevel.createLevel();
 
-        // Once all the tiles have been created
-        generateHashMap();
+                tileMap = forestLevel.getTileDictionary();
+                tileDepthMap = forestLevel.getTileDepthDictionary();
+            }
+
+            case WorldType.VOLCANIC -> {
+            }
+
+            case WorldType.BLIZZARD -> {
+            }
+
+            case WorldType.END -> {
+            }
+        }
     }
+
+    private static void generateEndLevel() {}
 
     public static WorldType getRandomWorld()
     {
         Random random = new Random();
         int randWorld = random.nextInt(100);
 
-        if (randWorld < 50)
-            return WorldType.FOREST;
-        else
-            if (randWorld < 80)
-                return WorldType.BLIZZARD; // 30% Chance of snow
-            else
-                return WorldType.VOLCANIC; // 20% Chance of the hardest possible level
+        return WorldType.FOREST;
+
+        // This will remain commented until I draw the remaining tiles
+
+        // if (randWorld < 50)
+        //     return WorldType.FOREST;
+        // else
+        //     if (randWorld < 80)
+        //         return WorldType.BLIZZARD; // 30% Chance of snow
+        //     else
+        //         return WorldType.VOLCANIC; // 20% Chance of the hardest possible level
     }
 
-    private static void generateHashMap()
-    {
-        if (tiles == null) return;
-
-        for (Tile tile: tiles)
-            tileMap.put(tile.getX(), tile);
-    } 
-
     public static Tile getTile(int key) { return tileMap.get(key); }
+    public static Collection<Tile> getAllTiles() { return tileMap.values(); }
+    public static Collection<Tile> getAllDepthTiles() { return tileDepthMap.values(); }
 
+    // This is called in InputHandler
     public static void move(int worldSpeed)
     {
-        if (tiles == null) return;
+        if (tileMap.values() == null) return;
 
-        for (Tile tile: tiles)
+        for (Tile tile : tileMap.values())
+            tile.move(worldSpeed);
+
+        if (tileDepthMap.values() == null) return;
+
+        for (Tile tile : tileDepthMap.values())
             tile.move(worldSpeed);
     }
 }

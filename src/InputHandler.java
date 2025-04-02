@@ -30,18 +30,17 @@ public class InputHandler implements KeyListener {
                 {
                     playerEntity.move(-dx);
                     backgroundManager.move(-1);
-                    WorldGeneration.move(-worldSpeed);
+                    WorldGeneration.move(worldSpeed);
                 }
             }
             case KeyEvent.VK_D -> {
                  // Prevent the background from scrolling too much
-                if (playerEntity.getX() + dx < 1000)
+                if (playerEntity.getX() + dx + (playerEntity.getWidth() / 2) + dx < playerEntity.getPanelDimensions().getWidth() - playerEntity.getWidth() / 2)
                 {
                     backgroundManager.move(1);
-                    WorldGeneration.move(worldSpeed);
+                    WorldGeneration.move(-worldSpeed);
+                    playerEntity.move(dx);
                 }
-
-                playerEntity.move(dx);
             }
             case KeyEvent.VK_SPACE -> {
                 playerEntity.jump();

@@ -1,5 +1,6 @@
 package src;
 
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Image;
 
@@ -48,7 +49,11 @@ public class Player implements Entity {
     public void setWidth(int newWidth) { width = newWidth; }
     public void setHeight(int newHeight) { height = newHeight; }
     // Shape Accessors
+    public int getWidth() { return width; }
     public int getHeight() { return height; }
+
+    // Panel Dimension Accessors
+    public Dimension getPanelDimensions() { return panel.getSize(); }
 
     @Override
     public void move(int direction)

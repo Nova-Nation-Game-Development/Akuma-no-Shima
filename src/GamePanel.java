@@ -4,12 +4,16 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.util.Collection;
 import javax.swing.JPanel;
 
 public class GamePanel extends JPanel implements Runnable {
 
-    // private final int scale = 3;
     private final GameWindow window;
+
+    private final int finalLevel = 10;
+    private int currentLevel = 1;
+    private boolean isEndless = false;
 
     // Parallax background variables
     private final BufferedImage image;
@@ -23,6 +27,9 @@ public class GamePanel extends JPanel implements Runnable {
     // Entity Variables
     private Player playerEntity;
     private InputHandler playerInput;
+
+    private Collection<Tile> tiles;
+    private Collection<Tile> tileDepths;
 
     public GamePanel(GameWindow window)
     {
@@ -53,6 +60,14 @@ public class GamePanel extends JPanel implements Runnable {
         if (playerEntity != null)
             playerEntity.draw(imageContext);
 
+        if (tiles != null)
+            for (Tile tile : tiles)
+                tile.draw(imageContext);
+
+        if (tileDepths != null)
+            for (Tile tile : tileDepths)
+                tile.draw(imageContext);
+
         imageContext.dispose();
     }
 
@@ -69,11 +84,23 @@ public class GamePanel extends JPanel implements Runnable {
         int playerHeight = (window.getHeight() / 164) * 20;
         int playerWidth = (playerHeight / 3);
 
-        playerEntity = new Player(this, 10, window.getHeight() - 264, playerWidth, playerHeight);
+        // Fix spawn height
+        playerEntity = new Player(this, 10, window.getHeight() - 257, playerWidth, playerHeight);
         playerInput = new InputHandler(playerEntity, backgroundManager);
 
         addKeyListener(playerInput);
 
+        WorldType world = WorldGeneration.getRandomWorld();
+
+        if (currentLevel == finalLevel && !isEndless)
+            WorldGeneration.generateLevel(this, WorldType.END);
+        else
+            WorldGeneration.generateLevel(this, world);
+
+        tiles = WorldGeneration.getAllTiles();
+        tileDepths = WorldGeneration.getAllDepthTiles();
+
+        currentLevel++; // Create entities will only be called at the start of a new level
         repaint();
     }
 

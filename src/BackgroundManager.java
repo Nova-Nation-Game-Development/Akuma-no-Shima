@@ -21,7 +21,7 @@ public class BackgroundManager {
 	// };
 
 	// a move amount of 0 would make a background stationary
-  	private int moveAmount[] = {2, 4, 8, 16, 32};  // applied to moveSize // 2, 6, 24
+  	private int moveAmount[] = {1, 2, 3, 8, 16};  // applied to moveSize // 2, 6, 24
     
   	private Background[] backgrounds;
   	private int numBackgrounds;

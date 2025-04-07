@@ -7,12 +7,12 @@ public class CameraControls {
     private final BackgroundManager backgroundManager;
 
     // Speeds for camera manipulation
-    private final int WORLD_SPEED = 2;
-    private final int PLAYER_SPEED = 2;
+    private final int WORLD_SPEED = 2;                      // This determines the speed of the world (Does not have to be the same speed as the player)
+    private final int PLAYER_SPEED = 2;                     // This determines the speed of the player
 
     private final int LEFT_THRESHOLD = 600;                 // Defines the area in which the player must enter before the world moves
     private final int RIGHT_THRESHOLD = 750;                // Defines the area in which the player must leave before the world stops moving
-    private final float THRESHOLD_SCALE = 10f;               // How much the player speed is reduced when entering the threshold
+    private final float THRESHOLD_SCALE = 10f;              // How much the player speed is reduced when entering the threshold
     
     // Location
     private float xPos;

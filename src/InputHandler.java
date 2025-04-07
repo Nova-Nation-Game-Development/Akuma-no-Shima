@@ -6,15 +6,13 @@ import java.awt.event.KeyListener;
 public class InputHandler implements KeyListener {
 
     private final Player playerEntity;
-    private final BackgroundManager backgroundManager;
 
-    private final int dx = 10;
-    private final int worldSpeed = 5;
+    private boolean isMoving;
+    private int direction;
 
-    public InputHandler(Player player, BackgroundManager backgroundManager)
+    public InputHandler(Player player)
     {
         this.playerEntity = player;
-        this.backgroundManager = backgroundManager;
     }
 
     @Override
@@ -22,25 +20,16 @@ public class InputHandler implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-
         // I will temporarily configure the physics here for the player
         switch (e.getKeyCode()) {
             case KeyEvent.VK_A -> {
-                if (playerEntity.getX() - dx > 0)
-                {
-                    playerEntity.move(-dx);
-                    backgroundManager.move(-1);
-                    WorldGeneration.move(worldSpeed);
-                }
+
+                isMoving = true;
+                direction = -1;
             }
             case KeyEvent.VK_D -> {
-                 // Prevent the background from scrolling too much
-                if (playerEntity.getX() + dx + (playerEntity.getWidth() / 2) + dx < playerEntity.getPanelDimensions().getWidth() - playerEntity.getWidth() / 2)
-                {
-                    backgroundManager.move(1);
-                    WorldGeneration.move(-worldSpeed);
-                    playerEntity.move(dx);
-                }
+                 isMoving = true;
+                 direction = 1;
             }
             case KeyEvent.VK_SPACE -> {
                 playerEntity.jump();
@@ -49,6 +38,13 @@ public class InputHandler implements KeyListener {
         }
     }
 
+    public int getDirection() { return direction; }
+    public boolean isMoving() { return isMoving; }
+
     @Override
-    public void keyReleased(KeyEvent e) { playerEntity.stopMoving();}
+    public void keyReleased(KeyEvent e)
+    {
+        isMoving = false;
+        direction = 0;
+    }
 }

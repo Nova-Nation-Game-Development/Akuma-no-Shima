@@ -27,6 +27,7 @@ public class GamePanel extends JPanel implements Runnable {
     // Entity Variables
     private Player playerEntity;
     private InputHandler playerInput;
+    private CameraControls camera;
 
     private Collection<Tile> tiles;
     private Collection<Tile> tileDepths;
@@ -75,6 +76,9 @@ public class GamePanel extends JPanel implements Runnable {
     {
         playerEntity.setHeight((window.getHeight() / 164) * 40);
         playerEntity.setWidth(playerEntity.getHeight() / 2);
+
+        // This will keep track of the world and player and update their locations accordingly
+        camera.update();
     }
 
     public void createGameEntities()
@@ -85,8 +89,9 @@ public class GamePanel extends JPanel implements Runnable {
         int playerWidth = (playerHeight / 3);
 
         // Fix spawn height
-        playerEntity = new Player(this, 10, window.getHeight() - 257, playerWidth, playerHeight);
-        playerInput = new InputHandler(playerEntity, backgroundManager);
+        playerEntity = new Player(this, 30, window.getHeight() - 257, playerWidth, playerHeight);
+        playerInput = new InputHandler(playerEntity);
+        camera = new CameraControls(playerEntity, playerInput, backgroundManager);
 
         addKeyListener(playerInput);
 

@@ -5,15 +5,11 @@ import java.awt.event.KeyListener;
 
 public class InputHandler implements KeyListener {
 
-    private final Player playerEntity;
-
     private boolean isMoving;
     private int direction;
 
-    public InputHandler(Player player)
-    {
-        this.playerEntity = player;
-    }
+    // In case of multiplayer, this will be instantiated
+    public InputHandler() { }
 
     @Override
     public void keyTyped(KeyEvent e) { }
@@ -32,8 +28,7 @@ public class InputHandler implements KeyListener {
                  direction = 1;
             }
             case KeyEvent.VK_SPACE -> {
-                playerEntity.jump();
-                // backgroundManager.jump();
+                // Phyics.jump();
             }
         }
     }

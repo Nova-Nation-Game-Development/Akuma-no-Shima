@@ -7,7 +7,7 @@ public class CameraControls {
     private final BackgroundManager backgroundManager;
 
     // Speeds for camera manipulation
-    private final int WORLD_SPEED = 2;                      // This determines the speed of the world (Does not have to be the same speed as the player)
+    private final int WORLD_SPEED = 2;                      // This determines the speed of the world
     private final int PLAYER_SPEED = 2;                     // This determines the speed of the player
 
     private final int LEFT_THRESHOLD = 600;                 // Defines the area in which the player must enter before the world moves
@@ -59,7 +59,7 @@ public class CameraControls {
 
     public void moveWorld(int newPlayerSpeed, int newWorldSpeed, int bgDirection)
     {
-        if (xPos > LEFT_THRESHOLD && xPos < RIGHT_THRESHOLD)
+        if (xPos >= LEFT_THRESHOLD && xPos <= RIGHT_THRESHOLD)
             xPos += (newPlayerSpeed / THRESHOLD_SCALE);
         else
             xPos += newPlayerSpeed;

@@ -90,7 +90,7 @@ public class GamePanel extends JPanel implements Runnable {
 
         // Fix spawn height
         playerEntity = new Player(this, 30, window.getHeight() - 257, playerWidth, playerHeight);
-        playerInput = new InputHandler(playerEntity);
+        playerInput = new InputHandler();
         camera = new CameraControls(playerEntity, playerInput, backgroundManager);
 
         addKeyListener(playerInput);

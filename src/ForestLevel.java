@@ -10,7 +10,7 @@ public class ForestLevel implements Level {
 
     // Level presets
     private static final int TILE_LENGTH = 64;                  // Length of a tile in pixels
-    private static final int WORLD_LENGTH = 20;                 // Total amount of tiles that can be made // 64 x 20 = 1280 pixels
+    private static final int WORLD_LENGTH = 30;                 // Total amount of tiles that can be made // 64 x 30 = 1920 pixels
     private static final int SPAWN_LENGTH = 3;                  // Total amount of tiles dedicated to generating spawn
     private static final int BASE_HEIGHT = 64;                  // Starting height for world generation
     private static final int ELEVATION_LENGTH = 3;              // Total guaranteed tiles placed on elevation
@@ -150,6 +150,7 @@ public class ForestLevel implements Level {
         }
     }
 
+    // TODO: Finish platform stuff
     public void generateFloatingPlatform()
     {
         

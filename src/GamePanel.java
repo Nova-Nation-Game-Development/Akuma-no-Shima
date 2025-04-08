@@ -132,7 +132,7 @@ public class GamePanel extends JPanel implements Runnable {
 			timeDelta += (currentTime - lastTime) / drawInterval;
 			lastTime = currentTime;
 
-            // Update the game according to match the FTP of 60FPS
+            // Update the game accordingly to match the FTP of 60FPS
 			if(timeDelta >= frameTimePacing)
             {
                 updateEntityCalculations();

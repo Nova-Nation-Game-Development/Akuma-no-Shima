@@ -6,16 +6,10 @@
     "configurations": [
         {
             "type": "java",
-            "name": "Current File",
-            "request": "launch",
-            "mainClass": "src.Main"
-        },
-        {
-            "type": "java",
             "name": "Main",
             "request": "launch",
             "mainClass": "src.Main",
-            "projectName": "akuma no shima"
+            "projectName": "Akuma-no-Shima_5c94d2a0"
         }
     ]
 }

@@ -3,7 +3,7 @@ package src;
 import java.awt.Graphics2D;
 import java.awt.Image;
 
-public class Player implements Entity {
+public class Player extends Physics implements Entity {
     
     // Location
     private int x;
@@ -11,6 +11,10 @@ public class Player implements Entity {
 
     private int dx = 0;
     private int dy = 0;
+    double timeElapsed = 0;
+    double startY;
+    int moveDirection;
+    
 
     // Shape
     private int width;
@@ -50,21 +54,81 @@ public class Player implements Entity {
     // Shape Accessors
     public int getHeight() { return height; }
 
-    @Override
+@Override
     public void move(int direction)
     {
-        dx = direction;
+        dx = 10;
 
-        if (x + dx > 0 && x + dx < panel.getWidth() - width)
-            x += dx;
+        if (x + dx > 0 && x + dx < panel.getWidth() - width) {
+            if (direction == 1) {
+                x -= dx; // left
+                moveDirection = -1;
+            }
+            if (direction == 2) {
+                x += dx; // right
+                moveDirection = 1;
+            }
+            if (direction == 3 && !isJumping) {
+                jump(); // jump
+                
+            }
+        }
+
+        System.out.println("moving");
     }
 
-    public void stopMoving() { dx = 0; }
+
+    public void update() {
+       double vertDisplacement = 0;
+       double horizDisplacement = 0;
+       double newY;
+       double newX;
+       
+
+        if (isJumping) {
+            timeElapsed++;
+            vertDisplacement = (int) calculateVertComponent(2, timeElapsed);
+            
+        newY = (int) (startY - vertDisplacement);
+        y = (int) newY;
+
+
+        if(moveDirection != 0){
+            horizDisplacement = (int) calculateHorizComponent(moveDirection, timeElapsed);
+            newX = x + horizDisplacement;
+
+            if (newX > 0 && newX < panel.getWidth() - 500) {
+                x = (int) newX;
+            }
+        }
+
+            //  ground collision
+            if (y >= panel.getHeight() - 264) {
+                y = panel.getHeight() - 264;
+                resetJumpPos();
+                moveDirection = 0;
+            }
+
+        }
+
+        System.out.println("displacement: " + vertDisplacement + "  Time elasped: " + timeElapsed + "  y: " + y);
+    }
+
+
+    public void stopMoving() {
+         dx = 0; 
+        moveDirection = 0;
+    }
 
     @Override
-    public void jump() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'jump'");
+    public void jump() 
+    {
+        System.out.println("Jumping");
+       if(!isJumping){
+        startJump(y, x);
+        timeElapsed = 0;     // logic with isJumping needs to be seperated accordingly
+      }
+       
     }
 
     @Override

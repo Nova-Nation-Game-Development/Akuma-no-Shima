@@ -24,6 +24,8 @@ public class GamePanel extends JPanel implements Runnable {
     private Player playerEntity;
     private InputHandler playerInput;
 
+    private double timer = 0; // for phys calculations
+
     public GamePanel(GameWindow window)
     {
         this.window = window;
@@ -60,6 +62,7 @@ public class GamePanel extends JPanel implements Runnable {
     {
         playerEntity.setHeight((window.getHeight() / 164) * 40);
         playerEntity.setWidth(playerEntity.getHeight() / 2);
+        playerEntity.update();
     }
 
     public void createGameEntities()
@@ -107,6 +110,11 @@ public class GamePanel extends JPanel implements Runnable {
                 repaint();
 				timeDelta -= frameTimePacing;
 		    }
+            timer++;
 		}
+    }
+
+    public double getTimer(){
+        return timer;
     }
 }

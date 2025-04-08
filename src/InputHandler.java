@@ -27,7 +27,7 @@ public class InputHandler implements KeyListener {
             case KeyEvent.VK_A -> {
                 if (playerEntity.getX() - dx > 0)
                 {
-                    playerEntity.move(-dx);
+                    playerEntity.move(1); //left
                     backgroundManager.move(-1);
                 }
             }
@@ -36,10 +36,10 @@ public class InputHandler implements KeyListener {
                 if (playerEntity.getX() + dx < 1000)
                     backgroundManager.move(1);
 
-                playerEntity.move(dx);
+                playerEntity.move(2); //right
             }
             case KeyEvent.VK_SPACE -> {
-                playerEntity.jump();
+                playerEntity.move(3); //jump
                 // backgroundManager.jump();
             }
         }

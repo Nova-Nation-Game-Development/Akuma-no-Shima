@@ -59,15 +59,15 @@ public class CameraControls {
 
     public void moveWorld(int newPlayerSpeed, int newWorldSpeed, int bgDirection)
     {
-        if (xPos >= LEFT_THRESHOLD && xPos <= RIGHT_THRESHOLD)
+        if ((int) xPos >= LEFT_THRESHOLD && (int) xPos <= RIGHT_THRESHOLD)
             xPos += (newPlayerSpeed / THRESHOLD_SCALE);
         else
-            xPos += newPlayerSpeed;
+            xPos = (int) xPos + newPlayerSpeed;
 
-        if (xPos < LEFT_THRESHOLD || xPos > RIGHT_THRESHOLD)
+        if ((int) xPos < LEFT_THRESHOLD || (int) xPos > RIGHT_THRESHOLD)
             player.move(newPlayerSpeed);
     
-        if (xPos > LEFT_THRESHOLD && xPos < RIGHT_THRESHOLD)
+        if ((int) xPos > LEFT_THRESHOLD && (int) xPos < RIGHT_THRESHOLD)
         {
             backgroundManager.move(bgDirection);
             WorldGeneration.move(newWorldSpeed);

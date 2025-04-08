@@ -19,3 +19,6 @@ bin/src/Background.class
 bin/src/BackgroundManager.class
 bin/src/GamePanel.class
 bin/src/GameWindow.class
+bin/src/CameraControls.class
+bin/src/LoadingPanel.class
+.gitignore

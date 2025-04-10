@@ -99,7 +99,7 @@ public class GamePanel extends JPanel implements Runnable {
         tileDepths = WorldGeneration.getAllDepthTiles();
 
         // Fix spawn height
-        playerEntity = new Player(this, 30, (getHeight() - playerHeight) - 35 - WorldGeneration.getTileLength(), playerWidth, playerHeight);
+        playerEntity = new Player(this, 30, (getHeight() - playerHeight) - 32 - WorldGeneration.getTileLength(), playerWidth, playerHeight);
         playerInput = new InputHandler();
         camera = new CameraControls(playerEntity, playerInput, backgroundManager);
 

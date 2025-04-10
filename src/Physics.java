@@ -6,8 +6,8 @@ public class Physics {
     private static final double INITIAL_VERTICAL_VELOCITY = -12.0;
     private static final double INITIAL_HORIZONTAL_VELOCITY = 5.0;
 
-    private static final int JUMP_INTERVAL = 5; // In milliseconds (ms)
-    private static final int MAX_STEP_COUNT = 120; // Maximum steps for calculating the jump
+    private static final int JUMP_INTERVAL = 5; // In milliseconds (ms) // Influences jump smoothness
+    private static final int MAX_STEP_COUNT = 120; // Maximum steps for calculating the jump // Influences jump height
     private static final double COUNT_SCALE = 0.3f;
     private static final double SPEED_SCALE = 0.2f;
 

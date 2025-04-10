@@ -141,7 +141,7 @@ public class Player implements Entity {
                     double newY = y - velocity;
 
                     if (!(newY + height + 25 > panel.getHeight() - tileHeight))
-                        performJumpAction(counter, velocity);
+                        performJumpAction(velocity);
                     else
                         canJump = false;
                 }
@@ -151,7 +151,7 @@ public class Player implements Entity {
         timer.scheduleAtFixedRate(jumpTask, 0, Physics.getJumpInterval());
     }
 
-    private void performJumpAction(int counter, double velocity)
+    private void performJumpAction(double velocity)
     {
         double newY = y - velocity;
         double newX = Physics.calculateHorizComponent(velocity, 0);
@@ -160,7 +160,7 @@ public class Player implements Entity {
 
         // x += newX;
 
-        if (newY + height + 25 < panel.getHeight() - tileHeight)
+        if (newY + 25 > 0 && newY + height + 25 < panel.getHeight() - tileHeight)
             y = (int) newY;
     }
 

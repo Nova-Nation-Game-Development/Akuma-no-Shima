@@ -84,26 +84,66 @@ public class Player implements Entity {
     {
         isJumping = true;
         canJump = true;
+
         Timer timer = new Timer();
 
         // Perform jump over a period of time
         TimerTask jumpTask = new TimerTask() {
             int counter = 0;
+            int countdown = 1;
+
+            int tileHeight = WorldGeneration.getTileLength();
+            int decrementCounter = 0;
+            double velocity = 0;
 
             @Override
             public void run() {
                 counter++;
-                // Perform jump action
-                System.out.println("Jumping " + counter);
-                performJumpAction(counter);
+                // Perform jump actions
+
+                // First half
+                if (counter < (Physics.getMaxStep() * 0.33))
+                    velocity = Physics.getSpeedScale() * counter;
+                
+                // Second half
+                if (counter >= (Physics.getMaxStep() * 0.33))
+                {
+                    decrementCounter++;
+                    velocity = -(Physics.getGravity() * decrementCounter);
+                }
 
                 // Prevent a jump loop
-                if (counter + 1 >= Physics.getMaxStep())
+                if (counter + Physics.getJumpInterval() >= Physics.getMaxStep())
                     canJump = false;
 
-                if (counter >= Physics.getMaxStep()) {
+                if (counter >= Physics.getMaxStep())
+                {
                     isJumping = false;
                     timer.cancel();
+                }
+
+                // End jump task on ground contact
+                if ((y - velocity) + height < panel.getHeight() - tileHeight)
+                {
+                    // Stop performing the jump and end the task
+                    if (!canJump)
+                    {
+                        if (countdown == 0)
+                        {
+                            isJumping = false;
+                            timer.cancel();
+                            return;
+                        }
+                        else
+                            countdown--;
+                    }
+
+                    double newY = y - velocity;
+
+                    if (!(newY + height + 25 > panel.getHeight() - tileHeight))
+                        performJumpAction(counter, velocity);
+                    else
+                        canJump = false;
                 }
             }
         };
@@ -111,14 +151,17 @@ public class Player implements Entity {
         timer.scheduleAtFixedRate(jumpTask, 0, Physics.getJumpInterval());
     }
 
-    private void performJumpAction(int counter)
+    private void performJumpAction(int counter, double velocity)
     {
-        double vertDisplacement = 0;
-        double horizDisplacement = 0;
-        double newY;
-        double newX;
+        double newY = y - velocity;
+        double newX = Physics.calculateHorizComponent(velocity, 0);
 
+        int tileHeight = WorldGeneration.getTileLength();
 
+        // x += newX;
+
+        if (newY + height + 25 < panel.getHeight() - tileHeight)
+            y = (int) newY;
     }
 
     @Override

@@ -53,6 +53,8 @@ public class ForestLevel implements Level {
 
     public ForestLevel(GamePanel panel) { this.panel = panel; }
 
+    public int getTileLength() { return TILE_LENGTH; }
+
     @Override
     public HashMap<Integer, Tile> getTileDictionary() { return tileMap; }
     @Override

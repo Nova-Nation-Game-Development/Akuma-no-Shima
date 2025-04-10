@@ -8,12 +8,14 @@ public class WorldGeneration {
 
     private static HashMap<Integer, Tile> tileMap = new HashMap<>();
     private static HashMap<Integer, Tile> tileDepthMap = new HashMap<>();
+
+    private static ForestLevel forestLevel;
     
     public static void generateLevel(GamePanel panel, WorldType world)
     {
         switch (world) {
             case WorldType.FOREST -> {
-                Level forestLevel = new ForestLevel(panel);
+                forestLevel = new ForestLevel(panel);
                 forestLevel.createLevel();
 
                 tileMap = forestLevel.getTileDictionary();
@@ -30,6 +32,8 @@ public class WorldGeneration {
             }
         }
     }
+
+    public static int getTileLength() { return forestLevel.getTileLength(); }
 
     private static void generateEndLevel() {}
 

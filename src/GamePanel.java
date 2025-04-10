@@ -58,9 +58,6 @@ public class GamePanel extends JPanel implements Runnable {
         if (backgroundManager != null)
             backgroundManager.draw(imageContext);
 
-        if (playerEntity != null)
-            playerEntity.draw(imageContext);
-
         if (tiles != null)
             for (Tile tile : tiles)
                 tile.draw(imageContext);
@@ -69,13 +66,16 @@ public class GamePanel extends JPanel implements Runnable {
             for (Tile tile : tileDepths)
                 tile.draw(imageContext);
 
+        if (playerEntity != null)
+            playerEntity.draw(imageContext);
+
         imageContext.dispose();
     }
 
     public void updateEntityCalculations()
     {
-        playerEntity.setHeight((window.getHeight() / 164) * 40);
-        playerEntity.setWidth(playerEntity.getHeight() / 2);
+        // playerEntity.setHeight((int) (window.getHeight() / 164) * 40);
+        // playerEntity.setWidth((int) playerEntity.getHeight() / 2);
 
         // This will keep track of the world and player and update their locations accordingly
         camera.update();
@@ -85,15 +85,8 @@ public class GamePanel extends JPanel implements Runnable {
     {
         backgroundManager = new BackgroundManager(this, window);
 
-        int playerHeight = (window.getHeight() / 164) * 20;
-        int playerWidth = (playerHeight / 3);
-
-        // Fix spawn height
-        playerEntity = new Player(this, 30, window.getHeight() - 257, playerWidth, playerHeight);
-        playerInput = new InputHandler();
-        camera = new CameraControls(playerEntity, playerInput, backgroundManager);
-
-        addKeyListener(playerInput);
+        int playerHeight = (window.getHeight() / 164) * 40;
+        int playerWidth = (playerHeight / 2);
 
         WorldType world = WorldGeneration.getRandomWorld();
 
@@ -104,6 +97,13 @@ public class GamePanel extends JPanel implements Runnable {
 
         tiles = WorldGeneration.getAllTiles();
         tileDepths = WorldGeneration.getAllDepthTiles();
+
+        // Fix spawn height
+        playerEntity = new Player(this, 30, (getHeight() - playerHeight) - 32 - WorldGeneration.getTileLength(), playerWidth, playerHeight);
+        playerInput = new InputHandler();
+        camera = new CameraControls(playerEntity, playerInput, backgroundManager);
+
+        addKeyListener(playerInput);
 
         currentLevel++; // Create entities will only be called at the start of a new level
         repaint();

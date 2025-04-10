@@ -3,6 +3,8 @@ package src;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Player implements Entity {
     
@@ -13,13 +15,19 @@ public class Player implements Entity {
     private int dx = 0;
     private int dy = 0;
 
+    // Physics
+    private double timeElapsed = 0;
+    private double startY;
+    private boolean isJumping;
+    private boolean canJump;
+
     // Shape
     private int width;
     private int height;
-    private Image playerImage;
+    private final Image playerImage;
 
     // Game Panel
-    private GamePanel panel;
+    private final GamePanel panel;
 
     public Player(GamePanel panel, int x, int y, int width, int height)
     {
@@ -31,6 +39,7 @@ public class Player implements Entity {
 
         this.panel = panel;
 
+        isJumping = false;
         playerImage = ImageManager.loadImage("/gfx/characters/frames/char_noroi_idle.png");
     }
 
@@ -52,6 +61,10 @@ public class Player implements Entity {
     public int getWidth() { return width; }
     public int getHeight() { return height; }
 
+    // Physics Accessors
+    public boolean isJumping() { return isJumping; }
+    public boolean canJump() { return canJump; }
+
     // Panel Dimension Accessors
     public Dimension getPanelDimensions() { return panel.getSize(); }
 
@@ -67,9 +80,88 @@ public class Player implements Entity {
     public void stopMoving() { dx = 0; }
 
     @Override
-    public void jump() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'jump'");
+    public void jump()
+    {
+        isJumping = true;
+        canJump = true;
+
+        Timer timer = new Timer();
+
+        // Perform jump over a period of time
+        TimerTask jumpTask = new TimerTask() {
+            int counter = 0;
+            int countdown = 1;
+
+            int tileHeight = WorldGeneration.getTileLength();
+            int decrementCounter = 0;
+            double velocity = 0;
+
+            @Override
+            public void run() {
+                counter++;
+                // Perform jump actions
+
+                // First half
+                if (counter < (Physics.getMaxStep() * 0.33))
+                    velocity = Physics.getSpeedScale() * counter;
+                
+                // Second half
+                if (counter >= (Physics.getMaxStep() * 0.33))
+                {
+                    decrementCounter++;
+                    velocity = -(Physics.getGravity() * decrementCounter);
+                }
+
+                // Prevent a jump loop
+                if (counter + Physics.getJumpInterval() >= Physics.getMaxStep())
+                    canJump = false;
+
+                if (counter >= Physics.getMaxStep())
+                {
+                    isJumping = false;
+                    timer.cancel();
+                }
+
+                // End jump task on ground contact
+                if ((y - velocity) + height < panel.getHeight() - tileHeight)
+                {
+                    // Stop performing the jump and end the task
+                    if (!canJump)
+                    {
+                        if (countdown == 0)
+                        {
+                            isJumping = false;
+                            timer.cancel();
+                            return;
+                        }
+                        else
+                            countdown--;
+                    }
+
+                    double newY = y - velocity;
+
+                    if (!(newY + height + 25 > panel.getHeight() - tileHeight))
+                        performJumpAction(velocity);
+                    else
+                        canJump = false;
+                }
+            }
+        };
+
+        timer.scheduleAtFixedRate(jumpTask, 0, Physics.getJumpInterval());
+    }
+
+    private void performJumpAction(double velocity)
+    {
+        double newY = y - velocity;
+        double newX = Physics.calculateHorizComponent(velocity, 0);
+
+        int tileHeight = WorldGeneration.getTileLength();
+
+        // x += newX;
+
+        if (newY + 25 > 0 && newY + height + 25 < panel.getHeight() - tileHeight)
+            y = (int) newY;
     }
 
     @Override

@@ -54,7 +54,14 @@ public class CameraControls {
                 if (player.getX() + newPlayerSpeed + (player.getWidth() / 2) + newPlayerSpeed < player.getPanelDimensions().getWidth() - player.getWidth() / 2)
                     moveWorld(newPlayerSpeed, newWorldSpeed, bgDirection);
             }
+
+            // May be best to leave the world height as is (For now)
+            if (playerInput.canJump() && !player.isJumping())
+                player.jump();
         }
+
+        if (!player.canJump())
+            playerInput.stopJump();
     }
 
     public void moveWorld(int newPlayerSpeed, int newWorldSpeed, int bgDirection)

@@ -3,6 +3,8 @@ package src;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Player implements Entity {
     
@@ -13,13 +15,19 @@ public class Player implements Entity {
     private int dx = 0;
     private int dy = 0;
 
+    // Physics
+    private double timeElapsed = 0;
+    private double startY;
+    private boolean isJumping;
+    private boolean canJump;
+
     // Shape
     private int width;
     private int height;
-    private Image playerImage;
+    private final Image playerImage;
 
     // Game Panel
-    private GamePanel panel;
+    private final GamePanel panel;
 
     public Player(GamePanel panel, int x, int y, int width, int height)
     {
@@ -31,6 +39,7 @@ public class Player implements Entity {
 
         this.panel = panel;
 
+        isJumping = false;
         playerImage = ImageManager.loadImage("/gfx/characters/frames/char_noroi_idle.png");
     }
 
@@ -52,6 +61,10 @@ public class Player implements Entity {
     public int getWidth() { return width; }
     public int getHeight() { return height; }
 
+    // Physics Accessors
+    public boolean isJumping() { return isJumping; }
+    public boolean canJump() { return canJump; }
+
     // Panel Dimension Accessors
     public Dimension getPanelDimensions() { return panel.getSize(); }
 
@@ -67,9 +80,45 @@ public class Player implements Entity {
     public void stopMoving() { dx = 0; }
 
     @Override
-    public void jump() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'jump'");
+    public void jump()
+    {
+        isJumping = true;
+        canJump = true;
+        Timer timer = new Timer();
+
+        // Perform jump over a period of time
+        TimerTask jumpTask = new TimerTask() {
+            int counter = 0;
+
+            @Override
+            public void run() {
+                counter++;
+                // Perform jump action
+                System.out.println("Jumping " + counter);
+                performJumpAction(counter);
+
+                // Prevent a jump loop
+                if (counter + 1 >= Physics.getMaxStep())
+                    canJump = false;
+
+                if (counter >= Physics.getMaxStep()) {
+                    isJumping = false;
+                    timer.cancel();
+                }
+            }
+        };
+
+        timer.scheduleAtFixedRate(jumpTask, 0, Physics.getJumpInterval());
+    }
+
+    private void performJumpAction(int counter)
+    {
+        double vertDisplacement = 0;
+        double horizDisplacement = 0;
+        double newY;
+        double newX;
+
+
     }
 
     @Override

@@ -16,6 +16,7 @@ public class ForestLevel implements Level {
     private static final int BASE_HEIGHT = 64;                  // Starting height for world generation
     private static final int ELEVATION_LENGTH = 3;              // Total guaranteed tiles placed on elevation
     private static final int ELEVATION_PERCENT = 60;
+    private static final int CHUNK_WIDTH = 1;
 
     private static final int MAIN_TILE_PERCENT = 40;            // Represents grass, lava stone, snowy grass
     private static final int SECONDARY_TILE_PERCENT = 50;       // Represents dirt, stone, snow pile
@@ -36,11 +37,9 @@ public class ForestLevel implements Level {
     private int yPos = BASE_HEIGHT;                     // Current height at which the random terrain is generated
     private int tempTileCount = 0;                      // Keep track of any extra tiles added
     private int elevationDistance = 0;                  // How many consecutive tiles is a single elevation
-    private int previousDistance = 0;
-    private int previousHeight = 0;
+    private int chunkHeight = 0;
     private int randChance = ELEVATION_PERCENT;         // Chance of continuing the generation at the current elevation
     private int tileDepth = 0;
-    private boolean isFirstElevation = true;
 
     // Generation variables
     private static final int SCALE = 2;
@@ -65,32 +64,15 @@ public class ForestLevel implements Level {
     @Override
     public HashMap<Integer, Chunk> getChunkDictionary() { return chunkMap; }
 
-    private void createChunk(int elevation, int tileCount)
+    private void createChunk(int elevation)
     {
-        int newTileHeight = TILE_LENGTH * elevation;
+        Chunk newChunk = new Chunk((currentTile * TILE_LENGTH), yPos, CHUNK_WIDTH, (elevation / TILE_LENGTH), TILE_LENGTH);
+        chunkMap.put(currentTile * TILE_LENGTH, newChunk);
 
-        if (previousHeight != TILE_LENGTH)
-        {
-            if (!isFirstElevation)
-            {
-                Chunk newChunk = new Chunk((tileCount) * TILE_LENGTH, yPos, (previousDistance + 1), elevation, TILE_LENGTH);
-                chunkMap.put((tileCount) * TILE_LENGTH, newChunk);
+        if (currentTile == 0)
+            System.out.println("\n \n \n \n");
 
-                System.out.println(newChunk);
-            }
-            
-            previousHeight = newTileHeight;
-        }
-        else
-        {
-            if (!isFirstElevation)
-            {
-                Chunk newChunk = new Chunk((tileCount) * TILE_LENGTH, yPos, (previousDistance + 1), elevation, TILE_LENGTH);
-                chunkMap.put((tileCount) * TILE_LENGTH, newChunk);
-
-                System.out.println(newChunk);
-            }
-        }
+        System.out.println(newChunk);
     }
     
     @Override
@@ -107,7 +89,6 @@ public class ForestLevel implements Level {
             else
             {
                 randChance = ELEVATION_PERCENT;
-                previousDistance = elevationDistance;
                 elevationDistance = 0;
                 return;
             }
@@ -115,39 +96,32 @@ public class ForestLevel implements Level {
 
         if (elevationDistance == 0)
         {
-            int tileCount = currentTile - previousDistance - 1;
-            if (!isFirstElevation)
-                System.out.println("Tile: " + tileCount); // This should only be called once per chunk call
-
             if (randHeight < FIRST_HEIGHT_PRESET)
             {
                 yPos = panelHeight;
-                createChunk(1, tileCount);
+                chunkHeight = TILE_LENGTH;
             }
     
             if (randHeight >= FIRST_HEIGHT_PRESET && randHeight < SECOND_HEIGHT_PRESET)
             {
                 yPos = panelHeight - (TILE_LENGTH);
-                createChunk(2, tileCount);
+                chunkHeight = TILE_LENGTH * 2;
             }
     
             if (randHeight >= SECOND_HEIGHT_PRESET && randHeight < THRID_HEIGHT_PRESET)
             {
                 yPos = panelHeight - (TILE_LENGTH * 2);
-                createChunk(3, tileCount);
+                chunkHeight = TILE_LENGTH * 3;
             }
     
             if (randHeight >= THRID_HEIGHT_PRESET && randHeight < FOURTH_HEIGHT_PRESET)
             {
                 yPos = panelHeight - (TILE_LENGTH * 3);
-                createChunk(4, tileCount);
+                chunkHeight = TILE_LENGTH * 4;
             }
 
             elevationDistance = 0;
         }
-
-        if (isFirstElevation)
-            isFirstElevation = false;
 
         elevationDistance++;
     }
@@ -209,21 +183,18 @@ public class ForestLevel implements Level {
                 Tile newTile = new Tile(panel, (currentTile * TILE_LENGTH), panelHeight, TILE_LENGTH, TileType.PRIMARY, WorldType.FOREST);
                 tileMap.put(newTile.getX(), newTile);
 
+                yPos = panelHeight;
+                createChunk(TILE_LENGTH);
+
                 previousTile = TileType.PRIMARY;
 
                 successiveTiles++;
                 currentTile++;
-
-                if (currentTile + 1 > SPAWN_LENGTH)
-                {
-                    Chunk newChunk = new Chunk(0, panelHeight, 3, 1, TILE_LENGTH);
-                    chunkMap.put(0, newChunk);
-                    
-                    System.out.println("\n\n" + newChunk); // Spawn chunk
-                }
             }
             else
             {
+                // System.out.println("Tile: " + currentTile);
+
                 Random random = new Random();
 
                 int randTile = random.nextInt(100);
@@ -235,6 +206,7 @@ public class ForestLevel implements Level {
                 // Main Tiles
                 if (randTile < newMainPercent)
                 {
+                    createChunk(chunkHeight);
                     setMainTile();
                     fillAirGaps(TileType.PRIMARY);
                     continue;
@@ -243,6 +215,7 @@ public class ForestLevel implements Level {
                 // Secondary Tiles
                 if (randTile >= newMainPercent && randTile < newSecondaryPercent)
                 {
+                    createChunk(chunkHeight);
                     setSecondaryTile();
                     fillAirGaps(TileType.SECONDARY);
                     continue;
@@ -251,6 +224,7 @@ public class ForestLevel implements Level {
                 // Tertiary Tiles
                 if (randTile >= newSecondaryPercent && randTile < newTertiaryPercent)
                 {
+                    createChunk(chunkHeight);
                     setTertiaryTile();
                     fillAirGaps(TileType.TERTIARY);
                     continue;
@@ -260,14 +234,6 @@ public class ForestLevel implements Level {
                 if (randTile >= newTertiaryPercent && randTile < newVoidPercent)
                     setVoidTile();
             }
-        }
-
-        // In the very rare case where the whole world is flat
-        if (chunkMap == null)
-        {
-            // Create a chunk of the entire world
-            Chunk newChunk = new Chunk(0, yPos, currentTile, 1, TILE_LENGTH);
-            chunkMap.put((currentTile + 1) * TILE_LENGTH, newChunk);
         }
     }
 

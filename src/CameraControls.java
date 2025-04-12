@@ -76,9 +76,6 @@ public class CameraControls {
 
         player.setWorldPos((int) xPos);
 
-        if (xPos % 64 == 0)
-            System.out.println((xPos / 64));
-
         if ((int) xPos < LEFT_THRESHOLD || (int) xPos > RIGHT_THRESHOLD)
             player.move(newPlayerSpeed);
     

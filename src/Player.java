@@ -3,6 +3,7 @@ package src;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.geom.Rectangle2D;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -26,6 +27,7 @@ public class Player implements Entity {
     private int width;
     private int height;
     private Chunk currentChunk;
+    private Rectangle2D.Double chunk;
     private final Image playerImage;
 
     // Game Panel
@@ -101,6 +103,7 @@ public class Player implements Entity {
             // Player is about to enter a chunk
             if (currentChunk != null)
             {
+                chunk = currentChunk.getChunkBounds();
                 System.out.println("Current Chunk: " + currentChunk);
                 break;
             }
@@ -202,6 +205,6 @@ public class Player implements Entity {
 
     @Override
     public void draw(Graphics2D g2) {
-        g2.drawImage(playerImage, x, y, width, height, null);
+        g2.drawImage(playerImage, x, y, width, height, null);  
     }
 }

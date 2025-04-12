@@ -22,9 +22,8 @@ public class Chunk {
         this.width = width;
         this.height = height;
 
-        chunk = new Rectangle2D.Double(xPos, yPos, width, height);
-
         setDimensions(tileLength);
+        chunk = new Rectangle2D.Double(xPos, yPos, width, height);
     }
 
     private void setDimensions(int tileLength)

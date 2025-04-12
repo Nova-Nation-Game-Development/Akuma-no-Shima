@@ -28,6 +28,7 @@ public class Player implements Entity {
     private int height;
     private Chunk currentChunk;
     private Rectangle2D.Double chunk;
+    Rectangle2D.Double playerBounds;
     private final Image playerImage;
 
     // Game Panel
@@ -82,10 +83,7 @@ public class Player implements Entity {
         dx = direction;
 
         if (x + dx > 0 && x + dx < panel.getWidth() - width)
-        {
-            if (!isColliding(dx))
-                x += dx;
-        }
+            x += dx;
     }
 
     public void stopMoving() { dx = 0; }
@@ -96,20 +94,31 @@ public class Player implements Entity {
         for (int i = 0; i < Math.abs(dx); i++)
         {
             if (dx > 0)
-                currentChunk = WorldGeneration.getChunk(worldX + i);
+                currentChunk = WorldGeneration.getChunk(worldX + (width / 2) + i);
             else
-                currentChunk = WorldGeneration.getChunk(worldX - i);
+                currentChunk = WorldGeneration.getChunk(worldX + (width / 2) - i);
 
             // Player is about to enter a chunk
             if (currentChunk != null)
             {
                 chunk = currentChunk.getChunkBounds();
-                System.out.println("Current Chunk: " + currentChunk);
-                break;
+
+                int tileHeight = WorldGeneration.getTileLength();
+                playerBounds = new Rectangle2D.Double(worldX, y - tileHeight, width, height + tileHeight);
+
+                if (playerBounds.intersects(chunk) || chunk.contains(playerBounds))
+                    return true;
             }
         }
 
         return false;
+    }
+
+    public int getCollisionDirection()
+    {
+        if (playerBounds.getX() < chunk.getX()) // Player is on the left
+            return 0;
+        return 1; // Otherwise, player is on the right
     }
 
     @Override
@@ -205,6 +214,6 @@ public class Player implements Entity {
 
     @Override
     public void draw(Graphics2D g2) {
-        g2.drawImage(playerImage, x, y, width, height, null);  
+        g2.drawImage(playerImage, x, y, width, height, null);
     }
 }

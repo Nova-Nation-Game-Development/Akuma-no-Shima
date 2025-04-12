@@ -28,8 +28,8 @@ public class Chunk {
 
     private void setDimensions(int tileLength)
     {
-        // height *= tileLength;
-        // width *= tileLength;
+        height *= tileLength;
+        width *= tileLength;
     }
 
     // For testing purposes // Draw the chunk bounds
@@ -37,5 +37,5 @@ public class Chunk {
     public Rectangle2D.Double getChunkBounds() { return chunk; }
 
     @Override
-    public String toString() { return "Chunk -> x Position: " + xPos / 64 + " y Position: " + Math.abs(yPos) + " Width: " + width + " height: " + height; }
+    public String toString() { return "Chunk -> x Position: " + xPos / 64 + " y Position: " + yPos + " Width: " + width / 64 + " height: " + height / 64; }
 }

@@ -193,8 +193,6 @@ public class ForestLevel implements Level {
             }
             else
             {
-                // System.out.println("Tile: " + currentTile);
-
                 Random random = new Random();
 
                 int randTile = random.nextInt(100);

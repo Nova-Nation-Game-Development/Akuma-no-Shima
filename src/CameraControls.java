@@ -65,19 +65,28 @@ public class CameraControls {
             playerInput.stopJump();
     }
 
+    private void updatePlayer(int newPlayerSpeed)
+    {
+        xPos += (newPlayerSpeed);
+        player.setWorldPos((int) xPos);
+    }
+
     public void moveWorld(int newPlayerSpeed, int newWorldSpeed, int bgDirection)
     {
-        // if ((int) xPos >= LEFT_THRESHOLD && (int) xPos <= RIGHT_THRESHOLD)
-        //     xPos += (newPlayerSpeed / THRESHOLD_SCALE);
-        // else
-        //     xPos = (int) xPos + newPlayerSpeed;
+        if (!player.isColliding(newPlayerSpeed))
+            updatePlayer(newPlayerSpeed);
+        else
+        {
+            if (player.getCollisionDirection() == 0 && newPlayerSpeed < 0)
+                updatePlayer(newPlayerSpeed);
 
-        xPos += (newPlayerSpeed);
-
-        player.setWorldPos((int) xPos);
-
+            if (player.getCollisionDirection() == 1 && newPlayerSpeed > 0)
+                updatePlayer(newPlayerSpeed);
+        }
+        
         if ((int) xPos < LEFT_THRESHOLD || (int) xPos > RIGHT_THRESHOLD)
-            player.move(newPlayerSpeed);
+            if (!player.isColliding(newPlayerSpeed))
+                player.move(newPlayerSpeed);
     
         if ((int) xPos > LEFT_THRESHOLD && (int) xPos < RIGHT_THRESHOLD)
         {

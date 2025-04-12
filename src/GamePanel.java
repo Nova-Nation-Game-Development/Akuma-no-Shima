@@ -74,8 +74,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void updateEntityCalculations()
     {
-        // playerEntity.setHeight((int) (window.getHeight() / 164) * 40);
-        // playerEntity.setWidth((int) playerEntity.getHeight() / 2);
+        Physics.applyGravity(playerEntity, playerEntity.getX(), playerEntity.getY());
 
         // This will keep track of the world and player and update their locations accordingly
         camera.update();

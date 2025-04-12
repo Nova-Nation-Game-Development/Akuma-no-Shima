@@ -11,6 +11,7 @@ public class Player implements Entity {
     // Location
     private int x;
     private int y;
+    private int worldX;
 
     private int dx = 0;
     private int dy = 0;
@@ -21,9 +22,10 @@ public class Player implements Entity {
     private boolean isJumping;
     private boolean canJump;
 
-    // Shape
+    // Shape and Collisions
     private int width;
     private int height;
+    private Chunk currentChunk;
     private final Image playerImage;
 
     // Game Panel
@@ -41,6 +43,8 @@ public class Player implements Entity {
 
         isJumping = false;
         playerImage = ImageManager.loadImage("/gfx/characters/frames/char_noroi_idle.png");
+        // Testing purposes only
+        System.out.println("\n");
     }
 
     // Directional mutators
@@ -53,6 +57,8 @@ public class Player implements Entity {
     // Locational Accessors
     public int getX() { return x; }
     public int getY() { return y; }
+    // Locational Mutators
+    public void setWorldPos(int xPos) { worldX = xPos; }
 
     // Shape Mutators
     public void setWidth(int newWidth) { width = newWidth; }
@@ -74,10 +80,34 @@ public class Player implements Entity {
         dx = direction;
 
         if (x + dx > 0 && x + dx < panel.getWidth() - width)
-            x += dx;
+        {
+            if (!isColliding(dx))
+                x += dx;
+        }
     }
 
     public void stopMoving() { dx = 0; }
+
+    public boolean isColliding(int dx)
+    {
+        // Check collision upto dx
+        for (int i = 0; i < Math.abs(dx); i++)
+        {
+            if (dx > 0)
+                currentChunk = WorldGeneration.getChunk(worldX + i);
+            else
+                currentChunk = WorldGeneration.getChunk(worldX - i);
+
+            // Player is about to enter a chunk
+            if (currentChunk != null)
+            {
+                System.out.println("Current Chunk: " + currentChunk);
+                break;
+            }
+        }
+
+        return false;
+    }
 
     @Override
     public void jump()

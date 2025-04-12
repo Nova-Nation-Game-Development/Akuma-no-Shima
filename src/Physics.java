@@ -28,7 +28,7 @@ public class Physics {
 
     // Functions
     
-    public void applyGravity(Entity entity, double x, double y) { }
+    public static void applyGravity(Entity entity, double x, double y) { }
 
     // kinematics 
     // s = ut + 1/2at^2

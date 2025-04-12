@@ -7,10 +7,11 @@ public class ForestLevel implements Level {
 
     private static final HashMap<Integer, Tile> tileMap = new HashMap<>();
     private static final HashMap<Integer, Tile> tileDepthMap = new HashMap<>();
+    private static final HashMap<Integer, Chunk> chunkMap = new HashMap<>();
 
     // Level presets
     private static final int TILE_LENGTH = 64;                  // Length of a tile in pixels
-    private static final int WORLD_LENGTH = 30;                 // Total amount of tiles that can be made // 64 x 30 = 1920 pixels
+    private static final int WORLD_LENGTH = 30;                 // Total amount of tiles that can be made // 64 x 30 = 1920 pixels * 2
     private static final int SPAWN_LENGTH = 3;                  // Total amount of tiles dedicated to generating spawn
     private static final int BASE_HEIGHT = 64;                  // Starting height for world generation
     private static final int ELEVATION_LENGTH = 3;              // Total guaranteed tiles placed on elevation
@@ -21,9 +22,9 @@ public class ForestLevel implements Level {
     private static final int TERTIARY_TILE_PERCENT = 75;        // Represents water, lava, ice
     private static final int VOID_PERCENT = 100;                // Represents air gaps that can cause an individual to fall
 
-    private static final int FIRST_HEIGHT_PRESET = 40;
-    private static final int SECOND_HEIGHT_PRESET = 50;
-    private static final int THRID_HEIGHT_PRESET = 75;
+    private static final int FIRST_HEIGHT_PRESET = 20;
+    private static final int SECOND_HEIGHT_PRESET = 40;
+    private static final int THRID_HEIGHT_PRESET = 60;
     private static final int FOURTH_HEIGHT_PRESET = 100;
 
     // Temporary level presets
@@ -35,9 +36,11 @@ public class ForestLevel implements Level {
     private int yPos = BASE_HEIGHT;                     // Current height at which the random terrain is generated
     private int tempTileCount = 0;                      // Keep track of any extra tiles added
     private int elevationDistance = 0;                  // How many consecutive tiles is a single elevation
+    private int previousDistance = 0;
     private int previousHeight = 0;
     private int randChance = ELEVATION_PERCENT;         // Chance of continuing the generation at the current elevation
     private int tileDepth = 0;
+    private boolean isFirstElevation = true;
 
     // Generation variables
     private static final int SCALE = 2;
@@ -59,6 +62,36 @@ public class ForestLevel implements Level {
     public HashMap<Integer, Tile> getTileDictionary() { return tileMap; }
     @Override
     public HashMap<Integer, Tile> getTileDepthDictionary() { return tileDepthMap; }
+    @Override
+    public HashMap<Integer, Chunk> getChunkDictionary() { return chunkMap; }
+
+    private void createChunk(int elevation, int tileCount)
+    {
+        int newTileHeight = TILE_LENGTH * elevation;
+
+        if (previousHeight != TILE_LENGTH)
+        {
+            if (!isFirstElevation)
+            {
+                Chunk newChunk = new Chunk((tileCount) * TILE_LENGTH, yPos, (previousDistance + 1), elevation, TILE_LENGTH);
+                chunkMap.put((tileCount) * TILE_LENGTH, newChunk);
+
+                System.out.println(newChunk);
+            }
+            
+            previousHeight = newTileHeight;
+        }
+        else
+        {
+            if (!isFirstElevation)
+            {
+                Chunk newChunk = new Chunk((tileCount) * TILE_LENGTH, yPos, (previousDistance + 1), elevation, TILE_LENGTH);
+                chunkMap.put((tileCount) * TILE_LENGTH, newChunk);
+
+                System.out.println(newChunk);
+            }
+        }
+    }
     
     @Override
     public void setElevation(int randHeight)
@@ -74,6 +107,7 @@ public class ForestLevel implements Level {
             else
             {
                 randChance = ELEVATION_PERCENT;
+                previousDistance = elevationDistance;
                 elevationDistance = 0;
                 return;
             }
@@ -81,32 +115,39 @@ public class ForestLevel implements Level {
 
         if (elevationDistance == 0)
         {
+            int tileCount = currentTile - previousDistance - 1;
+            if (!isFirstElevation)
+                System.out.println("Tile: " + tileCount); // This should only be called once per chunk call
+
             if (randHeight < FIRST_HEIGHT_PRESET)
             {
                 yPos = panelHeight;
-                previousHeight = FIRST_HEIGHT_PRESET;
+                createChunk(1, tileCount);
             }
     
             if (randHeight >= FIRST_HEIGHT_PRESET && randHeight < SECOND_HEIGHT_PRESET)
             {
                 yPos = panelHeight - (TILE_LENGTH);
-                previousHeight = SECOND_HEIGHT_PRESET;
+                createChunk(2, tileCount);
             }
     
             if (randHeight >= SECOND_HEIGHT_PRESET && randHeight < THRID_HEIGHT_PRESET)
             {
                 yPos = panelHeight - (TILE_LENGTH * 2);
-                previousHeight = THRID_HEIGHT_PRESET;
+                createChunk(3, tileCount);
             }
     
             if (randHeight >= THRID_HEIGHT_PRESET && randHeight < FOURTH_HEIGHT_PRESET)
             {
                 yPos = panelHeight - (TILE_LENGTH * 3);
-                previousHeight = FOURTH_HEIGHT_PRESET;
+                createChunk(4, tileCount);
             }
 
             elevationDistance = 0;
         }
+
+        if (isFirstElevation)
+            isFirstElevation = false;
 
         elevationDistance++;
     }
@@ -119,37 +160,33 @@ public class ForestLevel implements Level {
         int levelCount = (panelHeight - yPos) / TILE_LENGTH;
         int tileOffset = currentTile - 1;
 
+        // Separated for future manipulation
         switch (tileType)
         {
             case TileType.PRIMARY -> {
                 for (int i = 1; i <= levelCount; i++)
-                {
-                    Tile newTile = new Tile(panel, (tileOffset * TILE_LENGTH), yPos + (i * TILE_LENGTH), TILE_LENGTH, TileType.SECONDARY, WorldType.FOREST);
-                    tileDepthMap.put(tileDepth, newTile);
-                    tileDepth++;
-                }
+                    iterateGaps(tileOffset, i, TileType.SECONDARY);
             }
 
             case TileType.SECONDARY -> {
                 for (int i = 1; i <= levelCount; i++)
-                {
-                    Tile newTile = new Tile(panel, (tileOffset * TILE_LENGTH), yPos + (i * TILE_LENGTH), TILE_LENGTH, TileType.SECONDARY, WorldType.FOREST);
-                    tileDepthMap.put(tileDepth, newTile);
-                    tileDepth++;
-                }
+                    iterateGaps(tileOffset, i, TileType.SECONDARY);
             }
 
             case TileType.TERTIARY -> {
                 for (int i = 1; i <= levelCount; i++)
-                {
-                    Tile newTile = new Tile(panel, (tileOffset * TILE_LENGTH), yPos + (i * TILE_LENGTH), TILE_LENGTH, TileType.SECONDARY, WorldType.FOREST);
-                    tileDepthMap.put(tileDepth, newTile);
-                    tileDepth++;
-                }
+                    iterateGaps(tileOffset, i, TileType.SECONDARY);
             }
 
             case TileType.VOID -> { }
         }
+    }
+
+    private void iterateGaps(int tileOffset, int i, TileType tileType)
+    {
+        Tile newTile = new Tile(panel, (tileOffset * TILE_LENGTH), yPos + (i * TILE_LENGTH), TILE_LENGTH, tileType, WorldType.FOREST);
+        tileDepthMap.put(tileDepth, newTile);
+        tileDepth++;
     }
 
     // TODO: Finish platform stuff
@@ -176,44 +213,61 @@ public class ForestLevel implements Level {
 
                 successiveTiles++;
                 currentTile++;
-                continue;
+
+                if (currentTile + 1 > SPAWN_LENGTH)
+                {
+                    Chunk newChunk = new Chunk(0, panelHeight, 3, 1, TILE_LENGTH);
+                    chunkMap.put(0, newChunk);
+                    
+                    System.out.println("\n\n" + newChunk); // Spawn chunk
+                }
             }
-
-            Random random = new Random();
-
-            int randTile = random.nextInt(100);
-            int randHeight = random.nextInt(100);
-
-            // Generate a random elevation
-            setElevation(randHeight);
-
-            // Main Tiles
-            if (randTile < newMainPercent)
+            else
             {
-                setMainTile();
-                fillAirGaps(TileType.PRIMARY);
-                continue;
-            }
+                Random random = new Random();
 
-            // Secondary Tiles
-            if (randTile >= newMainPercent && randTile < newSecondaryPercent)
-            {
-                setSecondaryTile();
-                fillAirGaps(TileType.SECONDARY);
-                continue;
-            }
+                int randTile = random.nextInt(100);
+                int randHeight = random.nextInt(100);
 
-            // Tertiary Tiles
-            if (randTile >= newSecondaryPercent && randTile < newTertiaryPercent)
-            {
-                setTertiaryTile();
-                fillAirGaps(TileType.TERTIARY);
-                continue;
-            }
+                // Generate a random elevation
+                setElevation(randHeight);
 
-            // Air tiles
-            if (randTile >= newTertiaryPercent && randTile < newVoidPercent)
-                setVoidTile();
+                // Main Tiles
+                if (randTile < newMainPercent)
+                {
+                    setMainTile();
+                    fillAirGaps(TileType.PRIMARY);
+                    continue;
+                }
+
+                // Secondary Tiles
+                if (randTile >= newMainPercent && randTile < newSecondaryPercent)
+                {
+                    setSecondaryTile();
+                    fillAirGaps(TileType.SECONDARY);
+                    continue;
+                }
+
+                // Tertiary Tiles
+                if (randTile >= newSecondaryPercent && randTile < newTertiaryPercent)
+                {
+                    setTertiaryTile();
+                    fillAirGaps(TileType.TERTIARY);
+                    continue;
+                }
+
+                // Air tiles
+                if (randTile >= newTertiaryPercent && randTile < newVoidPercent)
+                    setVoidTile();
+            }
+        }
+
+        // In the very rare case where the whole world is flat
+        if (chunkMap == null)
+        {
+            // Create a chunk of the entire world
+            Chunk newChunk = new Chunk(0, yPos, currentTile, 1, TILE_LENGTH);
+            chunkMap.put((currentTile + 1) * TILE_LENGTH, newChunk);
         }
     }
 

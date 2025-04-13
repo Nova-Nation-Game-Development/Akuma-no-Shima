@@ -16,7 +16,7 @@ public class CameraControls {
     // private final float THRESHOLD_SCALE = 10f;              // How much the player speed is reduced when entering the threshold
     
     // Location
-    private float xPos;
+    private double xPos;
 
     public CameraControls(Player player, InputHandler playerInput, BackgroundManager backgroundManager)
     {
@@ -73,6 +73,11 @@ public class CameraControls {
 
     public void moveWorld(int newPlayerSpeed, int newWorldSpeed, int bgDirection)
     {
+        // Increase player speed while jumping
+        // if (player.isJumping())
+        //     newPlayerSpeed *= 1.5;
+
+        // Handle collisions
         if (!player.isColliding(newPlayerSpeed))
             updatePlayer(newPlayerSpeed);
         else
@@ -84,6 +89,9 @@ public class CameraControls {
                 updatePlayer(newPlayerSpeed);
         }
         
+        // For testing purposes only
+        // updatePlayer(newPlayerSpeed);
+
         if ((int) xPos < LEFT_THRESHOLD || (int) xPos > RIGHT_THRESHOLD)
             if (!player.isColliding(newPlayerSpeed))
                 player.move(newPlayerSpeed);

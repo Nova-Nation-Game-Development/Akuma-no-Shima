@@ -80,5 +80,8 @@ public class WorldGeneration {
 
         for (Tile tile : tileDepthMap.values())
             tile.move(worldSpeed);
+
+        // for (Chunk chunk : chunkMap.values())
+        //     chunk.move(worldSpeed);
     }
 }

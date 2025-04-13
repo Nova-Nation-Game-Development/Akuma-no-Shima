@@ -74,6 +74,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void updateEntityCalculations()
     {
+        // Constantly apply gravity to the player
         Physics.applyGravity(playerEntity, playerEntity.getX(), playerEntity.getY());
 
         // This will keep track of the world and player and update their locations accordingly
@@ -98,7 +99,7 @@ public class GamePanel extends JPanel implements Runnable {
         tileDepths = WorldGeneration.getAllDepthTiles();
 
         // Fix spawn height
-        playerEntity = new Player(this, 30, (getHeight() - playerHeight) - 32 - WorldGeneration.getTileLength(), playerWidth, playerHeight);
+        playerEntity = new Player(this, 30, (getHeight() - playerHeight) - (int) (WorldGeneration.getTileLength() * 1.5), playerWidth, playerHeight);
         playerInput = new InputHandler();
         camera = new CameraControls(playerEntity, playerInput, backgroundManager);
 

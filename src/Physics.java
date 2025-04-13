@@ -6,8 +6,8 @@ public class Physics {
     private static final double INITIAL_VERTICAL_VELOCITY = -12.0;
     private static final double INITIAL_HORIZONTAL_VELOCITY = 5.0;
 
-    private static final int JUMP_INTERVAL = 5; // In milliseconds (ms) // Influences jump smoothness
-    private static final int MAX_STEP_COUNT = 120; // Maximum steps for calculating the jump // Influences jump height
+    private static final int JUMP_INTERVAL = 7; // In milliseconds (ms) // Influences jump smoothness
+    private static final int MAX_STEP_COUNT = 230; // Maximum steps for calculating the jump // Influences jump height
     private static final double COUNT_SCALE = 0.3f;
     private static final double SPEED_SCALE = 0.2f;
 
@@ -28,7 +28,20 @@ public class Physics {
 
     // Functions
     
-    public static void applyGravity(Entity entity, double x, double y) { }
+    public static void applyGravity(Entity entity, double x, double y)
+    {
+        // if (entity == null) return;
+
+        // if (entity.getCurrentChunk() == null) // Assume air gap
+        //     entity.moveY((gravity * 10));
+        // else
+        // {
+        //     Rectangle2D.Double chunkBounds = entity.getCurrentChunk().getChunkBounds();
+
+        //     if (y + (gravity * 10) + 64 <= chunkBounds.getY()) // Fix
+        //         entity.moveY((gravity * 10));
+        // }
+    }
 
     // kinematics 
     // s = ut + 1/2at^2

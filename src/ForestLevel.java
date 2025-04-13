@@ -24,8 +24,8 @@ public class ForestLevel implements Level {
     private static final int VOID_PERCENT = 100;                // Represents air gaps that can cause an individual to fall
 
     private static final int FIRST_HEIGHT_PRESET = 20;
-    private static final int SECOND_HEIGHT_PRESET = 40;
-    private static final int THRID_HEIGHT_PRESET = 60;
+    private static final int SECOND_HEIGHT_PRESET = 60;
+    private static final int THRID_HEIGHT_PRESET = 90;
     private static final int FOURTH_HEIGHT_PRESET = 100;
 
     // Temporary level presets
@@ -68,11 +68,6 @@ public class ForestLevel implements Level {
     {
         Chunk newChunk = new Chunk((currentTile * TILE_LENGTH), yPos, CHUNK_WIDTH, (elevation / TILE_LENGTH), TILE_LENGTH);
         chunkMap.put(currentTile * TILE_LENGTH, newChunk);
-
-        if (currentTile == 0)
-            System.out.println("\n \n \n \n");
-
-        System.out.println(newChunk);
     }
     
     @Override

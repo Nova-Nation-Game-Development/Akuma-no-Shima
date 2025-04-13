@@ -10,8 +10,6 @@ public class Chunk {
     private int xPos;                 // Starting x position of the chunk dimensions
     private int yPos;                 // Starting y position of the chunk dimensions
 
-    private int dx;
-
     private int width;                      // Width of the chunk (tiles)
     private int height;                     // Height of the chunk (tiles)
     
@@ -30,6 +28,11 @@ public class Chunk {
     {
         height *= tileLength;
         width *= tileLength;
+    }
+
+    public void move(int dx)
+    {
+        xPos += dx;
     }
 
     // For testing purposes // Draw the chunk bounds

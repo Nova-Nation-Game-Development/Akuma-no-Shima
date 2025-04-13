@@ -2,6 +2,7 @@ package src;
 
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.geom.Rectangle2D;
 
 public class Tile implements Entity {
 
@@ -98,4 +99,16 @@ public class Tile implements Entity {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'performAction'");
     }
+
+    @Override
+    public Rectangle2D.Double getEntityBounds() { return null; }
+
+    @Override
+    public Chunk getCurrentChunk() { return null; }
+
+    @Override
+    public void moveY(double dx) { }
+
+    @Override
+    public void onGround(boolean onGround) { }
 }

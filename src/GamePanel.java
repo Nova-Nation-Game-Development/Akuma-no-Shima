@@ -1,5 +1,6 @@
 package src;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -28,6 +29,7 @@ public class GamePanel extends JPanel implements Runnable {
     private Player playerEntity;
     private InputHandler playerInput;
     private CameraControls camera;
+    private AssualtWeapon ar;
 
     private Collection<Tile> tiles;
     private Collection<Tile> tileDepths;
@@ -48,6 +50,7 @@ public class GamePanel extends JPanel implements Runnable {
 
         doubleBufferBackground();
 
+
         g.dispose();
     }
 
@@ -65,9 +68,18 @@ public class GamePanel extends JPanel implements Runnable {
         if (tileDepths != null)
             for (Tile tile : tileDepths)
                 tile.draw(imageContext);
+        
+        if(ar != null) 
+            ar.drawBullets(imageContext);
 
         if (playerEntity != null)
             playerEntity.draw(imageContext);
+
+            imageContext.setColor(Color.WHITE);  // Set color to white
+            if(playerInput != null) {
+                imageContext.fillRect(InputHandler.getMouseX(), InputHandler.getMouseY(), 20, 20);
+            }
+            
 
         imageContext.dispose();
     }
@@ -79,6 +91,9 @@ public class GamePanel extends JPanel implements Runnable {
 
         // This will keep track of the world and player and update their locations accordingly
         camera.update();
+        if(ar != null) {
+            ar.updateShooting();
+        }
     }
 
     public void createGameEntities()
@@ -100,10 +115,18 @@ public class GamePanel extends JPanel implements Runnable {
 
         // Fix spawn height
         playerEntity = new Player(this, 30, (getHeight() - playerHeight) - 32 - WorldGeneration.getTileLength(), playerWidth, playerHeight);
-        playerInput = new InputHandler();
+        playerInput = new InputHandler(playerEntity);
         camera = new CameraControls(playerEntity, playerInput, backgroundManager);
+        ar = new AssualtWeapon(playerEntity);
+        ar.setInputHandler(playerInput);
+        playerInput.setWeapon(ar);        
 
         addKeyListener(playerInput);
+
+        //Mouse setup
+       
+        addMouseListener(playerInput);
+        addMouseMotionListener(playerInput);
 
         currentLevel++; // Create entities will only be called at the start of a new level
         repaint();

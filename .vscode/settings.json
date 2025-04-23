@@ -6,5 +6,6 @@
     },
     "java.project.referencedLibraries": [
         "lib/**/*.jar"
-    ]
+    ],
+    "java.autobuild.enabled": true
 }

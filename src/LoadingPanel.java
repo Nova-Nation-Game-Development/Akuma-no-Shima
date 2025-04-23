@@ -55,6 +55,7 @@ public class LoadingPanel extends JPanel implements Runnable {
         draw(g2);
 
         // It's 620 pixels in length for the loading bar
+        // Fix this for resolution change
         int width = (currentProgress * (620 / 100)) + 20; // Off by 20 pixels, but it's not really a huge issue
         Rectangle2D.Double loadingBar = new Rectangle2D.Double(373, 618, width, 39);
 

@@ -14,6 +14,7 @@ public final class GameWindow extends JFrame {
     private final GamePanel gamePanel;
 
     private final LoadingPanel loadingPanel;
+    private final Menu menuPanel;
 
     public GameWindow()
     {
@@ -30,15 +31,17 @@ public final class GameWindow extends JFrame {
 
         gamePanel = new GamePanel(this);
         loadingPanel = new LoadingPanel(this);
-        mainPanel = new JPanel();
+        menuPanel = new Menu(this);
 
+        mainPanel = new JPanel();
         mainPanel.setName("Game");
 
         SceneLoader.addScene(mainPanel);
         SceneLoader.addScene(loadingPanel);
+        SceneLoader.addScene(menuPanel);
 
-        // Start loading
-        SceneLoader.switchScene("LoadingPanel");
+        // Load Menu Scene
+        SceneLoader.switchScene("Menu");
 
         loadingPanel.startLoadThread();
         loadingPanel.incrementProgress(30);
@@ -55,6 +58,7 @@ public final class GameWindow extends JFrame {
         initializeGameLoadingThread();
     }
     
+    // Move this to a different class or smth
     private void initializeGameLoadingThread()
     {
         new Thread(() -> {
@@ -75,7 +79,7 @@ public final class GameWindow extends JFrame {
             javax.swing.SwingUtilities.invokeLater(() -> {
                 loadingPanel.stopThread();
 
-                SceneLoader.switchScene("Game");
+                // SceneLoader.switchScene("Game");
 
                 gamePanel.setFocusable(true);
                 gamePanel.requestFocusInWindow();

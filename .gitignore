@@ -23,4 +23,3 @@ bin/src/CameraControls.class
 bin/src/LoadingPanel.class
 .gitignore
 .vscode/java-formatter.xml
-.vscode/settings.json

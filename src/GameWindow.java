@@ -3,6 +3,14 @@ package src;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.FlowLayout;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.Arrays;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -63,7 +71,26 @@ public final class GameWindow extends JFrame {
 
     private void loadGameConfig()
     {
-        
+        File config = new File("/user-config/game_save.config");
+        if (config.exists())
+        {
+            try (BufferedReader reader = new BufferedReader(new FileReader(config)))
+            {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    System.out.println(line);
+                }
+            } catch (IOException e) { }
+        }
+        else
+        {
+            try {
+                    Files.write(Paths.get(config.getPath()),
+                                Arrays.asList("Line 1", "Line 2"),
+                                StandardOpenOption.CREATE,
+                                StandardOpenOption.TRUNCATE_EXISTING);
+                } catch (IOException e) { }
+        }
     }
 
     public void loadGame()

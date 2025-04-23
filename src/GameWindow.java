@@ -63,7 +63,7 @@ public final class GameWindow extends JFrame {
 
     private void loadGameConfig()
     {
-
+        
     }
 
     public void loadGame()

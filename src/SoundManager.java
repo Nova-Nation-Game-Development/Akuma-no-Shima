@@ -13,7 +13,7 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 public final class SoundManager {
 
     HashMap<String, Clip> musicClips = new HashMap<>();
-    HashMap<String, Clip> clips = new HashMap<>();
+    HashMap<String, Clip> sfxClips = new HashMap<>();
 	private final Clip menuClip;
 
 	private static SoundManager instance = null;	// keeps track of Singleton instance
@@ -45,7 +45,8 @@ public final class SoundManager {
 
 	public void setMusicVolume(float volume)
 	{
-		for (Clip clip : musicClips.values()) {
+		for (Clip clip : musicClips.values())
+		{
 			FloatControl volumeControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
         	volumeControl.setValue(volume);
 		}
@@ -56,7 +57,8 @@ public final class SoundManager {
 		FloatControl volumeControl = (FloatControl) menuClip.getControl(FloatControl.Type.MASTER_GAIN);
         volumeControl.setValue(volume);
 
-		for (Clip clip : musicClips.values()) {
+		for (Clip clip : musicClips.values())
+		{
 			volumeControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
         	volumeControl.setValue(volume);
 		}
@@ -71,17 +73,9 @@ public final class SoundManager {
 			instance = new SoundManager();
 		
 		return instance;
-	}		
+	}
 
-    public void setVolume(String clipName, float volume)
-	{
-        Clip clip = clips.get(clipName);
-
-        FloatControl volumeControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-        volumeControl.setValue(volume);
-    }
-
-	// Ggets clip from the specified file
+	// Gets clip from the specified file
     public Clip loadClip (String fileName) 
 	{	
  		AudioInputStream audioIn;
@@ -96,14 +90,23 @@ public final class SoundManager {
 		catch (IOException | LineUnavailableException | UnsupportedAudioFileException e) {
  			System.out.println ("Error opening sound files: " + e);
 		}
-    		return clip;
+    	
+		return clip;
     }
 
-	public Clip getClip (String title) { return clips.get(title); }
+	public Clip getClip (String title, ClipType clipType)
+	{
+		switch (clipType) {
+			case MENU -> { return menuClip; }
+			case MUSIC -> {  return musicClips.get(title); }
+			case SFX -> { return sfxClips.get(title); }
+			default -> { return null; }
+		}
+	}
 
-    public void playClip(String title, boolean looping)
+    public void playClip(String title, ClipType clipType, boolean looping)
 	{    
-		Clip clip = getClip(title);
+		Clip clip = getClip(title, clipType);
 
 		if (clip != null) {
 			clip.setFramePosition(0);
@@ -114,9 +117,9 @@ public final class SoundManager {
 		}
     }
 
-    public void stopClip(String title)
+    public void stopClip(String title, ClipType clipType)
 	{
-		Clip clip = getClip(title);
+		Clip clip = getClip(title, clipType);
 
 		if (clip != null)
 			clip.stop();

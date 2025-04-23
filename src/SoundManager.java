@@ -21,14 +21,14 @@ public final class SoundManager {
 	private SoundManager ()
 	{	
 		// Menu Setup
-		Clip clip = loadClip("/audio/music/menu_ego_super_slowed.wav");
+		Clip clip = loadClip("audio/music/menu_ego_super_slowed.wav");
 		menuClip = clip;
 
 		// Music Setup
-        clip = loadClip("audio/sfx/boss_fight_1_empire_slowed.wav");
+        clip = loadClip("audio/music/boss_fight_1_empire_slowed.wav");
 		musicClips.put("boss1", clip);
 
-		clip = loadClip("audio/sfx/boss_fight_2_aura2.wav");
+		clip = loadClip("audio/music/boss_fight_2_aura2.wav");
 		musicClips.put("boss2", clip);
 
 		// Sound Effect Setup

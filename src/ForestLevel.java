@@ -18,7 +18,7 @@ public class ForestLevel implements Level {
     private static final int ELEVATION_PERCENT = 60;
     private static final int CHUNK_WIDTH = 1;
 
-    private static final int MAIN_TILE_PERCENT = 40;            // Represents grass, lava stone, snowy grass
+    private static final int MAIN_TILE_PERCENT = 40;            // Represents grass, lava stone, snowy dirt
     private static final int SECONDARY_TILE_PERCENT = 50;       // Represents dirt, stone, snow pile
     private static final int TERTIARY_TILE_PERCENT = 75;        // Represents water, lava, ice
     private static final int VOID_PERCENT = 100;                // Represents air gaps that can cause an individual to fall

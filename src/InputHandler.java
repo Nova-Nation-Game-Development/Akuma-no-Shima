@@ -10,6 +10,10 @@ public class InputHandler implements KeyListener {
 
     private int direction;
 
+    // TODO: Temporary
+    public int damage;
+    public int health;
+
     // In case of multiplayer, this will be instantiated
     public InputHandler() { }
 
@@ -50,6 +54,13 @@ public class InputHandler implements KeyListener {
             stopMovement();
         if (direction == -1 && e.getKeyCode() == KeyEvent.VK_A)
             stopMovement();
+
+        // TODO: Temporary
+        if (e.getKeyCode() == KeyEvent.VK_K)
+            damage = 1;
+
+        if (e.getKeyCode() == KeyEvent.VK_L)
+            health = 1;
     }
 
     private void stopMovement()

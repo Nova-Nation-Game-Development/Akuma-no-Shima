@@ -66,7 +66,12 @@ public class GamePanel extends Scene {
                 tile.draw(imageContext);
 
         if (playerEntity != null)
+        {
             playerEntity.draw(imageContext);
+            
+            if (playerEntity.getHealth() != null)
+                playerEntity.getHealth().draw(imageContext);
+        }
 
         imageContext.dispose();
     }

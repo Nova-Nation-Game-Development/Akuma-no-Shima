@@ -31,6 +31,18 @@ public class CameraControls {
     {
         if (player == null || playerInput == null) return;
 
+        // TODO: Temporary
+        if (playerInput.damage != 0)
+        {
+            player.getHealth().dealDamage(playerInput.damage);
+            playerInput.damage = 0;
+        }
+        if (playerInput.health != 0)
+        {
+            player.getHealth().addHealth(playerInput.health);
+            playerInput.health = 0;
+        }
+            
         if (playerInput.isMoving())
         {
             int newWorldSpeed;

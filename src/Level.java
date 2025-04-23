@@ -17,4 +17,5 @@ public interface Level {
 
     public HashMap<Integer, Tile> getTileDictionary();
     public HashMap<Integer, Tile> getTileDepthDictionary();
+    public HashMap<Integer, Chunk> getChunkDictionary();
 }

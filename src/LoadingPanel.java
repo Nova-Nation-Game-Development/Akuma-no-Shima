@@ -39,7 +39,7 @@ public class LoadingPanel extends JPanel implements Runnable {
         loadingThread.start();
     }
 
-    public void stopThread() { loadingThread.interrupt(); loadingThread = null; }
+    public void stopThread() { loadingThread.interrupt(); loadingThread = null;}
     public boolean isRunning() { return loadingThread.isAlive(); }
 
     public void draw(Graphics2D g2) { g2.drawImage(loadingImage, 0, 0, window.getWidth(), this.window.getHeight(), null); }
@@ -55,6 +55,7 @@ public class LoadingPanel extends JPanel implements Runnable {
         draw(g2);
 
         // It's 620 pixels in length for the loading bar
+        // TODO: Fix this for resolution change
         int width = (currentProgress * (620 / 100)) + 20; // Off by 20 pixels, but it's not really a huge issue
         Rectangle2D.Double loadingBar = new Rectangle2D.Double(373, 618, width, 39);
 

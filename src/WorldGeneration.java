@@ -8,6 +8,7 @@ public class WorldGeneration {
 
     private static HashMap<Integer, Tile> tileMap = new HashMap<>();
     private static HashMap<Integer, Tile> tileDepthMap = new HashMap<>();
+    private static HashMap<Integer, Chunk> chunkMap = new HashMap<>();
 
     private static ForestLevel forestLevel;
     
@@ -20,6 +21,7 @@ public class WorldGeneration {
 
                 tileMap = forestLevel.getTileDictionary();
                 tileDepthMap = forestLevel.getTileDepthDictionary();
+                chunkMap = forestLevel.getChunkDictionary();
             }
 
             case WorldType.VOLCANIC -> {
@@ -34,6 +36,13 @@ public class WorldGeneration {
     }
 
     public static int getTileLength() { return forestLevel.getTileLength(); }
+    public static Chunk getChunk(int xPos) 
+    {
+        if (chunkMap.get(xPos) != null)
+            return chunkMap.get(xPos);
+
+        return null;
+    }
 
     private static void generateEndLevel() {}
 
@@ -71,5 +80,8 @@ public class WorldGeneration {
 
         for (Tile tile : tileDepthMap.values())
             tile.move(worldSpeed);
+
+        // for (Chunk chunk : chunkMap.values())
+        //     chunk.move(worldSpeed);
     }
 }

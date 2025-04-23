@@ -6,9 +6,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.Collection;
-import javax.swing.JPanel;
 
-public class GamePanel extends JPanel implements Runnable {
+public class GamePanel extends Scene {
 
     private final GameWindow window;
 
@@ -73,7 +72,12 @@ public class GamePanel extends JPanel implements Runnable {
             ar.drawBullets(imageContext);
 
         if (playerEntity != null)
+        {
             playerEntity.draw(imageContext);
+            
+            if (playerEntity.getHealth() != null)
+                playerEntity.getHealth().draw(imageContext);
+        }
 
             imageContext.setColor(Color.WHITE);  // Set color to white
             if(playerInput != null) {
@@ -86,8 +90,8 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void updateEntityCalculations()
     {
-        // playerEntity.setHeight((int) (window.getHeight() / 164) * 40);
-        // playerEntity.setWidth((int) playerEntity.getHeight() / 2);
+        // Constantly apply gravity to the player
+        Physics.applyGravity(playerEntity, playerEntity.getX(), playerEntity.getY());
 
         // This will keep track of the world and player and update their locations accordingly
         camera.update();
@@ -114,8 +118,8 @@ public class GamePanel extends JPanel implements Runnable {
         tileDepths = WorldGeneration.getAllDepthTiles();
 
         // Fix spawn height
-        playerEntity = new Player(this, 30, (getHeight() - playerHeight) - 32 - WorldGeneration.getTileLength(), playerWidth, playerHeight);
-        playerInput = new InputHandler(playerEntity);
+        playerEntity = new Player(this, 30, (getHeight() - playerHeight) - (int) (WorldGeneration.getTileLength() * 1.5), playerWidth, playerHeight);
+        playerInput = new InputHandler();
         camera = new CameraControls(playerEntity, playerInput, backgroundManager);
         ar = new AssualtWeapon(playerEntity);
         ar.setInputHandler(playerInput);

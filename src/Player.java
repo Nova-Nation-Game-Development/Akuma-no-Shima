@@ -3,14 +3,16 @@ package src;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.geom.Rectangle2D;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class Player implements Entity {
     
     // Location
-    private int x;
-    private int y;
+    private double x;
+    private double y;
+    private int worldX;
 
     private int dx = 0;
     private int dy = 0;
@@ -23,9 +25,15 @@ public class Player implements Entity {
     private boolean isJumping;
     private boolean canJump;
 
-    // Shape
+    private Health health;
+
+    // Shape and Collisions
     private int width;
     private int height;
+    private Chunk currentChunk;
+    private Chunk previousChunk;
+    private Rectangle2D.Double chunk;
+    Rectangle2D.Double playerBounds;
     private final Image playerImage;
 
     // Game Panel
@@ -43,6 +51,7 @@ public class Player implements Entity {
 
         isJumping = false;
         playerImage = ImageManager.loadImage("/gfx/characters/frames/char_noroi_idle.png");
+        health = new Health();
     }
 
     // Directional mutators
@@ -53,8 +62,10 @@ public class Player implements Entity {
     public int getDY() { return dy; }
 
     // Locational Accessors
-    public int getX() { return x; }
-    public int getY() { return y; }
+    public double getX() { return x; }
+    public double getY() { return y; }
+    // Locational Mutators
+    public void setWorldPos(int xPos) { worldX = xPos; }
 
     // Shape Mutators
     public void setWidth(int newWidth) { width = newWidth; }
@@ -66,6 +77,7 @@ public class Player implements Entity {
     // Physics Accessors
     public boolean isJumping() { return isJumping; }
     public boolean canJump() { return canJump; }
+    public Health getHealth() { return health; }
 
     // Panel Dimension Accessors
     public Dimension getPanelDimensions() { return panel.getSize(); }
@@ -75,11 +87,66 @@ public class Player implements Entity {
     {
         dx = direction;
 
+        currentChunk = WorldGeneration.getChunk(2);
+
         if (x + dx > 0 && x + dx < panel.getWidth() - width)
             x += dx;
     }
 
+    @Override
+    public Rectangle2D.Double getEntityBounds()
+    {
+        return playerBounds;
+    }
+
+    @Override
+    public void moveY(double dx) { y += dx; }
+
+    @Override
+    public void onGround(boolean onGround) { }
+
+    @Override
+    public Chunk getCurrentChunk() { return currentChunk; }
+
     public void stopMoving() { dx = 0; }
+
+    public boolean isColliding(int dx)
+    {
+        // Check collision upto dx
+        for (int i = 0; i < Math.abs(dx); i++)
+        {
+            if (dx > 0)
+                currentChunk = WorldGeneration.getChunk(worldX + (width / 2) + i);
+            else 
+                currentChunk = WorldGeneration.getChunk(worldX + (width / 2) - i);
+
+            // Player is about to enter a chunk
+            if (currentChunk != null)
+            {
+                previousChunk = WorldGeneration.getChunk((worldX + (width / 2) - i) - WorldGeneration.getTileLength());
+
+                if (dx < 0 && previousChunk != null) // Check if the player is moving backwards, and not over air
+                    currentChunk = previousChunk;
+                    
+                chunk = currentChunk.getChunkBounds();
+
+                int tileHeight = WorldGeneration.getTileLength();
+                playerBounds = new Rectangle2D.Double(worldX, y - tileHeight, width, height + tileHeight);
+
+                if (playerBounds.intersects(chunk) || chunk.contains(playerBounds))
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
+    public int getCollisionDirection()
+    {
+        if (playerBounds.getX() < chunk.getX()) // Player is on the left
+            return 0;
+        return 1; // Otherwise, player is on the right
+    }
 
     @Override
     public void jump()
@@ -104,14 +171,14 @@ public class Player implements Entity {
                 // Perform jump actions
 
                 // First half
-                if (counter < (Physics.getMaxStep() * 0.33))
+                if (counter < (Physics.getMaxStep() * 0.20))
                     velocity = Physics.getSpeedScale() * counter;
                 
                 // Second half
-                if (counter >= (Physics.getMaxStep() * 0.33))
+                if (counter >= (Physics.getMaxStep() * 0.20))
                 {
                     decrementCounter++;
-                    velocity = -(Physics.getGravity() * decrementCounter);
+                    velocity = -(Physics.getGravity() * decrementCounter * 2);
                 }
 
                 // Prevent a jump loop
@@ -174,7 +241,7 @@ public class Player implements Entity {
 
     @Override
     public void draw(Graphics2D g2) {
-        g2.drawImage(playerImage, x, y, width, height, null);
+        g2.drawImage(playerImage, (int) x, (int) y, width, height, null);
     }
 
     

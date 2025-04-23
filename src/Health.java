@@ -10,6 +10,7 @@ public class Health {
 
     private final Image healthImage;
     private final Image damagedHealthImage;
+    private final Image bonusHealthImage;
 
     // Health values
     private final int MAX_HP = 5;
@@ -20,6 +21,7 @@ public class Health {
     {
         healthImage = ImageManager.loadImage("/gfx/images/ui/heart_filled.png");
         damagedHealthImage = ImageManager.loadImage("/gfx/images/ui/heart_empty.png");
+        bonusHealthImage = ImageManager.loadImage("/gfx/images/ui/heart_filled_bonus.png");
     }
 
     public void dealDamage(int damage)
@@ -47,11 +49,24 @@ public class Health {
 
     public void draw(Graphics2D g2)
     {
-        for (int i = 0; i < currentHealth; i++)
-            g2.drawImage(healthImage, (i * heartOffset) + (heartOffset / 2), (heartOffset / 2), heartSize, heartSize, null);
+        if (currentHealth <= DEFAULT_HP)
+            for (int i = 0; i < currentHealth; i++)
+                g2.drawImage(healthImage, (i * heartOffset) + (heartOffset / 2), (heartOffset / 2), heartSize, heartSize, null);
+
+        if (currentHealth > DEFAULT_HP)
+        {
+            for (int i = 0; i < DEFAULT_HP; i++)
+                g2.drawImage(healthImage, (i * heartOffset) + (heartOffset / 2), (heartOffset / 2), heartSize, heartSize, null);
+
+            for (int i = DEFAULT_HP; i < currentHealth; i++)
+                g2.drawImage(bonusHealthImage, (i * heartOffset) + (heartOffset / 2), (heartOffset / 2), heartSize, heartSize, null); 
+        }
 
         if (currentHealth < DEFAULT_HP)
+        {
             for (int i = currentHealth; i < DEFAULT_HP; i++)
                 g2.drawImage(damagedHealthImage, (i * heartOffset) + (heartOffset / 2), (heartOffset / 2), heartSize, heartSize, null);
+        }
+            
     }
 }

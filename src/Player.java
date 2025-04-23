@@ -17,6 +17,8 @@ public class Player implements Entity {
     private int dx = 0;
     private int dy = 0;
 
+    //private double health;
+
     // Physics
     private double timeElapsed = 0;
     private double startY;
@@ -241,4 +243,6 @@ public class Player implements Entity {
     public void draw(Graphics2D g2) {
         g2.drawImage(playerImage, (int) x, (int) y, width, height, null);
     }
+
+    
 }

@@ -16,6 +16,8 @@ public final class GameWindow extends JFrame {
     private final LoadingPanel loadingPanel;
     private final Menu menuPanel;
 
+    private final SoundManager soundManager;
+
     public GameWindow()
     {
         // Setup window and container
@@ -26,6 +28,9 @@ public final class GameWindow extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         container = getContentPane();
+
+        // Sound Manager
+        soundManager = SoundManager.getInstance();
 
         // Panels
 
@@ -43,6 +48,9 @@ public final class GameWindow extends JFrame {
         // Load Menu Scene
         SceneLoader.switchScene("Menu");
 
+        // Load Game Files
+        loadGameConfig();
+
         // Main Panel
         
         mainPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
@@ -51,6 +59,11 @@ public final class GameWindow extends JFrame {
 
         container.add(SceneLoader.getCardPanel());
         setVisible(true);
+    }
+
+    private void loadGameConfig()
+    {
+
     }
 
     public void loadGame()

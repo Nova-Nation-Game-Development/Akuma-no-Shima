@@ -77,8 +77,7 @@ public final class GameWindow extends JFrame {
             // Force a slight delay to ensure that the final progress is visible
             try {
                 Thread.sleep(50);
-            } catch (InterruptedException e) {
-            }
+            } catch (InterruptedException e) { }
             
             // Begin game setup on Swing thread
             javax.swing.SwingUtilities.invokeLater(() -> {

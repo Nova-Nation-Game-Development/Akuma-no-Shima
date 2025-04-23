@@ -23,6 +23,8 @@ public class Player implements Entity {
     private boolean isJumping;
     private boolean canJump;
 
+    private Health health;
+
     // Shape and Collisions
     private int width;
     private int height;
@@ -47,8 +49,7 @@ public class Player implements Entity {
 
         isJumping = false;
         playerImage = ImageManager.loadImage("/gfx/characters/frames/char_noroi_idle.png");
-        // Testing purposes only
-        System.out.println("\n");
+        health = new Health();
     }
 
     // Directional mutators
@@ -74,6 +75,7 @@ public class Player implements Entity {
     // Physics Accessors
     public boolean isJumping() { return isJumping; }
     public boolean canJump() { return canJump; }
+    public Health getHealth() { return health; }
 
     // Panel Dimension Accessors
     public Dimension getPanelDimensions() { return panel.getSize(); }

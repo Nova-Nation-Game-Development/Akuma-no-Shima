@@ -10,12 +10,13 @@ public class CameraControls {
     private final int WORLD_SPEED = 2;                      // This determines the speed of the world
     private final int PLAYER_SPEED = 2;                     // This determines the speed of the player
 
+    // Max size of the world = 3840px
     private final int LEFT_THRESHOLD = 600;                 // Defines the area in which the player must enter before the world moves
-    private final int RIGHT_THRESHOLD = 750;                // Defines the area in which the player must leave before the world stops moving
-    private final float THRESHOLD_SCALE = 10f;              // How much the player speed is reduced when entering the threshold
+    private final int RIGHT_THRESHOLD = 3000;               // Defines the area in which the player must leave before the world stops moving
+    // private final float THRESHOLD_SCALE = 10f;              // How much the player speed is reduced when entering the threshold
     
     // Location
-    private float xPos;
+    private double xPos;
 
     public CameraControls(Player player, InputHandler playerInput, BackgroundManager backgroundManager)
     {
@@ -23,7 +24,7 @@ public class CameraControls {
         this.playerInput = playerInput;
         this.backgroundManager = backgroundManager;
 
-        xPos = player.getX();
+        xPos = player.getX() + 30;
     }
 
     public void update()
@@ -64,20 +65,44 @@ public class CameraControls {
             playerInput.stopJump();
     }
 
+    private void updatePlayer(int newPlayerSpeed)
+    {
+        xPos += (newPlayerSpeed);
+        player.setWorldPos((int) xPos);
+    }
+
     public void moveWorld(int newPlayerSpeed, int newWorldSpeed, int bgDirection)
     {
-        if ((int) xPos >= LEFT_THRESHOLD && (int) xPos <= RIGHT_THRESHOLD)
-            xPos += (newPlayerSpeed / THRESHOLD_SCALE);
+        // Increase player speed while jumping
+        // if (player.isJumping())
+        //     newPlayerSpeed *= 1.5;
+
+        // Handle collisions
+        if (!player.isColliding(newPlayerSpeed))
+            updatePlayer(newPlayerSpeed);
         else
-            xPos = (int) xPos + newPlayerSpeed;
+        {
+            if (player.getCollisionDirection() == 0 && newPlayerSpeed < 0)
+                updatePlayer(newPlayerSpeed);
+
+            if (player.getCollisionDirection() == 1 && newPlayerSpeed > 0)
+                updatePlayer(newPlayerSpeed);
+        }
+        
+        // For testing purposes only
+        // updatePlayer(newPlayerSpeed);
 
         if ((int) xPos < LEFT_THRESHOLD || (int) xPos > RIGHT_THRESHOLD)
-            player.move(newPlayerSpeed);
+            if (!player.isColliding(newPlayerSpeed))
+                player.move(newPlayerSpeed);
     
         if ((int) xPos > LEFT_THRESHOLD && (int) xPos < RIGHT_THRESHOLD)
         {
-            backgroundManager.move(bgDirection);
-            WorldGeneration.move(newWorldSpeed);
+            if (!player.isColliding(newPlayerSpeed))
+            {
+                backgroundManager.move(bgDirection);
+                WorldGeneration.move(newWorldSpeed);
+            }
         }
     }
 }

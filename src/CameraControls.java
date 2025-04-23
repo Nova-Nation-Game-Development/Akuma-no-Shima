@@ -78,19 +78,19 @@ public class CameraControls {
         //     newPlayerSpeed *= 1.5;
 
         // Handle collisions
-        if (!player.isColliding(newPlayerSpeed))
-            updatePlayer(newPlayerSpeed);
-        else
-        {
-            if (player.getCollisionDirection() == 0 && newPlayerSpeed < 0)
-                updatePlayer(newPlayerSpeed);
+        // if (!player.isColliding(newPlayerSpeed))
+        //     updatePlayer(newPlayerSpeed);
+        // else
+        // {
+        //     if (player.getCollisionDirection() == 0 && newPlayerSpeed < 0)
+        //         updatePlayer(newPlayerSpeed);
 
-            if (player.getCollisionDirection() == 1 && newPlayerSpeed > 0)
-                updatePlayer(newPlayerSpeed);
-        }
+        //     if (player.getCollisionDirection() == 1 && newPlayerSpeed > 0)
+        //         updatePlayer(newPlayerSpeed);
+        // }
         
         // For testing purposes only
-        // updatePlayer(newPlayerSpeed);
+        updatePlayer(newPlayerSpeed);
 
         if ((int) xPos < LEFT_THRESHOLD || (int) xPos > RIGHT_THRESHOLD)
             if (!player.isColliding(newPlayerSpeed))

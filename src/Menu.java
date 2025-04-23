@@ -108,19 +108,16 @@ public class Menu extends Scene {
     {
         // TODO: Check if game save already exists
 
-
+        window.loadGame();
     }
 
-    private void loadSettings()
-    {
-        SceneLoader.switchScene("Settings");
-    }
+    private void loadSettings() { SceneLoader.switchScene("Settings"); }
 
     private void exitGame()
     {
-        // TODO: Save game
+        // TODO: Save game state
 
-        // Customize this panel
+        // TODO: Customize this panel
         int choice = JOptionPane.showConfirmDialog(null, "Are you sure you want to exit?", "Exit",
         JOptionPane.YES_NO_OPTION);
 

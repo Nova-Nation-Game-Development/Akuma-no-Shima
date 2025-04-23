@@ -43,9 +43,6 @@ public final class GameWindow extends JFrame {
         // Load Menu Scene
         SceneLoader.switchScene("Menu");
 
-        loadingPanel.startLoadThread();
-        loadingPanel.incrementProgress(30);
-
         // Main Panel
         
         mainPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
@@ -54,14 +51,22 @@ public final class GameWindow extends JFrame {
 
         container.add(SceneLoader.getCardPanel());
         setVisible(true);
+    }
+
+    public void loadGame()
+    {
+        SceneLoader.switchScene("LoadingPanel");
+
+        loadingPanel.startLoadThread();
+        loadingPanel.incrementProgress(30);
 
         initializeGameLoadingThread();
     }
     
-    // Move this to a different class or smth
     private void initializeGameLoadingThread()
     {
         new Thread(() -> {
+            
             loadingPanel.incrementProgress(30);
 
             // Load game entities
@@ -69,17 +74,17 @@ public final class GameWindow extends JFrame {
 
             // Stop loading and switch to game
             loadingPanel.incrementProgress(40);
-
             // Force a slight delay to ensure that the final progress is visible
             try {
                 Thread.sleep(50);
-            } catch (InterruptedException e) { }
+            } catch (InterruptedException e) {
+            }
             
             // Begin game setup on Swing thread
             javax.swing.SwingUtilities.invokeLater(() -> {
                 loadingPanel.stopThread();
 
-                // SceneLoader.switchScene("Game");
+                SceneLoader.switchScene("Game");
 
                 gamePanel.setFocusable(true);
                 gamePanel.requestFocusInWindow();

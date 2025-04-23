@@ -34,7 +34,7 @@ public class Bullet implements Projectile{
 
    
     @Override
-    public void spawn(int x, int y, double angle) {
+    public void spawn(double x, double y, double angle) {
         this.x = x;
         this.y = y;
         this.angle = angle;

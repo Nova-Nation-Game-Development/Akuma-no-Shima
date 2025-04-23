@@ -28,12 +28,8 @@ public class InputHandler implements KeyListener, MouseListener, MouseMotionList
     public int health;
 
     // In case of multiplayer, this will be instantiated
-    public InputHandler(Player player) 
-    { 
-        this.player = player;
-    }
+    public InputHandler(Player player) { this.player = player; }
 
-   
     // Accessors
     public boolean canJump() { return canJump; }
     public int getDirection() { return direction; }

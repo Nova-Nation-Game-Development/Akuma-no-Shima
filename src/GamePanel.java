@@ -5,9 +5,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.Collection;
-import javax.swing.JPanel;
 
-public class GamePanel extends JPanel implements Runnable {
+public class GamePanel extends Scene {
 
     private final GameWindow window;
 

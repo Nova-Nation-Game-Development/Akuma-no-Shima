@@ -1,6 +1,5 @@
 package src;
 
-import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.FlowLayout;
@@ -16,9 +15,6 @@ public final class GameWindow extends JFrame {
 
     private final LoadingPanel loadingPanel;
 
-    private final JPanel cardPanel;
-    private final CardLayout cardLayout;
-
     public GameWindow()
     {
         // Setup window and container
@@ -30,32 +26,30 @@ public final class GameWindow extends JFrame {
 
         container = getContentPane();
 
-        // Card Layout for scene switching
-        cardLayout = new CardLayout();
-        cardPanel = new JPanel(cardLayout);
-
         // Panels
 
-        // Loading Panel
-        loadingPanel = new LoadingPanel(this);
-        cardPanel.add(loadingPanel, "Loading");
-
-        // Game Panel
         gamePanel = new GamePanel(this);
-        gamePanel.setBackground(Color.WHITE);
+        loadingPanel = new LoadingPanel(this);
+        mainPanel = new JPanel();
+
+        mainPanel.setName("Game");
+
+        SceneLoader.addScene(mainPanel);
+        SceneLoader.addScene(loadingPanel);
 
         // Start loading
+        SceneLoader.switchScene("LoadingPanel");
+
         loadingPanel.startLoadThread();
         loadingPanel.incrementProgress(30);
 
         // Main Panel
-        mainPanel = new JPanel();
+        
         mainPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
         mainPanel.setBackground(Color.BLUE);
         mainPanel.add(gamePanel);
-        cardPanel.add(mainPanel, "Game");
 
-        container.add(cardPanel);
+        container.add(SceneLoader.getCardPanel());
         setVisible(true);
 
         initializeGameLoadingThread();
@@ -80,7 +74,8 @@ public final class GameWindow extends JFrame {
             // Begin game setup on Swing thread
             javax.swing.SwingUtilities.invokeLater(() -> {
                 loadingPanel.stopThread();
-                cardLayout.show(cardPanel, "Game");
+
+                SceneLoader.switchScene("Game");
 
                 gamePanel.setFocusable(true);
                 gamePanel.requestFocusInWindow();

@@ -80,11 +80,12 @@ public class GamePanel extends Scene {
                 playerEntity.getHealth().draw(imageContext);
         }
 
-            imageContext.setColor(Color.WHITE);  // Set color to white
-            if(playerInput != null) {
-                imageContext.fillRect(InputHandler.getMouseX(), InputHandler.getMouseY(), 20, 20);
-            }
-            
+        EnemyManager.draw(imageContext);
+
+        imageContext.setColor(Color.WHITE);  // Set color to white
+        if(playerInput != null) {
+            imageContext.fillRect(InputHandler.getMouseX(), InputHandler.getMouseY(), 20, 20);
+        }    
 
         imageContext.dispose();
     }
@@ -100,6 +101,8 @@ public class GamePanel extends Scene {
             ar.updateShooting();
         }
     }
+
+    public GameWindow getGameWindow() { return window; }
 
     public void createGameEntities()
     {

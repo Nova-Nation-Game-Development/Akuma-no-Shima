@@ -25,18 +25,30 @@ public class Health {
         bonusHealthImage = ImageManager.loadImage("/gfx/images/ui/heart_filled_bonus.png");
     }
 
-    public void dealDamage(int damage)
+    public void dealDamage(int damage, EntityType entityType, Entity entity)
     {
         damage = Math.abs(damage); // In case of damage being negative
 
         if (currentHealth - damage <= 0)
-            killPlayer();
+            switch (entityType) {
+                case PLAYER -> { killPlayer(); }
+                case ONI -> { destroyEntity(entity); }
+                case HELLHOUND -> { destroyEntity(entity); }
+                case MAOU -> { killFinalBoss(); }
+            }
         else
             currentHealth -= damage;
     }
 
+    public void destroyEntity(Entity entity)
+    {
+        EnemyManager.destroyEntity(entity);
+    }
+
     // TODO: Complete (Add Death Screen, etc)
     public void killPlayer() { currentHealth = 0; System.out.println("You Died!");}
+
+    public void killFinalBoss() {}
 
     public void addHealth(int hp)
     {

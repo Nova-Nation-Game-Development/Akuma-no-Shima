@@ -57,6 +57,7 @@ public class ForestLevel implements Level {
     public ForestLevel(GamePanel panel) { this.panel = panel; }
 
     public int getTileLength() { return TILE_LENGTH; }
+    public int getMaxWorld() { return TILE_LENGTH * WORLD_LENGTH * 2; }
 
     @Override
     public HashMap<Integer, Tile> getTileDictionary() { return tileMap; }
@@ -169,6 +170,11 @@ public class ForestLevel implements Level {
     public void createLevel()
     {
         panelHeight = panel.getHeight() - BASE_HEIGHT - (TILE_LENGTH / 2);
+
+        GameWindow window = panel.getGameWindow();
+
+        EnemyManager.setWorldWidth(getMaxWorld());
+        EnemyManager.generateEnemies(window.getConfig().getDifficulty());
 
         // For percentage resets; this means other tiles can have a higher percentage with a weighting > 100
         // The world moves around the player so it must be larger than the visible area

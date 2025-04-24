@@ -6,9 +6,9 @@ import java.awt.geom.Rectangle2D;
 
 public interface Entity {
     
+    public void draw(Graphics2D g2);
     public void move(int direction);
     public void jump();
-    public void draw(Graphics2D g2);
     public void performAction();
 
     public Rectangle2D.Double getEntityBounds();

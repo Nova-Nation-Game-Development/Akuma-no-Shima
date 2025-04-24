@@ -1,0 +1,52 @@
+package com.novanation.akumanoshima;
+
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.geom.Rectangle2D;
+
+public class EnemyMaou implements Entity {
+
+    private final Health health;
+
+    // Design variables
+    private final Image maouImage;
+
+    public EnemyMaou()
+    {
+        health = new Health();
+        maouImage = ImageManager.loadImage("/gfx/characters/char_maou.png");
+    }
+
+    @Override
+    public void move(int direction) { // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'move'"); }
+
+    @Override
+    public void jump() { // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'jump'"); }
+
+    @Override
+    public void draw(Graphics2D g2) { // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'draw'"); }
+
+    @Override
+    public void performAction() { // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'performAction'"); }
+
+    @Override
+    public Rectangle2D.Double getEntityBounds() { // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'getEntityBounds'"); }
+
+    @Override
+    public Chunk getCurrentChunk() { // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'getCurrentChunk'"); }
+
+    @Override
+    public void onGround(boolean onGround) { // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'onGround'"); }
+
+    @Override
+    public void moveY(double dx) { // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'moveY'"); }
+    
+}

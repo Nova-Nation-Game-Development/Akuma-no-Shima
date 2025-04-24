@@ -59,7 +59,7 @@ public class Player implements Entity {
         this.panel = panel;
 
         isJumping = false;
-        playerImage = ImageManager.loadImage("/gfx/characters/frames/char_noroi_idle.png");
+        playerImage = ImageManager.loadImage("/gfx/characters/char_noroi.png");
         health = new Health();
     }
 
@@ -278,7 +278,5 @@ public class Player implements Entity {
     @Override
     public void draw(Graphics2D g2) {
         g2.drawImage(playerImage, (int) x, (int) y, width, height, null);
-    }
-
-    
+    }  
 }

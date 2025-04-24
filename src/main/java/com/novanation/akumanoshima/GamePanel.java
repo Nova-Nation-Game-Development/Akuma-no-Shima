@@ -79,23 +79,25 @@ public class GamePanel extends Scene {
             if (playerEntity.getHealth() != null)
                 playerEntity.getHealth().draw(imageContext);
         }
+        
+        EnemyManager.draw(imageContext);
 
-            imageContext.setColor(Color.WHITE);  // cross hair
-            if(playerInput != null) {
-                int x = InputHandler.getMouseX();
-                int y = InputHandler.getMouseY();
-                int size = 20; // Size of crosshair
-                
-                imageContext.setColor(Color.WHITE);
-                // Draw horizontal line
-                imageContext.drawLine(x - size/2, y, x + size/2, y);
-                // Draw vertical line
-                imageContext.drawLine(x, y - size/2, x, y + size/2);
-                
-                // Optional: Add a small dot in the center
-                imageContext.fillOval(x - 2, y - 2, 4, 4);
-            }
+        imageContext.setColor(Color.WHITE);  // cross hair
+        
+        if(playerInput != null) {
+            int x = InputHandler.getMouseX();
+            int y = InputHandler.getMouseY();
+            int size = 20; // Size of crosshair
             
+            imageContext.setColor(Color.WHITE);
+            // Draw horizontal line
+            imageContext.drawLine(x - size/2, y, x + size/2, y);
+            // Draw vertical line
+            imageContext.drawLine(x, y - size/2, x, y + size/2);
+            
+            // Optional: Add a small dot in the center
+            imageContext.fillOval(x - 2, y - 2, 4, 4);
+        }
 
         imageContext.dispose();
     }
@@ -112,6 +114,8 @@ public class GamePanel extends Scene {
             ar.updateReloading();
         }
     }
+
+    public GameWindow getGameWindow() { return window; }
 
     public void createGameEntities()
     {

@@ -16,26 +16,30 @@ public class EnemyHellhound implements Entity {
     private final int width;
     private final int height;
 
+    private final String enemyID;
+
     private final Image hellhoundImage;
 
-    public EnemyHellhound(int width, int height, int xPos, int yPos)
+    public EnemyHellhound(int width, int height, int xPos, int yPos, String enemyID)
     {
         this.width = width;
         this.height = height;
         this.xPos = xPos;
         this.yPos = yPos;
+        this.enemyID = enemyID;
 
         health = new Health();
         // TODO: Get Hellhound Image
-        hellhoundImage = ImageManager.loadImage("/gfx/characters/char_maou.png");
+        hellhoundImage = ImageManager.loadImage("/gfx/characters/char_hellhound.png");
     }
+
+    public String getEnemyID() { return enemyID; }
 
     @Override
     public void draw(Graphics2D g2) { g2.drawImage(hellhoundImage, xPos, yPos, width, height, null); }
     
     @Override
-    public void move(int direction) { // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'move'"); }
+    public void move(int direction) { xPos += direction; }
 
     @Override
     public void jump() { // TODO Auto-generated method stub
@@ -46,8 +50,7 @@ public class EnemyHellhound implements Entity {
     throw new UnsupportedOperationException("Unimplemented method 'performAction'"); }
 
     @Override
-    public Rectangle2D.Double getEntityBounds() { // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'getEntityBounds'"); }
+    public Rectangle2D.Double getEntityBounds() { return new Rectangle2D.Double(xPos, yPos, width, height); }
 
     @Override
     public Chunk getCurrentChunk() { // TODO Auto-generated method stub

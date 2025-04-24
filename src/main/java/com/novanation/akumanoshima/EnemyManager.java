@@ -2,11 +2,17 @@ package com.novanation.akumanoshima;
 
 import java.awt.Graphics2D;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 public class EnemyManager {
     
-    private static ArrayList<Entity> enemies = new ArrayList<>();
+    private static HashMap<String, Entity> enemies = new HashMap<>();
+    private static int worldWidth;
 
     // Difficulty Presets
 
@@ -28,6 +34,7 @@ public class EnemyManager {
     public static void generateEnemies(Difficulty difficulty)
     {
         Random random = new Random();
+
         int enemyCount = 0;
         int hellHoundCount = 0;
 
@@ -47,27 +54,86 @@ public class EnemyManager {
             }
         }
 
+        List<String> enemyTypes = new ArrayList<>();
+
+        // Fill the list with the correct number of each type
+        for (int i = 0; i < hellHoundCount; i++) {
+            enemyTypes.add("HELLHOUND");
+        }
+        for (int i = 0; i < enemyCount - hellHoundCount; i++) {
+            enemyTypes.add("ONI");
+        }
+
+        // Shuffle the spawn order
+        Collections.shuffle(enemyTypes);
+
+        int segmentWidth = worldWidth / enemyCount;
+        Set<Integer> usedXPositions = new HashSet<>();
+
         for (int i = 0; i < enemyCount; i++)
         {
-            if (i < hellHoundCount)
+            String type = enemyTypes.get(i);
+
+            int enemyWidth = type.equals("HELLHOUND") ? 128 : 64;
+            int enemyHeight = type.equals("HELLHOUND") ? 64 : 128;
+
+            int segmentStart = i * segmentWidth;
+            int segmentEnd = segmentStart + segmentWidth;
+
+            segmentStart = Math.max(segmentStart, 1000); // To prevent the enemies from spawning in front the player
+            segmentEnd = Math.min(segmentEnd, worldWidth);
+
+            int x; // TODO: Presently, multiple enemies can spawn on top of each other
+            int attempts = 0;
+            do
             {
-                // Hellhounds are quick but do only melee damage
-                EnemyHellhound hellHound = new EnemyHellhound(80, 100, 100, 50);
-                enemies.add((EnemyHellhound) hellHound);
-            }
-            else
-            {
-                // The Oni are slow but have range attacks to compensate
-                EnemyOni oni = new EnemyOni(80, 120, 10, 50);
-                enemies.add((EnemyOni) oni);
+                x = (int) (Math.random() * (segmentEnd - segmentStart)) + segmentStart;
+                x = Math.max(1000, Math.min(worldWidth, x));
+
+                if (++attempts > UPPER_HARD) break; // Prevent looping infinitely
+            } while (usedXPositions.contains(x));
+
+            usedXPositions.add(x);
+            int y = getYPosition();
+
+            if (type.equals("HELLHOUND")) {
+                EnemyHellhound hellHound = new EnemyHellhound(enemyWidth, enemyHeight, x, y, "Enemy " + i);
+                enemies.put("Enemy " + i, hellHound);
+            } else {
+                EnemyOni oni = new EnemyOni(enemyWidth, enemyHeight, x, y, "Enemy " + i);
+                enemies.put("Enemy " + i, oni);
             }
         }
     }
 
+    public static void destroyEntity(Entity enemy)
+    {
+        // TODO: Update the Entity Manager to remove it from the list
+        if (enemy instanceof EnemyHellhound enemyHellhound)
+        {
+            enemies.remove(enemyHellhound.getEnemyID());
+        }
+
+        if (enemy instanceof EnemyOni enemyOni)
+        {
+            enemies.remove(enemyOni.getEnemyID());
+        }
+    }
+
+    private static int getYPosition()
+    {
+        // TODO: Get height using their x location with the tile and getting the y pos of the tile
+        return 50;
+    }
+
+    public static void setWorldWidth(int worldLimit) { worldWidth = worldLimit; }
+
+    public static int getRemainingEnemies() { return enemies.size(); }
+
     // TODO: Move based on world speed
     public static void move(int direction)
     {
-        for (Entity enemy : enemies)
+        for (Entity enemy : enemies.values())
             enemy.move(direction);
     }
 
@@ -75,7 +141,7 @@ public class EnemyManager {
     {
         if (enemies == null) return;
 
-        for (Entity enemy : enemies)
+        for (Entity enemy : enemies.values())
             enemy.draw(g2);
     }
 }

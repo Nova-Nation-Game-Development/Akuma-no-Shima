@@ -16,19 +16,24 @@ public class EnemyOni implements Entity {
     private final int width;
     private final int height;
 
+    private final String enemyID;
+
     private final Image oniImage;
 
-    public EnemyOni(int width, int height, int xPos, int yPos)
+    public EnemyOni(int width, int height, int xPos, int yPos, String enemyID)
     {
         this.width = width;
         this.height = height;
         this.xPos = xPos;
         this.yPos = yPos;
+        this.enemyID = enemyID;
 
         health = new Health();
         oniImage = ImageManager.loadImage("/gfx/characters/char_oni.png");
     }
     
+    public String getEnemyID() { return enemyID; }
+
     @Override
     public void draw(Graphics2D g2) { g2.drawImage(oniImage, xPos, yPos, width, height, null); }
 
@@ -44,8 +49,7 @@ public class EnemyOni implements Entity {
     throw new UnsupportedOperationException("Unimplemented method 'performAction'"); }
 
     @Override
-    public Rectangle2D.Double getEntityBounds() { // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'getEntityBounds'"); }
+    public Rectangle2D.Double getEntityBounds() { return new Rectangle2D.Double(xPos, yPos, width, height); }
 
     @Override
     public Chunk getCurrentChunk() { // TODO Auto-generated method stub

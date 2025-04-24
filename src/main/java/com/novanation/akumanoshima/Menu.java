@@ -51,9 +51,10 @@ public class Menu extends Scene {
         menuThread.start();
 
         handleButtonListeners();
+        window.playAudioClip("Menu", ClipType.MENU, true);
     }
 
-    public void stopThread() { menuThread.interrupt(); menuThread = null; }
+    public void stopThread() { menuThread.interrupt(); menuThread = null; window.stopAudioClip("Menu", ClipType.MENU); }
 
     @Override
     protected void paintComponent(Graphics g)
@@ -110,6 +111,7 @@ public class Menu extends Scene {
     {
         // TODO: Check if game save already exists
 
+        stopThread();
         window.loadGame();
     }
 

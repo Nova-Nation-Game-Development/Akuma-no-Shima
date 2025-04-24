@@ -80,9 +80,20 @@ public class GamePanel extends Scene {
                 playerEntity.getHealth().draw(imageContext);
         }
 
-            imageContext.setColor(Color.WHITE);  // Set color to white
+            imageContext.setColor(Color.WHITE);  // cross hair
             if(playerInput != null) {
-                imageContext.fillRect(InputHandler.getMouseX(), InputHandler.getMouseY(), 20, 20);
+                int x = InputHandler.getMouseX();
+                int y = InputHandler.getMouseY();
+                int size = 20; // Size of crosshair
+                
+                imageContext.setColor(Color.WHITE);
+                // Draw horizontal line
+                imageContext.drawLine(x - size/2, y, x + size/2, y);
+                // Draw vertical line
+                imageContext.drawLine(x, y - size/2, x, y + size/2);
+                
+                // Optional: Add a small dot in the center
+                imageContext.fillOval(x - 2, y - 2, 4, 4);
             }
             
 
@@ -98,6 +109,7 @@ public class GamePanel extends Scene {
         camera.update();
         if(ar != null) {
             ar.updateShooting();
+            ar.updateReloading();
         }
     }
 

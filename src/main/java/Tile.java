@@ -41,10 +41,10 @@ public class Tile implements Entity {
     {
         switch (world)
         {
-            case WorldType.FOREST -> setupForestData();
-            case WorldType.VOLCANIC -> setupVolcanicData();
-            case WorldType.BLIZZARD -> setupBlizzardData();
-            case WorldType.END -> setupEndData();
+            case FOREST -> setupForestData();
+            case VOLCANIC -> setupVolcanicData();
+            case BLIZZARD -> setupBlizzardData();
+            case END -> setupEndData();
         }    
     }
 
@@ -52,9 +52,9 @@ public class Tile implements Entity {
     {
         switch (tileType)
         {
-            case TileType.PRIMARY -> tileImage = ImageManager.loadImage("/gfx/tiles/grass_tile.png");
-            case TileType.SECONDARY -> tileImage = ImageManager.loadImage("/gfx/tiles/dirt_tile.png");
-            case TileType.TERTIARY -> tileImage = ImageManager.loadImage("/gfx/tiles/water/water_tile_1.png"); // Use animated water in future
+            case PRIMARY -> tileImage = ImageManager.loadImage("/gfx/tiles/grass_tile.png");
+            case SECONDARY -> tileImage = ImageManager.loadImage("/gfx/tiles/dirt_tile.png");
+            case TERTIARY -> tileImage = ImageManager.loadImage("/gfx/tiles/water/water_tile_1.png"); // Use animated water in future
         }
     }
 

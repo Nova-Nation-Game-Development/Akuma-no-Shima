@@ -132,22 +132,22 @@ public class ForestLevel implements Level {
         // Separated for future manipulation
         switch (tileType)
         {
-            case TileType.PRIMARY -> {
+            case PRIMARY -> {
                 for (int i = 1; i <= levelCount; i++)
                     iterateGaps(tileOffset, i, TileType.SECONDARY);
             }
 
-            case TileType.SECONDARY -> {
+            case SECONDARY -> {
                 for (int i = 1; i <= levelCount; i++)
                     iterateGaps(tileOffset, i, TileType.SECONDARY);
             }
 
-            case TileType.TERTIARY -> {
+            case TERTIARY -> {
                 for (int i = 1; i <= levelCount; i++)
                     iterateGaps(tileOffset, i, TileType.SECONDARY);
             }
 
-            case TileType.VOID -> { }
+            case VOID -> { }
         }
     }
 

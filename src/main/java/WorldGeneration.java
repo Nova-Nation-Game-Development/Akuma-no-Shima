@@ -15,7 +15,7 @@ public class WorldGeneration {
     public static void generateLevel(GamePanel panel, WorldType world)
     {
         switch (world) {
-            case WorldType.FOREST -> {
+            case FOREST -> {
                 forestLevel = new ForestLevel(panel);
                 forestLevel.createLevel();
 
@@ -24,14 +24,11 @@ public class WorldGeneration {
                 chunkMap = forestLevel.getChunkDictionary();
             }
 
-            case WorldType.VOLCANIC -> {
-            }
+            case VOLCANIC -> { }
 
-            case WorldType.BLIZZARD -> {
-            }
+            case BLIZZARD -> { }
 
-            case WorldType.END -> {
-            }
+            case END -> { }
         }
     }
 

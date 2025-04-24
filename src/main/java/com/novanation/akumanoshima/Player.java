@@ -5,6 +5,8 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -27,6 +29,7 @@ public class Player implements Entity {
     private boolean canJump;
 
     private Health health;
+   
 
     // Shape and Collisions
     private int width;
@@ -39,6 +42,11 @@ public class Player implements Entity {
 
     // Game Panel
     private final GamePanel panel;
+
+    //Perks
+    private List<Perk> activePerks = new ArrayList<>();
+    private double moveSpeedMultiplier = 1.0;
+    private Weapon currentWeapon;
 
     public Player(GamePanel panel, int x, int y, int width, int height)
     {
@@ -83,10 +91,37 @@ public class Player implements Entity {
     // Panel Dimension Accessors
     public Dimension getPanelDimensions() { return panel.getSize(); }
 
+    //Perk Accessors
+    public Weapon getWeapon() { return currentWeapon; }
+    public void setCurrentWeapon(Weapon weapon) { currentWeapon = weapon; }
+
+    public void applyPerk(Perk perk) {
+        if (!activePerks.contains(perk)) {
+            activePerks.add(perk);
+            perk.applyEffect(this);
+        }
+    }
+
+    public void removePerk(Perk perk) {
+        if (activePerks.contains(perk)) {
+            activePerks.remove(perk);
+            perk.removeEffect(this);
+        }
+    }
+
+    public void setMoveSpeedMultiplier(double multiplier) {
+        this.moveSpeedMultiplier = multiplier;
+    }
+
+    public double getMoveSpeedMultiplier() {
+        return moveSpeedMultiplier;
+    }
+
+
     @Override
     public void move(int direction)
     {
-        dx = direction;
+        dx = (int)(direction * moveSpeedMultiplier);
 
         currentChunk = WorldGeneration.getChunk(2);
 

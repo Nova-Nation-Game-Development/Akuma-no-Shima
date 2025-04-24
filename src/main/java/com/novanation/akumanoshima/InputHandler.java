@@ -22,6 +22,9 @@ public class InputHandler implements KeyListener, MouseListener, MouseMotionList
 
     Player player;
     AssualtWeapon ar;
+    private VandalPerk vandalPerk = new VandalPerk();
+    private VitalityPerk vitalityPerk = new VitalityPerk();
+    private SpeedsterPerk speedsterPerk = new SpeedsterPerk();
     private int direction;
 
     // TODO: Temporary
@@ -58,9 +61,27 @@ public class InputHandler implements KeyListener, MouseListener, MouseMotionList
                     canJump = true;
                 }
             }
+            case KeyEvent.VK_V -> {
+                if(!vandalPerk.isActive()) {
+                    vandalPerk.applyEffect(player);
+                    System.out.println("Vandal Perk Applied!");
+                    vandalPerk.setActive(true);
+
+                }
+            }
+            case KeyEvent.VK_B -> { 
+                if(!vitalityPerk.isActive()) {
+                  vitalityPerk.applyEffect(player);
+                   vitalityPerk.setActive(true);
+                 }
+        }
+        case KeyEvent.VK_N -> {
+            if (!speedsterPerk.isActive()) {
+                speedsterPerk.applyEffect(player);
+            }
         }
     }
-
+    }
     @Override
     public void keyReleased(KeyEvent e)
     {
@@ -153,6 +174,7 @@ public class InputHandler implements KeyListener, MouseListener, MouseMotionList
         mouseB = -1;
         if (e.getButton() == MouseEvent.BUTTON1) { // Left click released
             ar.setArIsFiring(false);
+            ar.setArCanFire(false);
         }
     }
 

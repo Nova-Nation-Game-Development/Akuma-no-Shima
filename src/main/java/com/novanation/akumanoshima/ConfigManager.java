@@ -34,9 +34,11 @@ public class ConfigManager {
 
         if (Files.notExists(CONFIG_PATH))
         {
+            // Create and save the default config if no file was found
             System.out.println("Config file not found. Creating default config...");
+            
             Config defaultConfig = new Config();
-            saveConfig(defaultConfig); // Create and save the default config
+            saveConfig(defaultConfig);
             return defaultConfig;
         }
 

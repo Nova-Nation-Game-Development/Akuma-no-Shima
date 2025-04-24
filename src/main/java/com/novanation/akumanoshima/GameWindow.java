@@ -63,6 +63,8 @@ public final class GameWindow extends JFrame {
         setVisible(true);
     }
 
+    public Config getConfig() { return config; } 
+
     public void playAudioClip(String title, ClipType clipType, boolean loopable) { soundManager.playClip(title, clipType, loopable); }
     public void stopAudioClip(String title, ClipType clipType) { soundManager.stopClip(title, clipType); }
 

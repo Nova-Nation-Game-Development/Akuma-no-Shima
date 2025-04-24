@@ -65,3 +65,10 @@ target/classes/com/novanation/akumanoshima/GameWindow.class
 target/classes/com/novanation/akumanoshima/Menu.class
 target/classes/com/novanation/akumanoshima/Menu$1.class
 target/classes/com/novanation/akumanoshima/Menu$2.class
+target/classes/com/novanation/akumanoshima/CameraControls.class
+target/classes/com/novanation/akumanoshima/EnemyHellhound.class
+target/classes/com/novanation/akumanoshima/EnemyManager.class
+target/classes/com/novanation/akumanoshima/EnemyOni.class
+target/classes/com/novanation/akumanoshima/EntityType.class
+target/classes/com/novanation/akumanoshima/ForestLevel.class
+target/classes/com/novanation/akumanoshima/Health.class

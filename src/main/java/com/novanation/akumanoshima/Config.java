@@ -10,6 +10,7 @@ public class Config {
 
     // Game state
     private int level;
+    private Difficulty difficulty;
     private WorldType worldType;
     private String currentWeapon;
     private int currentAmmo;
@@ -27,6 +28,7 @@ public class Config {
         this.resolutionWidth = 1366;
         this.resolutionHeight = 768;
         this.level = 1;
+        this.difficulty = Difficulty.NORMAL;
         this.worldType = WorldType.FOREST;
         this.currentWeapon = "Assault";
         this.currentAmmo = 30;
@@ -51,6 +53,9 @@ public class Config {
     // Game state
     public int getLevel() { return level; }
     public void setLevel(int level) { this.level = level; }
+
+    public Difficulty getDifficulty() { return difficulty; }
+    public void setDifficulty(Difficulty difficulty) { this.difficulty = difficulty; }
 
     public WorldType getWorldType() { return worldType; }
     public void setWorldType(WorldType worldType) { this.worldType = worldType; }

@@ -30,7 +30,7 @@ public class VitalityPerk implements Perk{
     public void removeEffect(Player player) {
         Health playerHealth = player.getHealth();
         if (playerHealth != null) {
-            playerHealth.dealDamage(HEALTH_BONUS);
+            playerHealth.dealDamage(HEALTH_BONUS, EntityType.PLAYER, player);
             System.out.println("Vitality Perk Removed! Health decreased.");
         }
     }

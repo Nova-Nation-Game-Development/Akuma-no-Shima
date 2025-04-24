@@ -53,3 +53,6 @@ bin/src/Weapon.class
 src/ConfigManager.java
 bin/src/Main.class
 bin/src/Main.class
+target/classes/ForestLevel.class
+target/classes/Tile.class
+target/classes/WorldGeneration.class

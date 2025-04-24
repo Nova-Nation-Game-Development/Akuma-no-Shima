@@ -8,6 +8,20 @@
             "type": "java",
             "name": "Main",
             "request": "launch",
+            "mainClass": "com.novanation.akumanoshima.Main",
+            "projectName": "akuma-no-shima"
+        },
+        {
+            "type": "java",
+            "name": "Main",
+            "request": "launch",
+            "mainClass": "Main",
+            "projectName": "akuma-no-shima"
+        },
+        {
+            "type": "java",
+            "name": "Main",
+            "request": "launch",
             "mainClass": "src.Main",
             "projectName": "Akuma-no-Shima-1_44d66a20"
         },

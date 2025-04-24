@@ -1,0 +1,17 @@
+src\main\java\Player$1.class
+src\main\java\Chunk.class
+src\main\java\Health.class
+src\main\java\Projectile.class
+src\main\java\AssualtWeapon.class
+src\main\java\GameWindow.class
+src\main\java\Bullet.class
+src\main\java\Entity.class
+src\main\java\GamePanel.class
+src\main\java\BackgroundManager.class
+src\main\java\CameraControls.class
+src\main\java\SpecialWeapon.class
+src\main\java\AmmoStock.class
+src\main\java\InputHandler.class
+src\main\java\Weapon.class
+src\main\java\Scene.class
+src\main\java\Player.class

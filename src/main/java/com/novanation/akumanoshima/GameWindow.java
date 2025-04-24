@@ -3,14 +3,6 @@ package com.novanation.akumanoshima;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.FlowLayout;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.util.Arrays;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -26,12 +18,16 @@ public final class GameWindow extends JFrame {
     private final Menu menuPanel;
 
     private final SoundManager soundManager;
+    private final Config config;
 
     public GameWindow()
     {
+        // Load Game Files
+        config = ConfigManager.loadConfig();
+
         // Setup window and container
         setTitle("Akuma no Shima");
-        setSize(1366, 768);
+        setSize(config.getResolutionWidth(), config.getResolutionHeight());
         setLocationRelativeTo(null);
         setResizable(false);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -57,9 +53,6 @@ public final class GameWindow extends JFrame {
         // Load Menu Scene
         SceneLoader.switchScene("Menu");
 
-        // Load Game Files
-        loadGameConfig();
-
         // Main Panel
         
         mainPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
@@ -68,30 +61,6 @@ public final class GameWindow extends JFrame {
 
         container.add(SceneLoader.getCardPanel());
         setVisible(true);
-    }
-
-    private void loadGameConfig()
-    {
-        File config = new File("/user-config/game_save.config");
-        if (config.exists())
-        {
-            try (BufferedReader reader = new BufferedReader(new FileReader(config)))
-            {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    System.out.println(line);
-                }
-            } catch (IOException e) { }
-        }
-        else
-        {
-            try {
-                    Files.write(Paths.get(config.getPath()),
-                                Arrays.asList("Line 1", "Line 2"),
-                                StandardOpenOption.CREATE,
-                                StandardOpenOption.TRUNCATE_EXISTING);
-                } catch (IOException e) { }
-        }
     }
 
     public void loadGame()

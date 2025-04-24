@@ -1,8 +1,9 @@
 package com.novanation.akumanoshima;
 
 
-import java.io.File;
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 
 import javax.sound.sampled.AudioInputStream;
@@ -80,19 +81,25 @@ public final class SoundManager {
 	// Gets clip from the specified file
     public Clip loadClip (String fileName) 
 	{	
- 		AudioInputStream audioIn;
-		Clip clip = null;
+ 		Clip clip = null;
 
-		try {
-			File file = new File(fileName);
-			audioIn = AudioSystem.getAudioInputStream(file.toURI().toURL()); 
+		try (InputStream is = getClass().getClassLoader().getResourceAsStream(fileName))
+		{
+			if (is == null)
+			{
+				System.out.println("Audio file not found: " + fileName);
+				return null;
+			}
+
+			BufferedInputStream bufferedIn = new BufferedInputStream(is);
+			AudioInputStream audioIn = AudioSystem.getAudioInputStream(bufferedIn);
+			
 			clip = AudioSystem.getClip();
 			clip.open(audioIn);
+		} catch (IOException | LineUnavailableException | UnsupportedAudioFileException e) {
+			System.out.println("Error opening sound file: " + e);
 		}
-		catch (IOException | LineUnavailableException | UnsupportedAudioFileException e) {
- 			System.out.println ("Error opening sound files: " + e);
-		}
-    	
+
 		return clip;
     }
 

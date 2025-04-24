@@ -56,3 +56,8 @@ bin/src/Main.class
 target/classes/ForestLevel.class
 target/classes/Tile.class
 target/classes/WorldGeneration.class
+user-config/user-settings.config
+target/classes/com/novanation/akumanoshima/ConfigManager.class
+target/classes/com/novanation/akumanoshima/GameWindow.class
+target/classes/com/novanation/akumanoshima/SoundManager.class
+target/classes/com/novanation/akumanoshima/GameWindow.class

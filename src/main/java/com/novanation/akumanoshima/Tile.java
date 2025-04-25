@@ -5,7 +5,7 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.geom.Rectangle2D;
 
-public class Tile implements Entity {
+public class Tile {
 
     // Tile data
     private int x;
@@ -55,61 +55,66 @@ public class Tile implements Entity {
         {
             case PRIMARY -> tileImage = ImageManager.loadImage("/gfx/tiles/grass_tile.png");
             case SECONDARY -> tileImage = ImageManager.loadImage("/gfx/tiles/dirt_tile.png");
-            case TERTIARY -> tileImage = ImageManager.loadImage("/gfx/tiles/water/water_tile_1.png"); // Use animated water in future
+            case TERTIARY -> tileImage = ImageManager.loadImage("/gfx/tiles/animated/water_tile_1.png"); // TODO: Use animated water in future
+            case VOID -> {}
         }
     }
 
     private void setupVolcanicData()
     {
-        
+        switch (tileType)
+        {
+            case PRIMARY -> tileImage = ImageManager.loadImage("/gfx/tiles/lava_stone_tile.png");
+            case SECONDARY -> tileImage = ImageManager.loadImage("/gfx/tiles/stone_tile.png");
+            case TERTIARY -> tileImage = ImageManager.loadImage("/gfx/tiles/animated/water_tile_1.png"); // TODO: Use animated lava in future
+            case VOID -> {}
+        }
     }
 
     private void setupBlizzardData()
     {
-        
+        switch (tileType)
+        {
+            case PRIMARY -> tileImage = ImageManager.loadImage("/gfx/tiles/snowy_dirt_tile.png");
+            case SECONDARY -> tileImage = ImageManager.loadImage("/gfx/tiles/snow_pile_tile.png");
+            case TERTIARY -> tileImage = ImageManager.loadImage("/gfx/tiles/animated/water_tile_1.png"); // TODO: Use ice tile
+            case VOID -> {}
+        }
     }
 
     private void setupEndData()
     {
-
+        switch (tileType)
+        {
+            case PRIMARY -> tileImage = ImageManager.loadImage("/gfx/tiles/grass_tile.png"); // TODO: Use brick tiles
+            case SECONDARY -> tileImage = ImageManager.loadImage("/gfx/tiles/dirt_tile.png"); // TODO: Use cracked brick tiles
+            case TERTIARY -> {}
+            case VOID -> {}
+        }
     }
 
     public int getX() { return x; }
     public TileType getTileData() { return tileType; }
 
-    @Override
     public void move(int direction)
     {
         dx = direction;
         x += dx;
     }
 
-    @Override
     public void jump() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    @Override
     public void draw(Graphics2D g2) {
         g2.drawImage(tileImage, x, y, width, width, null);
     }
 
-    // Remove this and create a new interface following interface segregation
-    @Override
-    public void performAction() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'performAction'");
-    }
-
-    @Override
     public Rectangle2D.Double getEntityBounds() { return null; }
 
-    @Override
     public Chunk getCurrentChunk() { return null; }
 
-    @Override
     public void moveY(double dx) { }
 
-    @Override
     public void onGround(boolean onGround) { }
 }

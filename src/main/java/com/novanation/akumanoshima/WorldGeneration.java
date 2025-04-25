@@ -65,6 +65,7 @@ public class WorldGeneration {
     public static Tile getTile(int key) { return tileMap.get(key); }
     public static Collection<Tile> getAllTiles() { return tileMap.values(); }
     public static Collection<Tile> getAllDepthTiles() { return tileDepthMap.values(); }
+    public static Collection<Chunk> getAllChunks() { return chunkMap.values(); }
 
     // This is called in InputHandler
     public static void move(int worldSpeed)
@@ -79,7 +80,7 @@ public class WorldGeneration {
         for (Tile tile : tileDepthMap.values())
             tile.move(worldSpeed);
 
-        // for (Chunk chunk : chunkMap.values())
-        //     chunk.move(worldSpeed);
+        for (Chunk chunk : chunkMap.values())
+            chunk.move(worldSpeed);
     }
 }

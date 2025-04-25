@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.Collection;
 
 public class GamePanel extends Scene {
@@ -50,7 +51,6 @@ public class GamePanel extends Scene {
 
         doubleBufferBackground();
 
-
         g.dispose();
     }
 
@@ -78,6 +78,15 @@ public class GamePanel extends Scene {
             
             if (playerEntity.getHealth() != null)
                 playerEntity.getHealth().draw(imageContext);
+
+            // Draw the player's current chunk
+            // if (playerEntity.getCurrentChunk() != null)
+            //     playerEntity.getCurrentChunk().showChunkBounds(imageContext);
+
+            // Draw the player collider
+            // imageContext.setColor(new Color(255, 255, 255, 128));
+            // if (playerEntity.getEntityBounds() != null)
+            //     imageContext.fill(playerEntity.getEntityBounds());
         }
         
         EnemyManager.draw(imageContext);
@@ -107,6 +116,19 @@ public class GamePanel extends Scene {
         // Constantly apply gravity to the player
         Physics.applyGravity(playerEntity, playerEntity.getX(), playerEntity.getY());
 
+        // Add them to a separate list to prevent modification during iteration
+        ArrayList<Entity> entityList = new ArrayList<>();
+        for (Entity entity : EnemyManager.getEnemies().values())
+            entityList.add(entity);
+
+        for (Entity entity : entityList)
+        {
+            Physics.applyGravity(entity, entity.getX(), entity.getY());
+            entity.update();
+        }
+            
+        playerEntity.update();
+
         // This will keep track of the world and player and update their locations accordingly
         camera.update();
         if(ar != null) {
@@ -120,6 +142,7 @@ public class GamePanel extends Scene {
     public void createGameEntities()
     {
         backgroundManager = new BackgroundManager(this, window);
+        Physics.setPanel(this);
 
         int playerHeight = (window.getHeight() / 164) * 40;
         int playerWidth = (playerHeight / 2);
@@ -135,7 +158,10 @@ public class GamePanel extends Scene {
         tileDepths = WorldGeneration.getAllDepthTiles();
 
         // Fix spawn height
-        playerEntity = new Player(this, 30, (getHeight() - playerHeight) - (int) (WorldGeneration.getTileLength() * 1.5), playerWidth, playerHeight);
+        playerEntity = new Player(this, 30, (getHeight() - playerHeight) - (int) (WorldGeneration.getTileLength() * 1.5) - 300, playerWidth, playerHeight);
+        // playerEntity = new Player(this, 30, (getHeight() - playerHeight) - (int) (WorldGeneration.getTileLength() * 1.5) - 30, playerWidth, playerHeight);
+        playerEntity.setWorldPos((int) playerEntity.getX());
+
         playerInput = new InputHandler(playerEntity);
         camera = new CameraControls(playerEntity, playerInput, backgroundManager);
         ar = new AssualtWeapon(playerEntity);

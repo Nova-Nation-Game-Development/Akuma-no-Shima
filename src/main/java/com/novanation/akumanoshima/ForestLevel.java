@@ -68,7 +68,7 @@ public class ForestLevel implements Level {
 
     private void createChunk(int elevation)
     {
-        Chunk newChunk = new Chunk((currentTile * TILE_LENGTH), yPos, CHUNK_WIDTH, (elevation / TILE_LENGTH), TILE_LENGTH);
+        Chunk newChunk = new Chunk((currentTile * TILE_LENGTH), yPos, CHUNK_WIDTH, (elevation / TILE_LENGTH), TILE_LENGTH, previousTile, WorldType.FOREST);
         chunkMap.put(currentTile * TILE_LENGTH, newChunk);
     }
     

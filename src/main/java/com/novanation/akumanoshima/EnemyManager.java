@@ -17,19 +17,19 @@ public class EnemyManager {
     // Difficulty Presets
 
     // Enemy Count
-    public static final int LOWER_EASY = 5;
-    public static final int UPPER_EASY = 15;
+    private static final int LOWER_EASY = 5;
+    private static final int UPPER_EASY = 15;
 
-    public static final int LOWER_NORMAL = 20;
-    public static final int UPPER_NORMAL = 30;
+    private static final int LOWER_NORMAL = 20;
+    private static final int UPPER_NORMAL = 30;
 
-    public static final int LOWER_HARD = 40;
-    public static final int UPPER_HARD = 70;
+    private static final int LOWER_HARD = 40;
+    private static final int UPPER_HARD = 70;
 
     // Enemy Health
-    public static final int HEALTH_EASY = 2;
-    public static final int HEALTH_NORMAL = 3;
-    public static final int HEALTH_HARD = 5;
+    private static final int HEALTH_EASY = 2;
+    private static final int HEALTH_NORMAL = 3;
+    private static final int HEALTH_HARD = 5;
 
     public static void generateEnemies(Difficulty difficulty)
     {
@@ -106,18 +106,20 @@ public class EnemyManager {
         }
     }
 
+    public static HashMap<String, Entity> getEnemies() { return enemies; }
+
     public static void destroyEntity(Entity enemy)
     {
         // TODO: Update the Entity Manager to remove it from the list
-        if (enemy instanceof EnemyHellhound enemyHellhound)
-        {
-            enemies.remove(enemyHellhound.getEnemyID());
-        }
+        // if (enemy instanceof EnemyHellhound enemyHellhound)
+        // {
+        //     enemies.remove(enemyHellhound.getEnemyID());
+        // }
 
-        if (enemy instanceof EnemyOni enemyOni)
-        {
-            enemies.remove(enemyOni.getEnemyID());
-        }
+        // if (enemy instanceof EnemyOni enemyOni)
+        // {
+        //     enemies.remove(enemyOni.getEnemyID());
+        // }
     }
 
     private static int getYPosition()
@@ -134,7 +136,11 @@ public class EnemyManager {
     public static void move(int direction)
     {
         for (Entity enemy : enemies.values())
+        {
             enemy.move(direction);
+            // enemy.setWorldPos((int)(direction * 0.1));
+            enemy.setWorldPos(direction);
+        }
     }
 
     public static void draw(Graphics2D g2)
@@ -142,6 +148,13 @@ public class EnemyManager {
         if (enemies == null) return;
 
         for (Entity enemy : enemies.values())
+        {
             enemy.draw(g2);
+
+            // TODO: Testing purposes
+            // g2.setColor(Color.BLUE);
+            // if (enemy.getCurrentChunk() != null)
+            //     g2.fill(enemy.getCurrentChunk().getChunkBounds());
+        }
     }
 }

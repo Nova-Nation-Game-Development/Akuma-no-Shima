@@ -18,6 +18,8 @@ public class Health {
     private final int DEFAULT_HP = 3;
     private int currentHealth = 3;
 
+    private boolean isDead = false;
+
     public Health()
     {
         healthImage = ImageManager.loadImage("/gfx/images/ui/heart_filled.png");
@@ -46,7 +48,16 @@ public class Health {
     }
 
     // TODO: Complete (Add Death Screen, etc)
-    public void killPlayer() { currentHealth = 0; System.out.println("You Died!");}
+    public void killPlayer()
+    {
+        if (!isDead)
+        {
+            currentHealth = 0;
+            isDead = true;
+
+            System.out.println("You Died!");
+        }
+    }
 
     public void killFinalBoss() {}
 
@@ -55,7 +66,7 @@ public class Health {
         hp = Math.abs(hp); // In case of health being negative
 
         if (hp + currentHealth > MAX_HP)
-            currentHealth = 5;
+            currentHealth = MAX_HP;
         else
             currentHealth += hp;
     }

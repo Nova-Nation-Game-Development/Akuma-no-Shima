@@ -1,9 +1,4 @@
-src/.LCKGameApplication.java~
 .gitignore
 .vscode/java-formatter.xml
-src/ConfigManager.java
-target/classes/ForestLevel.class
-target/classes/Tile.class
-target/classes/WorldGeneration.class
 user-config/user-settings.config
 target/classes/

@@ -62,7 +62,6 @@ public class Physics {
             double groundY = chunkBounds.getY();
 
             // Only snap the entity to the ground if they are falling on the ground (not air gap)
-            // Fix
             if (entityBottom >= groundY && entity.getVelocityY() >= 0)
             {
                 entity.setY(groundY - entity.getHeight());
@@ -74,6 +73,14 @@ public class Physics {
         }
         else
             entity.setGrounded(false);
+
+        if (entity.getY() > panel.getHeight())
+        {
+            if (entity instanceof Player)
+                entity.getHealth().killPlayer();
+            else
+                entity.getHealth().destroyEntity(entity);
+        }
     }
 
     // kinematics 

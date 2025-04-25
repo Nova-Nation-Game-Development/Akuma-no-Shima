@@ -36,6 +36,13 @@ public class EnemyHellhound implements Entity {
     public String getEnemyID() { return enemyID; }
 
     @Override
+    public int getHeight() { return height; }
+    @Override
+    public double getY() { return yPos; }
+    @Override
+    public Health getHealth() { return health; }
+
+    @Override
     public void draw(Graphics2D g2) { g2.drawImage(hellhoundImage, xPos, yPos, width, height, null); }
     
     @Override

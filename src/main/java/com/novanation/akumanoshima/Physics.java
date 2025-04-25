@@ -1,5 +1,7 @@
 package com.novanation.akumanoshima;
 
+import java.awt.geom.Rectangle2D;
+
 
 public class Physics {
     
@@ -11,6 +13,8 @@ public class Physics {
     private static final int MAX_STEP_COUNT = 230; // Maximum steps for calculating the jump // Influences jump height
     private static final double COUNT_SCALE = 0.3f;
     private static final double SPEED_SCALE = 0.2f;
+
+    public static GamePanel panel;
 
     private static double gravity = 0.1f; // gravity = 9.8 m/s
 
@@ -29,19 +33,39 @@ public class Physics {
 
     // Functions
     
+    private static int count;
+
+    public static void setPanel(GamePanel gamePanel) { panel = gamePanel; }
+
     public static void applyGravity(Entity entity, double x, double y)
     {
-        // if (entity == null) return;
+        if (entity == null) return;
 
-        // if (entity.getCurrentChunk() == null) // Assume air gap
-        //     entity.moveY((gravity * 10));
-        // else
-        // {
-        //     Rectangle2D.Double chunkBounds = entity.getCurrentChunk().getChunkBounds();
+        if (entity.getCurrentChunk() == null) // Assume air gap
+        {
+            entity.moveY((gravity * 10));
+            if (panel != null)
+                if (entity.getY() <= panel.getHeight())
+                {
+                    Health entityHealth = entity.getHealth();
+                    entityHealth.killPlayer();
+                }
+        }
+        else
+        {
+            Rectangle2D.Double chunkBounds = entity.getCurrentChunk().getChunkBounds();
 
-        //     if (y + (gravity * 10) + 64 <= chunkBounds.getY()) // Fix
-        //         entity.moveY((gravity * 10));
-        // }
+            count++;
+            Player player = (Player) entity;
+            if (count >= 100)
+            {
+                System.out.println(player.getY());
+                count = 0;
+            }
+
+            if (y + (gravity * 10) + entity.getHeight() <= chunkBounds.getY()) // Fix
+                entity.moveY((gravity * 10));
+        }
     }
 
     // kinematics 

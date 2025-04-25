@@ -6,6 +6,9 @@ import java.awt.geom.Rectangle2D;
 
 public class EnemyMaou implements Entity {
 
+    public int yPos;
+    public int height;
+
     private final Health health;
 
     // Design variables
@@ -16,6 +19,13 @@ public class EnemyMaou implements Entity {
         health = new Health();
         maouImage = ImageManager.loadImage("/gfx/characters/char_maou.png");
     }
+
+    @Override
+    public int getHeight() { return height; }
+    @Override
+    public double getY() { return yPos; }
+    @Override
+    public Health getHealth() { return health; }
 
     @Override
     public void move(int direction) { // TODO Auto-generated method stub

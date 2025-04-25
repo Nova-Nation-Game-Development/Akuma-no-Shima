@@ -72,6 +72,7 @@ public class Player implements Entity {
 
     // Locational Accessors
     public double getX() { return x; }
+    @Override
     public double getY() { return y; }
     // Locational Mutators
     public void setWorldPos(int xPos) { worldX = xPos; }
@@ -86,6 +87,8 @@ public class Player implements Entity {
     // Physics Accessors
     public boolean isJumping() { return isJumping; }
     public boolean canJump() { return canJump; }
+
+    @Override
     public Health getHealth() { return health; }
 
     // Panel Dimension Accessors
@@ -117,7 +120,6 @@ public class Player implements Entity {
         return moveSpeedMultiplier;
     }
 
-
     @Override
     public void move(int direction)
     {
@@ -142,7 +144,12 @@ public class Player implements Entity {
     public void onGround(boolean onGround) { }
 
     @Override
-    public Chunk getCurrentChunk() { return currentChunk; }
+    public Chunk getCurrentChunk()
+    {
+        currentChunk = WorldGeneration.getChunk(((worldX) / 64) * 64);
+
+        return currentChunk;
+    }
 
     public void stopMoving() { dx = 0; }
 
@@ -151,14 +158,11 @@ public class Player implements Entity {
         // Check collision upto dx
         for (int i = 0; i < Math.abs(dx); i++)
         {
-            if (dx > 0)
-                currentChunk = WorldGeneration.getChunk(worldX + (width / 2) + i);
-            else 
-                currentChunk = WorldGeneration.getChunk(worldX + (width / 2) - i);
-
             // Player is about to enter a chunk
             if (currentChunk != null)
             {
+                System.out.println(currentChunk);
+
                 previousChunk = WorldGeneration.getChunk((worldX + (width / 2) - i) - WorldGeneration.getTileLength());
 
                 if (dx < 0 && previousChunk != null) // Check if the player is moving backwards, and not over air

@@ -12,7 +12,13 @@ public interface Entity {
     public void performAction();
 
     public Rectangle2D.Double getEntityBounds();
+    public int getHeight();
+
     public Chunk getCurrentChunk();
     public void onGround(boolean onGround);
+
     public void moveY(double dx);
+    public double getY();
+
+    public Health getHealth();
 }

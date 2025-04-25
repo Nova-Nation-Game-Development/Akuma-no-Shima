@@ -5,7 +5,7 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.geom.Rectangle2D;
 
-public class Tile implements Entity {
+public class Tile {
 
     // Tile data
     private int x;
@@ -77,39 +77,31 @@ public class Tile implements Entity {
     public int getX() { return x; }
     public TileType getTileData() { return tileType; }
 
-    @Override
     public void move(int direction)
     {
         dx = direction;
         x += dx;
     }
 
-    @Override
     public void jump() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    @Override
     public void draw(Graphics2D g2) {
         g2.drawImage(tileImage, x, y, width, width, null);
     }
 
     // Remove this and create a new interface following interface segregation
-    @Override
     public void performAction() {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'performAction'");
     }
 
-    @Override
     public Rectangle2D.Double getEntityBounds() { return null; }
 
-    @Override
     public Chunk getCurrentChunk() { return null; }
 
-    @Override
     public void moveY(double dx) { }
 
-    @Override
     public void onGround(boolean onGround) { }
 }

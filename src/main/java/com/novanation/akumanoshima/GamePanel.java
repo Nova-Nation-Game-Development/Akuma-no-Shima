@@ -50,7 +50,6 @@ public class GamePanel extends Scene {
 
         doubleBufferBackground();
 
-
         g.dispose();
     }
 
@@ -120,6 +119,7 @@ public class GamePanel extends Scene {
     public void createGameEntities()
     {
         backgroundManager = new BackgroundManager(this, window);
+        Physics.setPanel(this);
 
         int playerHeight = (window.getHeight() / 164) * 40;
         int playerWidth = (playerHeight / 2);
@@ -135,7 +135,7 @@ public class GamePanel extends Scene {
         tileDepths = WorldGeneration.getAllDepthTiles();
 
         // Fix spawn height
-        playerEntity = new Player(this, 30, (getHeight() - playerHeight) - (int) (WorldGeneration.getTileLength() * 1.5), playerWidth, playerHeight);
+        playerEntity = new Player(this, 30, (getHeight() - playerHeight) - (int) (WorldGeneration.getTileLength() * 1.5) - 30, playerWidth, playerHeight);
         playerInput = new InputHandler(playerEntity);
         camera = new CameraControls(playerEntity, playerInput, backgroundManager);
         ar = new AssualtWeapon(playerEntity);

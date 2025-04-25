@@ -17,19 +17,19 @@ public class EnemyManager {
     // Difficulty Presets
 
     // Enemy Count
-    public static final int LOWER_EASY = 5;
-    public static final int UPPER_EASY = 15;
+    private static final int LOWER_EASY = 5;
+    private static final int UPPER_EASY = 15;
 
-    public static final int LOWER_NORMAL = 20;
-    public static final int UPPER_NORMAL = 30;
+    private static final int LOWER_NORMAL = 20;
+    private static final int UPPER_NORMAL = 30;
 
-    public static final int LOWER_HARD = 40;
-    public static final int UPPER_HARD = 70;
+    private static final int LOWER_HARD = 40;
+    private static final int UPPER_HARD = 70;
 
     // Enemy Health
-    public static final int HEALTH_EASY = 2;
-    public static final int HEALTH_NORMAL = 3;
-    public static final int HEALTH_HARD = 5;
+    private static final int HEALTH_EASY = 2;
+    private static final int HEALTH_NORMAL = 3;
+    private static final int HEALTH_HARD = 5;
 
     public static void generateEnemies(Difficulty difficulty)
     {
@@ -105,6 +105,8 @@ public class EnemyManager {
             }
         }
     }
+
+    public static HashMap<String, Entity> getEnemies() { return enemies; }
 
     public static void destroyEntity(Entity enemy)
     {

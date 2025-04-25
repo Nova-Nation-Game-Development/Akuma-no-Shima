@@ -18,6 +18,7 @@ public class CameraControls {
     
     // Location
     private double xPos;
+    private boolean inThreshold = false;
 
     public CameraControls(Player player, InputHandler playerInput, BackgroundManager backgroundManager)
     {
@@ -80,8 +81,12 @@ public class CameraControls {
 
     private void updatePlayer(int newPlayerSpeed)
     {
-        xPos += (newPlayerSpeed);
+        // if (!inThreshold)
+            xPos += newPlayerSpeed;
+
         player.setWorldPos((int) xPos);
+
+        System.out.println(player.getWorldX());
     }
 
     public void moveWorld(int newPlayerSpeed, int newWorldSpeed, int bgDirection)
@@ -90,31 +95,33 @@ public class CameraControls {
         if (player.isJumping())
             newPlayerSpeed *= 1.5;
 
-        // Handle collisions
-        if (!player.isColliding(newPlayerSpeed))
+        if (!player.isColliding(newPlayerSpeed, false))
             updatePlayer(newPlayerSpeed);
         else
         {
+            // If is colliding right, allow left movement
             if (player.getCollisionDirection() == 0 && newPlayerSpeed < 0)
                 updatePlayer(newPlayerSpeed);
 
+            // If is colliding left, allow right movement
             if (player.getCollisionDirection() == 1 && newPlayerSpeed > 0)
                 updatePlayer(newPlayerSpeed);
         }
-        
-        // For testing purposes only
-        // updatePlayer(newPlayerSpeed);
 
+        // Handle collisions
         if ((int) xPos < LEFT_THRESHOLD || (int) xPos > RIGHT_THRESHOLD)
-            if (!player.isColliding(newPlayerSpeed))
+        {
+            if (!player.isColliding(newPlayerSpeed, false))
                 player.move(newPlayerSpeed);
-    
+        }
+                
         if ((int) xPos > LEFT_THRESHOLD && (int) xPos < RIGHT_THRESHOLD)
         {
-            if (!player.isColliding(newPlayerSpeed))
+            if (!player.isColliding(newPlayerSpeed, true))
             {
                 backgroundManager.move(bgDirection);
                 WorldGeneration.move(newWorldSpeed);
+                EnemyManager.move(newWorldSpeed);
             }
         }
     }

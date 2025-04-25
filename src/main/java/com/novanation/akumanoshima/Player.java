@@ -30,15 +30,17 @@ public class Player implements Entity {
 
     private Health health;
    
-
     // Shape and Collisions
     private int width;
     private int height;
     private Chunk currentChunk;
-    private Chunk previousChunk;
     private Rectangle2D.Double chunk;
     Rectangle2D.Double playerBounds;
     private final Image playerImage;
+
+    // Temp
+    private double thresholdX = 0;
+    private boolean inThreshold = false;
 
     // Game Panel
     private final GamePanel panel;
@@ -120,22 +122,10 @@ public class Player implements Entity {
         return moveSpeedMultiplier;
     }
 
-    @Override
-    public void move(int direction)
-    {
-        dx = (int)(direction * moveSpeedMultiplier);
-
-        currentChunk = WorldGeneration.getChunk(2);
-
-        if (x + dx > 0 && x + dx < panel.getWidth() - width)
-            x += dx;
-    }
+    public int getWorldX() { return worldX; }
 
     @Override
-    public Rectangle2D.Double getEntityBounds()
-    {
-        return playerBounds;
-    }
+    public Rectangle2D.Double getEntityBounds() { return playerBounds; }
 
     @Override
     public void moveY(double dx) { y += dx; }
@@ -143,38 +133,80 @@ public class Player implements Entity {
     @Override
     public void onGround(boolean onGround) { }
 
+    public void update()
+    {
+        playerBounds = new Rectangle2D.Double(x, y - 2, width, height);
+    }
+
     @Override
     public Chunk getCurrentChunk()
     {
-        return currentChunk = WorldGeneration.getChunk(((worldX) / 64) * 64);
+        int tileLength = WorldGeneration.getTileLength();
+        
+        if (inThreshold)
+            return currentChunk = WorldGeneration.getChunk((((int) worldX) / tileLength) * tileLength);
+        else
+            return currentChunk = WorldGeneration.getChunk((((int) x + tileLength) / tileLength) * tileLength);
     }
 
     public void stopMoving() { dx = 0; }
 
-    public boolean isColliding(int dx)
+    @Override
+    public void move(int direction)
     {
-        // Check collision upto dx
-        for (int i = 0; i < Math.abs(dx); i++)
+        dx = (int)(direction * moveSpeedMultiplier);
+
+        if (x + dx > 0 && x + dx < panel.getWidth() - width)
+            x += dx;
+    }
+
+    public void setThresholdX(double xVal) { thresholdX = xVal; }
+    
+    public boolean isColliding(int dx, boolean inThreshold)
+    {
+        int tileLength = WorldGeneration.getTileLength();
+
+        this.inThreshold = inThreshold;
+
+        if (inThreshold)
         {
-            // Player is about to enter a chunk
-            if (currentChunk != null)
+            if (dx > 0)
             {
-                previousChunk = WorldGeneration.getChunk((worldX + (width / 2) - i) - WorldGeneration.getTileLength());
-
-                if (dx < 0 && previousChunk != null) // Check if the player is moving backwards, and not over air
-                    currentChunk = previousChunk;
-                    
-                chunk = currentChunk.getChunkBounds();
-
-                int tileHeight = WorldGeneration.getTileLength();
-                playerBounds = new Rectangle2D.Double(worldX, y - tileHeight, width, height + tileHeight);
-
-                if (playerBounds.intersects(chunk) || chunk.contains(playerBounds))
-                    return true;
+                Chunk nextChunk = WorldGeneration.getChunk((((int) thresholdX + tileLength) / tileLength) * tileLength);
+                if (nextChunk != null) // Next chunk is not air and exists
+                    return getCollision(nextChunk);
             }
+            else if (dx < 0)
+            {
+                Chunk previousChunk = WorldGeneration.getChunk((((int) thresholdX - tileLength) / tileLength) * tileLength);
+                if (previousChunk != null) // Previous chunk is not air and exists
+                    return getCollision(previousChunk);
+            }
+        }
+        
+        // Check collision with the next chunk
+        if (dx > 0)
+        {
+            Chunk nextChunk = WorldGeneration.getChunk((((int) x + tileLength) / tileLength) * tileLength);
+            if (nextChunk != null) // Next chunk is not air and exists
+                return getCollision(nextChunk);
+                
+        }
+        else if (dx < 0)
+        {
+            Chunk previousChunk = WorldGeneration.getChunk((((int) x - tileLength) / tileLength) * tileLength);
+            if (previousChunk != null) // Previous chunk is not air and exists
+                return getCollision(previousChunk);
         }
 
         return false;
+    }
+
+    private boolean getCollision(Chunk newChunk)
+    {
+        // Check collision
+        chunk = newChunk.getChunkBounds();
+        return playerBounds.intersects(chunk) || chunk.contains(playerBounds);
     }
 
     public int getCollisionDirection()

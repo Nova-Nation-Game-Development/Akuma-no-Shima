@@ -80,6 +80,10 @@ public class GamePanel extends Scene {
 
             if (playerEntity.getCurrentChunk() != null)
                 playerEntity.getCurrentChunk().showChunkBounds(imageContext);
+
+            imageContext.setColor(new Color(255, 255, 255, 128));
+            if (playerEntity.getEntityBounds() != null)
+                imageContext.fill(playerEntity.getEntityBounds());
         }
         
         EnemyManager.draw(imageContext);
@@ -107,7 +111,12 @@ public class GamePanel extends Scene {
     public void updateEntityCalculations()
     {
         // Constantly apply gravity to the player
-        Physics.applyGravity(playerEntity, playerEntity.getX(), playerEntity.getY());
+        // Physics.applyGravity(playerEntity, playerEntity.getX(), playerEntity.getY());
+        for (Entity entity : EnemyManager.getEnemies().values()) {
+            // Physics.applyGravity(entity, entity.getX(), entity.getY());
+        }
+
+        playerEntity.update();
 
         // This will keep track of the world and player and update their locations accordingly
         camera.update();
@@ -138,7 +147,10 @@ public class GamePanel extends Scene {
         tileDepths = WorldGeneration.getAllDepthTiles();
 
         // Fix spawn height
-        playerEntity = new Player(this, 30, (getHeight() - playerHeight) - (int) (WorldGeneration.getTileLength() * 1.5) - 30, playerWidth, playerHeight);
+        playerEntity = new Player(this, 30, (getHeight() - playerHeight) - (int) (WorldGeneration.getTileLength() * 1.5) - 300, playerWidth, playerHeight);
+        // playerEntity = new Player(this, 30, (getHeight() - playerHeight) - (int) (WorldGeneration.getTileLength() * 1.5) - 30, playerWidth, playerHeight);
+        playerEntity.setWorldPos((int) playerEntity.getX());
+
         playerInput = new InputHandler(playerEntity);
         camera = new CameraControls(playerEntity, playerInput, backgroundManager);
         ar = new AssualtWeapon(playerEntity);

@@ -91,12 +91,6 @@ public class Tile {
         g2.drawImage(tileImage, x, y, width, width, null);
     }
 
-    // Remove this and create a new interface following interface segregation
-    public void performAction() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'performAction'");
-    }
-
     public Rectangle2D.Double getEntityBounds() { return null; }
 
     public Chunk getCurrentChunk() { return null; }

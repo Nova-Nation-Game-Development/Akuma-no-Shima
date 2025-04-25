@@ -19,6 +19,7 @@ public interface Entity {
 
     public void moveY(double dx);
     public double getY();
+    public double getX();
 
     public Health getHealth();
 }

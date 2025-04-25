@@ -7,6 +7,7 @@ import java.awt.geom.Rectangle2D;
 public class EnemyMaou implements Entity {
 
     public int yPos;
+    public int xPos;
     public int height;
 
     private final Health health;
@@ -22,6 +23,8 @@ public class EnemyMaou implements Entity {
 
     @Override
     public int getHeight() { return height; }
+    @Override
+    public double getX() { return xPos; }
     @Override
     public double getY() { return yPos; }
     @Override

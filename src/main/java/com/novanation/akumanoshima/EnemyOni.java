@@ -37,6 +37,8 @@ public class EnemyOni implements Entity {
     @Override
     public int getHeight() { return height; }
     @Override
+    public double getX() { return xPos; }
+    @Override
     public double getY() { return yPos; }
     @Override
     public Health getHealth() { return health; }

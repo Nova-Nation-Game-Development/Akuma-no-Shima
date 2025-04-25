@@ -21,16 +21,19 @@ public class Chunk {
         this.width = width;
         this.height = height;
 
-        height *= tileLength;
-        width *= tileLength;
+        this.height *= tileLength;
+        this.width *= tileLength;
         
-        chunk = new Rectangle2D.Double(xPos, yPos, width, height);
+        chunk = new Rectangle2D.Double(this.xPos, this.yPos, this.width, this.height);
     }
 
     public void move(int dx)
     {
         xPos += dx;
+        chunk.setRect(xPos, yPos, width, height);
     }
+
+    public int getX() { return xPos; }
 
     // For testing purposes // Draw the chunk bounds
     public void showChunkBounds(Graphics2D g2) { g2.setColor(Color.RED); g2.fill(chunk); }

@@ -93,7 +93,7 @@ public class CameraControls {
         if (player.isJumping())
             newPlayerSpeed *= 1.5;
 
-        if (!player.isColliding(newPlayerSpeed, false))
+        if (!player.isColliding(newPlayerSpeed))
             updatePlayer(newPlayerSpeed);
         else
         {
@@ -108,12 +108,12 @@ public class CameraControls {
 
         // Handle collisions
         if ((int) xPos < LEFT_THRESHOLD || (int) xPos > RIGHT_THRESHOLD)
-            if (!player.isColliding(newPlayerSpeed, false))
+            if (!player.isColliding(newPlayerSpeed))
                 player.move(newPlayerSpeed);
                 
         if ((int) xPos > LEFT_THRESHOLD && (int) xPos < RIGHT_THRESHOLD)
         {
-            if (!player.isColliding(newPlayerSpeed, true))
+            if (!player.isColliding(newPlayerSpeed))
             {
                 backgroundManager.move(bgDirection);
                 WorldGeneration.move(newWorldSpeed);

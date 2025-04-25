@@ -33,14 +33,14 @@ public class Player implements Entity {
     // Shape and Collisions
     private int width;
     private int height;
+
     private Chunk currentChunk;
+    private Chunk previousChunk;
+    private Chunk nextChunk;
+    
     private Rectangle2D.Double chunk;
     Rectangle2D.Double playerBounds;
     private final Image playerImage;
-
-    // Temp
-    private double thresholdX = 0;
-    private boolean inThreshold = false;
 
     // Game Panel
     private final GamePanel panel;
@@ -135,15 +135,17 @@ public class Player implements Entity {
 
     public void update()
     {
+        int tileLength = WorldGeneration.getTileLength();
+        currentChunk = WorldGeneration.getChunk((((int) worldX) / tileLength) * tileLength);
+
         playerBounds = new Rectangle2D.Double(x, y - 2, width, height);
+
+        Chunk newChunk = WorldGeneration.getChunk((((int) worldX + tileLength) / tileLength) * tileLength);
+        determineChunkTile(newChunk);
     }
 
     @Override
-    public Chunk getCurrentChunk()
-    {
-        int tileLength = WorldGeneration.getTileLength();
-        return currentChunk = WorldGeneration.getChunk((((int) worldX) / tileLength) * tileLength);
-    }
+    public Chunk getCurrentChunk() { return currentChunk; }
 
     public void stopMoving() { dx = 0; }
 
@@ -155,47 +157,46 @@ public class Player implements Entity {
         if (x + dx > 0 && x + dx < panel.getWidth() - width)
             x += dx;
     }
-
-    public void setThresholdX(double xVal) { thresholdX = xVal; }
     
-    public boolean isColliding(int dx, boolean inThreshold)
+    public boolean isColliding(int dx)
     {
         int tileLength = WorldGeneration.getTileLength();
 
-        this.inThreshold = inThreshold;
-
-        if (inThreshold)
-        {
-            if (dx > 0)
-            {
-                Chunk nextChunk = WorldGeneration.getChunk((((int) thresholdX + tileLength) / tileLength) * tileLength);
-                if (nextChunk != null) // Next chunk is not air and exists
-                    return getCollision(nextChunk);
-            }
-            else if (dx < 0)
-            {
-                Chunk previousChunk = WorldGeneration.getChunk((((int) thresholdX - tileLength) / tileLength) * tileLength);
-                if (previousChunk != null) // Previous chunk is not air and exists
-                    return getCollision(previousChunk);
-            }
-        }
-        
-        // Check collision with the next chunk
         if (dx > 0)
         {
-            Chunk nextChunk = WorldGeneration.getChunk((((int) x + tileLength) / tileLength) * tileLength);
+            nextChunk = WorldGeneration.getChunk((((int) worldX + tileLength) / tileLength) * tileLength);
             if (nextChunk != null) // Next chunk is not air and exists
                 return getCollision(nextChunk);
-                
         }
         else if (dx < 0)
         {
-            Chunk previousChunk = WorldGeneration.getChunk((((int) x - tileLength) / tileLength) * tileLength);
+            previousChunk = WorldGeneration.getChunk((((int) worldX - tileLength) / tileLength) * tileLength);
             if (previousChunk != null) // Previous chunk is not air and exists
                 return getCollision(previousChunk);
         }
 
         return false;
+    }
+
+    private void determineChunkTile(Chunk newChunk)
+    {
+        if (newChunk != null && newChunk.getTileType() == TileType.TERTIARY)
+        {
+            // TODO: Reduce player speed, damage player or increase player speed
+            switch (newChunk.getWorldType())
+            {
+                case FOREST -> {
+                    System.out.println("In Water!");
+                }
+                case VOLCANIC -> {
+                    System.out.println("In Lava!");
+                }
+                case BLIZZARD -> {
+                    System.out.println("On Ice!");
+                }
+                case END -> {}
+            }
+        }
     }
 
     private boolean getCollision(Chunk newChunk)

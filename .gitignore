@@ -32,3 +32,14 @@ target/classes/com/novanation/akumanoshima/Physics.class
 target/classes/com/novanation/akumanoshima/Player.class
 target/classes/com/novanation/akumanoshima/Player$1.class
 target/classes/com/novanation/akumanoshima/Tile.class
+target/classes/com/novanation/akumanoshima/CameraControls.class
+target/classes/com/novanation/akumanoshima/Chunk.class
+target/classes/com/novanation/akumanoshima/EnemyHellhound.class
+target/classes/com/novanation/akumanoshima/EnemyMaou.class
+target/classes/com/novanation/akumanoshima/EnemyOni.class
+target/classes/com/novanation/akumanoshima/Entity.class
+target/classes/com/novanation/akumanoshima/GamePanel.class
+target/classes/com/novanation/akumanoshima/Health.class
+target/classes/com/novanation/akumanoshima/Physics.class
+target/classes/com/novanation/akumanoshima/Player.class
+target/classes/com/novanation/akumanoshima/Tile.class

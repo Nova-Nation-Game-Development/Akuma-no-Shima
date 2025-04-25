@@ -54,7 +54,7 @@ public final class GameWindow extends JFrame {
         SceneLoader.switchScene("Menu");
 
         // Main Panel
-        
+
         mainPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
         mainPanel.setBackground(Color.BLUE);
         mainPanel.add(gamePanel);

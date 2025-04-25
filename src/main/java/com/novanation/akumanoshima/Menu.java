@@ -16,7 +16,7 @@ import java.awt.image.BufferedImage;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-public class Menu extends Scene {
+public final class Menu extends Scene {
 
     // Thread Variables
     private Thread menuThread;
@@ -33,7 +33,6 @@ public class Menu extends Scene {
     private final BufferedImage image;
     private final Image loadingImage;
 
-
     public Menu(GameWindow window)
     {
         this.window = window;
@@ -45,7 +44,7 @@ public class Menu extends Scene {
         startMenuThread();
     }
 
-    private void startMenuThread()
+    public void startMenuThread()
     {
         menuThread = new Thread(this);
         menuThread.start();
@@ -54,7 +53,7 @@ public class Menu extends Scene {
         window.playAudioClip("Menu", ClipType.MENU, true);
     }
 
-    public void stopThread() { menuThread.interrupt(); menuThread = null; window.stopAudioClip("Menu", ClipType.MENU); }
+    public void stopThread() { menuThread.interrupt(); window.stopAudioClip("Menu", ClipType.MENU); }
 
     @Override
     protected void paintComponent(Graphics g)

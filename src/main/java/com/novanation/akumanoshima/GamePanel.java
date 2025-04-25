@@ -79,8 +79,9 @@ public class GamePanel extends Scene {
             if (playerEntity.getHealth() != null)
                 playerEntity.getHealth().draw(imageContext);
 
-            if (playerEntity.getCurrentChunk() != null)
-                playerEntity.getCurrentChunk().showChunkBounds(imageContext);
+            // Draw the player's current chunk
+            // if (playerEntity.getCurrentChunk() != null)
+            //     playerEntity.getCurrentChunk().showChunkBounds(imageContext);
 
             // Draw the player collider
             // imageContext.setColor(new Color(255, 255, 255, 128));

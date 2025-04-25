@@ -12,6 +12,7 @@ import java.util.Set;
 public class EnemyManager {
     
     private static HashMap<String, Entity> enemies = new HashMap<>();
+    private static HashMap<String, Entity> enemiesAlive = new HashMap<>();
     private static int worldWidth;
 
     // Difficulty Presets
@@ -31,8 +32,15 @@ public class EnemyManager {
     private static final int HEALTH_NORMAL = 3;
     private static final int HEALTH_HARD = 5;
 
-    public static void generateEnemies(Difficulty difficulty)
+    // Boss Fight
+    private static boolean isFinalLevel = false;
+
+    public static boolean isFinal() { return isFinalLevel; }
+
+    public static void generateEnemies(Difficulty difficulty, boolean isFinal, GamePanel panel)
     {
+        isFinalLevel = isFinal;
+
         Random random = new Random();
 
         int enemyCount = 0;
@@ -53,6 +61,16 @@ public class EnemyManager {
                 hellHoundCount = random.nextInt(8, 16); // [8..15]
             }
         }
+
+        if (isFinal)
+        {
+            EnemyMaou demonLord = new EnemyMaou(150, 190, panel.getWidth() - 150 - 30, 50, "The Demon Lord");
+            enemies.put(demonLord.getEnemyID(), demonLord);
+            enemiesAlive.put(demonLord.getEnemyID(), demonLord);
+            return; // Only the demon lord will be initially created
+        }
+
+        LevelManager.setTotalEnemies(enemyCount);
 
         List<String> enemyTypes = new ArrayList<>();
 
@@ -108,18 +126,35 @@ public class EnemyManager {
 
     public static HashMap<String, Entity> getEnemies() { return enemies; }
 
+    public static void killAllEntities()
+    {
+        for (Entity enemy : enemies.values())
+        {
+            if (enemy instanceof EnemyHellhound enemyHellhound)
+                enemyHellhound.setEnemyID("DESTROYED");
+
+            if (enemy instanceof EnemyOni enemyOni)
+                enemyOni.setEnemyID("DESTROYED");
+
+            if (enemy instanceof EnemyMaou enemyMaou)
+                enemyMaou.setEnemyID("DESTROYED");
+        }
+
+        LevelManager.update();
+    }
+
     public static void destroyEntity(Entity enemy)
     {
-        // TODO: Update the Entity Manager to remove it from the list
-        // if (enemy instanceof EnemyHellhound enemyHellhound)
-        // {
-        //     enemies.remove(enemyHellhound.getEnemyID());
-        // }
+        if (enemy instanceof EnemyHellhound enemyHellhound)
+            enemyHellhound.setEnemyID("DESTROYED");
 
-        // if (enemy instanceof EnemyOni enemyOni)
-        // {
-        //     enemies.remove(enemyOni.getEnemyID());
-        // }
+        if (enemy instanceof EnemyOni enemyOni)
+            enemyOni.setEnemyID("DESTROYED");
+
+        if (enemy instanceof EnemyMaou enemyMaou)
+            enemyMaou.setEnemyID("DESTROYED");
+
+        LevelManager.update();
     }
 
     private static int getYPosition()
@@ -130,7 +165,48 @@ public class EnemyManager {
 
     public static void setWorldWidth(int worldLimit) { worldWidth = worldLimit; }
 
-    public static int getRemainingEnemies() { return enemies.size(); }
+    public static HashMap<String, Entity> getAliveList()
+    {
+        for (Entity entity : enemies.values())
+        {
+            if (entity instanceof EnemyHellhound enemyHellhound)
+                if ("DESTROYED".equals(enemyHellhound.getEnemyID()))
+                    enemiesAlive.put(enemyHellhound.getEnemyID(), enemyHellhound);
+                
+            if (entity instanceof EnemyOni enemyOni)
+                if ("DESTROYED".equals(enemyOni.getEnemyID()))
+                    enemiesAlive.put(enemyOni.getEnemyID(), enemyOni);
+
+            if (entity instanceof EnemyMaou enemyMaou)
+                if ("DESTROYED".equals(enemyMaou.getEnemyID()))
+                    enemiesAlive.put(enemyMaou.getEnemyID(), enemyMaou);
+        }
+
+        return enemiesAlive;
+    }
+
+    public static int getRemainingEnemies()
+    {
+        int remainingEnemies = 0;
+        if (enemies.values() == null) return 0;
+
+        for (Entity entity : enemies.values())
+        {
+            if (entity instanceof EnemyHellhound enemyHellhound)
+                if (!"DESTROYED".equals(enemyHellhound.getEnemyID()))
+                    remainingEnemies++;
+                
+            if (entity instanceof EnemyOni enemyOni)
+                if (!"DESTROYED".equals(enemyOni.getEnemyID()))
+                    remainingEnemies++;
+
+            if (entity instanceof EnemyMaou enemyMaou)
+                if (!"DESTROYED".equals(enemyMaou.getEnemyID()))
+                    remainingEnemies++;
+        }
+
+        return remainingEnemies;
+    }
 
     // TODO: Move based on world speed
     public static void move(int direction)
@@ -149,7 +225,17 @@ public class EnemyManager {
 
         for (Entity enemy : enemies.values())
         {
-            enemy.draw(g2);
+            if (enemy instanceof EnemyHellhound enemyHellhound)
+                if (!"DESTROYED".equals(enemyHellhound.getEnemyID()))
+                    enemy.draw(g2);
+
+            if (enemy instanceof EnemyOni enemyOni)
+                if (!"DESTROYED".equals(enemyOni.getEnemyID()))
+                    enemy.draw(g2);
+
+            if (enemy instanceof EnemyMaou enemyMaou)
+                if (!"DESTROYED".equals(enemyMaou.getEnemyID()))
+                    enemy.draw(g2);
 
             // TODO: Testing purposes
             // g2.setColor(Color.BLUE);

@@ -32,7 +32,7 @@ public class EnemyOni implements Entity {
 
     private Rectangle2D.Double entityBounds;
 
-    private final String enemyID;
+    private String enemyID;
     private final Image oniImage;
 
     public EnemyOni(int width, int height, int xPos, int yPos, String enemyID)
@@ -80,6 +80,7 @@ public class EnemyOni implements Entity {
     }
     
     public String getEnemyID() { return enemyID; }
+    public void setEnemyID(String enemyID) { this.enemyID = enemyID; }
 
     @Override
     public int getHeight() { return height; }

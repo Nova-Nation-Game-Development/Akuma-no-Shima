@@ -37,11 +37,13 @@ public class LoadingPanel extends JPanel implements Runnable {
     
     public void startLoadThread()
     {
+        currentProgress = 0;
+
         loadingThread = new Thread(this);
         loadingThread.start();
     }
 
-    public void stopThread() { loadingThread.interrupt(); loadingThread = null;}
+    public void stopThread() { loadingThread.interrupt(); }
     public boolean isRunning() { return loadingThread.isAlive(); }
 
     public void draw(Graphics2D g2) { g2.drawImage(loadingImage, 0, 0, window.getWidth(), this.window.getHeight(), null); }

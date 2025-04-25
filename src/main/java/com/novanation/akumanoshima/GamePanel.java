@@ -108,7 +108,51 @@ public class GamePanel extends Scene {
             imageContext.fillOval(x - 2, y - 2, 4, 4);
         }
 
+        if (LevelManager.showLevelClear() && LevelManager.isSetUp())
+        {
+            long elapsed = System.currentTimeMillis() - LevelManager.levelClearStartTime();
+            if (elapsed <= 3000)
+            {
+                int x = LevelManager.getImgClearX();
+                int y = LevelManager.getImgClearY();
+        
+                imageContext.drawImage(LevelManager.getClearImage(), x, y, this);
+            }
+            else
+            {
+                LevelManager.setLevelClear(false);
+                startNewLevel();
+            }
+        }
+
+        if (LevelManager.isFinalLevel() && LevelManager.isSetUp())
+        {
+            long elapsed = System.currentTimeMillis() - LevelManager.levelClearStartTime();
+            if (elapsed <= 5000)
+            {
+                int x = LevelManager.getImgWinX();
+                int y = LevelManager.getImgWinY();
+        
+                imageContext.drawImage(LevelManager.getWinImage(), x, y, this);
+            }
+            else
+            {
+                LevelManager.setFinal(false);
+                // Return the player to the main menu
+                SceneLoader.switchScene("Menu");
+                window.playAudioClip("Menu", ClipType.MENU, true);
+                stopGameThread();
+            }
+        }
+
         imageContext.dispose();
+    }
+
+    public void startNewLevel()
+    {
+        SceneLoader.switchScene("LoadingPanel");
+        stopGameThread();
+        window.loadGame();
     }
 
     public void updateEntityCalculations()
@@ -116,7 +160,7 @@ public class GamePanel extends Scene {
         // Constantly apply gravity to the player
         Physics.applyGravity(playerEntity, playerEntity.getX(), playerEntity.getY());
 
-        // Add them to a separate list to prevent modification during iteration
+        // Add entities to a separate list to prevent modification during iteration
         ArrayList<Entity> entityList = new ArrayList<>();
         for (Entity entity : EnemyManager.getEnemies().values())
             entityList.add(entity);
@@ -144,6 +188,8 @@ public class GamePanel extends Scene {
         backgroundManager = new BackgroundManager(this, window);
         Physics.setPanel(this);
 
+        LevelManager.setupToast(this);
+
         int playerHeight = (window.getHeight() / 164) * 40;
         int playerWidth = (playerHeight / 2);
 
@@ -151,15 +197,15 @@ public class GamePanel extends Scene {
 
         if (currentLevel == finalLevel && !isEndless)
             WorldGeneration.generateLevel(this, WorldType.END);
-        else
+        else if (!isEndless)
             WorldGeneration.generateLevel(this, world);
+        else
+            WorldGeneration.generateLevel(this, WorldType.END);
 
         tiles = WorldGeneration.getAllTiles();
         tileDepths = WorldGeneration.getAllDepthTiles();
 
-        // Fix spawn height
-        playerEntity = new Player(this, 30, (getHeight() - playerHeight) - (int) (WorldGeneration.getTileLength() * 1.5) - 300, playerWidth, playerHeight);
-        // playerEntity = new Player(this, 30, (getHeight() - playerHeight) - (int) (WorldGeneration.getTileLength() * 1.5) - 30, playerWidth, playerHeight);
+        playerEntity = new Player(this, 30, (getHeight() - playerHeight) - (int) (WorldGeneration.getTileLength() * 1.5) - 30, playerWidth, playerHeight);
         playerEntity.setWorldPos((int) playerEntity.getX());
 
         playerInput = new InputHandler(playerEntity);
@@ -187,6 +233,8 @@ public class GamePanel extends Scene {
             gameThread.start();
         }
     }
+
+    public void stopGameThread() { gameThread.interrupt(); }
 
     @Override
     public void run()

@@ -66,7 +66,7 @@ public class Health {
         hp = Math.abs(hp); // In case of health being negative
 
         if (hp + currentHealth > MAX_HP)
-            currentHealth = 5;
+            currentHealth = MAX_HP;
         else
             currentHealth += hp;
     }

@@ -55,23 +55,42 @@ public class Tile {
         {
             case PRIMARY -> tileImage = ImageManager.loadImage("/gfx/tiles/grass_tile.png");
             case SECONDARY -> tileImage = ImageManager.loadImage("/gfx/tiles/dirt_tile.png");
-            case TERTIARY -> tileImage = ImageManager.loadImage("/gfx/tiles/water/water_tile_1.png"); // Use animated water in future
+            case TERTIARY -> tileImage = ImageManager.loadImage("/gfx/tiles/animated/water_tile_1.png"); // TODO: Use animated water in future
+            case VOID -> {}
         }
     }
 
     private void setupVolcanicData()
     {
-        
+        switch (tileType)
+        {
+            case PRIMARY -> tileImage = ImageManager.loadImage("/gfx/tiles/lava_stone_tile.png");
+            case SECONDARY -> tileImage = ImageManager.loadImage("/gfx/tiles/stone_tile.png");
+            case TERTIARY -> tileImage = ImageManager.loadImage("/gfx/tiles/animated/water_tile_1.png"); // TODO: Use animated lava in future
+            case VOID -> {}
+        }
     }
 
     private void setupBlizzardData()
     {
-        
+        switch (tileType)
+        {
+            case PRIMARY -> tileImage = ImageManager.loadImage("/gfx/tiles/snowy_dirt_tile.png");
+            case SECONDARY -> tileImage = ImageManager.loadImage("/gfx/tiles/snow_pile_tile.png");
+            case TERTIARY -> tileImage = ImageManager.loadImage("/gfx/tiles/animated/water_tile_1.png"); // TODO: Use ice tile
+            case VOID -> {}
+        }
     }
 
     private void setupEndData()
     {
-
+        switch (tileType)
+        {
+            case PRIMARY -> tileImage = ImageManager.loadImage("/gfx/tiles/grass_tile.png"); // TODO: Use brick tiles
+            case SECONDARY -> tileImage = ImageManager.loadImage("/gfx/tiles/dirt_tile.png"); // TODO: Use cracked brick tiles
+            case TERTIARY -> {}
+            case VOID -> {}
+        }
     }
 
     public int getX() { return x; }

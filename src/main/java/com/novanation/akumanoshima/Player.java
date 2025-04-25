@@ -142,11 +142,7 @@ public class Player implements Entity {
     public Chunk getCurrentChunk()
     {
         int tileLength = WorldGeneration.getTileLength();
-        
-        if (inThreshold)
-            return currentChunk = WorldGeneration.getChunk((((int) worldX) / tileLength) * tileLength);
-        else
-            return currentChunk = WorldGeneration.getChunk((((int) x + tileLength) / tileLength) * tileLength);
+        return currentChunk = WorldGeneration.getChunk((((int) worldX) / tileLength) * tileLength);
     }
 
     public void stopMoving() { dx = 0; }

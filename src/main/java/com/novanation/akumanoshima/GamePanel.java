@@ -112,6 +112,7 @@ public class GamePanel extends Scene {
     {
         // Constantly apply gravity to the player
         // Physics.applyGravity(playerEntity, playerEntity.getX(), playerEntity.getY());
+
         for (Entity entity : EnemyManager.getEnemies().values()) {
             // Physics.applyGravity(entity, entity.getX(), entity.getY());
         }

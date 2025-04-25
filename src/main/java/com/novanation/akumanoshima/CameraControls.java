@@ -85,8 +85,6 @@ public class CameraControls {
             xPos += newPlayerSpeed;
 
         player.setWorldPos((int) xPos);
-
-        System.out.println(player.getWorldX());
     }
 
     public void moveWorld(int newPlayerSpeed, int newWorldSpeed, int bgDirection)
@@ -110,10 +108,8 @@ public class CameraControls {
 
         // Handle collisions
         if ((int) xPos < LEFT_THRESHOLD || (int) xPos > RIGHT_THRESHOLD)
-        {
             if (!player.isColliding(newPlayerSpeed, false))
                 player.move(newPlayerSpeed);
-        }
                 
         if ((int) xPos > LEFT_THRESHOLD && (int) xPos < RIGHT_THRESHOLD)
         {

@@ -44,9 +44,7 @@ public class LevelManager {
     public static void update()
     {
         remainingEnemies = EnemyManager.getRemainingEnemies();
-
-        System.out.println(remainingEnemies);
-
+        
         if (!isClear && remainingEnemies <= 0) // The clear condition will be limited to kills
         {
             // Progress to next level

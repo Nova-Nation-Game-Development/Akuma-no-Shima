@@ -146,9 +146,7 @@ public class Player implements Entity {
     @Override
     public Chunk getCurrentChunk()
     {
-        currentChunk = WorldGeneration.getChunk(((worldX) / 64) * 64);
-
-        return currentChunk;
+        return currentChunk = WorldGeneration.getChunk(((worldX) / 64) * 64);
     }
 
     public void stopMoving() { dx = 0; }
@@ -161,8 +159,6 @@ public class Player implements Entity {
             // Player is about to enter a chunk
             if (currentChunk != null)
             {
-                System.out.println(currentChunk);
-
                 previousChunk = WorldGeneration.getChunk((worldX + (width / 2) - i) - WorldGeneration.getTileLength());
 
                 if (dx < 0 && previousChunk != null) // Check if the player is moving backwards, and not over air

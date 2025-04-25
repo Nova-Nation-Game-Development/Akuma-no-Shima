@@ -21,14 +21,10 @@ public class Chunk {
         this.width = width;
         this.height = height;
 
-        setDimensions(tileLength);
-        chunk = new Rectangle2D.Double(xPos, yPos, width, height);
-    }
-
-    private void setDimensions(int tileLength)
-    {
         height *= tileLength;
         width *= tileLength;
+        
+        chunk = new Rectangle2D.Double(xPos, yPos, width, height);
     }
 
     public void move(int dx)

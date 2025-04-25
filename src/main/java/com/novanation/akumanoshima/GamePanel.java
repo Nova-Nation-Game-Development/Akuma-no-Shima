@@ -77,6 +77,9 @@ public class GamePanel extends Scene {
             
             if (playerEntity.getHealth() != null)
                 playerEntity.getHealth().draw(imageContext);
+
+            if (playerEntity.getCurrentChunk() != null)
+                playerEntity.getCurrentChunk().showChunkBounds(imageContext);
         }
         
         EnemyManager.draw(imageContext);

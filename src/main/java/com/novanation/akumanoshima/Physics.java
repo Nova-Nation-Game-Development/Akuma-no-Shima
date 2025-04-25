@@ -55,14 +55,6 @@ public class Physics {
         {
             Rectangle2D.Double chunkBounds = entity.getCurrentChunk().getChunkBounds();
 
-            count++;
-            Player player = (Player) entity;
-            if (count >= 100)
-            {
-                System.out.println(player.getY());
-                count = 0;
-            }
-
             if (y + (gravity * 10) + entity.getHeight() <= chunkBounds.getY()) // Fix
                 entity.moveY((gravity * 10));
         }

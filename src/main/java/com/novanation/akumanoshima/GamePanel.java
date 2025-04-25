@@ -81,9 +81,10 @@ public class GamePanel extends Scene {
             if (playerEntity.getCurrentChunk() != null)
                 playerEntity.getCurrentChunk().showChunkBounds(imageContext);
 
-            imageContext.setColor(new Color(255, 255, 255, 128));
-            if (playerEntity.getEntityBounds() != null)
-                imageContext.fill(playerEntity.getEntityBounds());
+            // Draw the player collider
+            // imageContext.setColor(new Color(255, 255, 255, 128));
+            // if (playerEntity.getEntityBounds() != null)
+            //     imageContext.fill(playerEntity.getEntityBounds());
         }
         
         EnemyManager.draw(imageContext);
@@ -111,7 +112,7 @@ public class GamePanel extends Scene {
     public void updateEntityCalculations()
     {
         // Constantly apply gravity to the player
-        // Physics.applyGravity(playerEntity, playerEntity.getX(), playerEntity.getY());
+        Physics.applyGravity(playerEntity, playerEntity.getX(), playerEntity.getY());
 
         for (Entity entity : EnemyManager.getEnemies().values()) {
             // Physics.applyGravity(entity, entity.getX(), entity.getY());

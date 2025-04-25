@@ -16,7 +16,8 @@ public class Physics {
 
     public static GamePanel panel;
 
-    private static double gravity = 0.1f; // gravity = 9.8 m/s
+    private static double gravity = 0.5f; // gravity = 9.8 m/s
+    private static double terminalVelocity = 10;
 
     public boolean isJumping = false;
     private double currTime = 0;
@@ -41,23 +42,38 @@ public class Physics {
     {
         if (entity == null) return;
 
-        if (entity.getCurrentChunk() == null) // Assume air gap
+        // Apply gravity
+        if (!entity.isGrounded())
         {
-            entity.moveY((gravity * 10));
-            if (panel != null)
-                if (entity.getY() <= panel.getHeight())
-                {
-                    Health entityHealth = entity.getHealth();
-                    entityHealth.killPlayer();
-                }
+            double newVelocityY = Math.min(entity.getVelocityY() + gravity, terminalVelocity);
+            entity.setVelocityY(newVelocityY);
+        }
+
+        entity.moveY(entity.getVelocityY());
+
+        // Check if player is landing
+        Rectangle2D.Double chunkBounds = entity.getCurrentChunk() != null
+            ? entity.getCurrentChunk().getChunkBounds()
+            : null;
+
+        if (chunkBounds != null)
+        {
+            double entityBottom = entity.getY() + entity.getHeight();
+            double groundY = chunkBounds.getY();
+
+            // Only snap the entity to the ground if they are falling on the ground (not air gap)
+            // Fix
+            if (entityBottom >= groundY && entity.getVelocityY() >= 0)
+            {
+                entity.setY(groundY - entity.getHeight());
+                entity.setGrounded(true);
+                entity.setVelocityY(0);
+            }
+            else
+                entity.setGrounded(false);
         }
         else
-        {
-            Rectangle2D.Double chunkBounds = entity.getCurrentChunk().getChunkBounds();
-
-            if (y + (gravity * 10) + entity.getHeight() <= chunkBounds.getY()) // Fix
-                entity.moveY((gravity * 10));
-        }
+            entity.setGrounded(false);
     }
 
     // kinematics 

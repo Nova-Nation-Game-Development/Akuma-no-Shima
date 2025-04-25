@@ -15,11 +15,18 @@ public interface Entity {
     public int getHeight();
 
     public Chunk getCurrentChunk();
-    public void onGround(boolean onGround);
 
-    public void moveY(double dx);
-    public double getY();
     public double getX();
+    public double getY();
+    public double getDY();
+    public void setY(double newY);
+    public void moveY(double dy);
+
+    public double getVelocityY();
+    public void setVelocityY(double vy);
+
+    public boolean isGrounded();
+    public void setGrounded(boolean grounded);
 
     public Health getHealth();
 }

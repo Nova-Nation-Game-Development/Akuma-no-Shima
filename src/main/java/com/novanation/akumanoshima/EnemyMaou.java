@@ -55,11 +55,31 @@ public class EnemyMaou implements Entity {
     throw new UnsupportedOperationException("Unimplemented method 'getCurrentChunk'"); }
 
     @Override
-    public void onGround(boolean onGround) { // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'onGround'"); }
-
-    @Override
     public void moveY(double dx) { // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'moveY'"); }
+
+    @Override
+    public double getDY() { // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'getDY'"); }
+
+    @Override
+    public void setY(double newY) { // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'setY'"); }
+
+    @Override
+    public double getVelocityY() { // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'getVelocityY'"); }
+
+    @Override
+    public void setVelocityY(double vy) { // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'setVelocityY'"); }
+
+    @Override
+    public boolean isGrounded() { // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'isGrounded'"); }
+
+    @Override
+    public void setGrounded(boolean grounded) { // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'setGrounded'"); }
     
 }

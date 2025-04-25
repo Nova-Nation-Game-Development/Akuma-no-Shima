@@ -91,7 +91,11 @@ public class CameraControls {
     {
         // Increase player speed while jumping
         if (player.isJumping())
+        {
             newPlayerSpeed *= 1.5;
+            newWorldSpeed *= 1.5;
+        }
+            
 
         if (!player.isColliding(newPlayerSpeed))
             updatePlayer(newPlayerSpeed);

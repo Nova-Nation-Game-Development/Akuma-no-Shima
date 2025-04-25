@@ -7,8 +7,6 @@ import java.awt.Image;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class Player implements Entity {
     
@@ -27,6 +25,9 @@ public class Player implements Entity {
     private double startY;
     private boolean isJumping;
     private boolean canJump;
+    private boolean onGround;
+
+    private double vy;
 
     private Health health;
    
@@ -70,9 +71,11 @@ public class Player implements Entity {
     public void setDY(int newDY) { dy = newDY; }
     // Directional accessors
     public int getDX() { return dx; }
-    public int getDY() { return dy; }
+    @Override
+    public double getDY() { return dy; }
 
     // Locational Accessors
+    @Override
     public double getX() { return x; }
     @Override
     public double getY() { return y; }
@@ -84,10 +87,11 @@ public class Player implements Entity {
     public void setHeight(int newHeight) { height = newHeight; }
     // Shape Accessors
     public int getWidth() { return width; }
+    @Override
     public int getHeight() { return height; }
 
     // Physics Accessors
-    public boolean isJumping() { return isJumping; }
+    public boolean isJumping() { return !isGrounded(); }
     public boolean canJump() { return canJump; }
 
     @Override
@@ -131,7 +135,17 @@ public class Player implements Entity {
     public void moveY(double dx) { y += dx; }
 
     @Override
-    public void onGround(boolean onGround) { }
+    public void setY(double newY) { y = newY; }
+
+    @Override
+    public boolean isGrounded() { return onGround; }
+    @Override
+    public void setGrounded(boolean grounded) { onGround = grounded; }
+
+    @Override
+    public double getVelocityY() { return vy; }
+    @Override
+    public void setVelocityY(double vy) { this.vy = vy; }
 
     public void update()
     {
@@ -216,86 +230,11 @@ public class Player implements Entity {
     @Override
     public void jump()
     {
-        isJumping = true;
-        canJump = true;
-
-        Timer timer = new Timer();
-
-        // Perform jump over a period of time
-        TimerTask jumpTask = new TimerTask() {
-            int counter = 0;
-            int countdown = 1;
-
-            int tileHeight = WorldGeneration.getTileLength();
-            int decrementCounter = 0;
-            double velocity = 0;
-
-            @Override
-            public void run() {
-                counter++;
-                // Perform jump actions
-
-                // First half
-                if (counter < (Physics.getMaxStep() * 0.20))
-                    velocity = Physics.getSpeedScale() * counter;
-                
-                // Second half
-                if (counter >= (Physics.getMaxStep() * 0.20))
-                {
-                    decrementCounter++;
-                    velocity = -(Physics.getGravity() * decrementCounter * 2);
-                }
-
-                // Prevent a jump loop
-                if (counter + Physics.getJumpInterval() >= Physics.getMaxStep())
-                    canJump = false;
-
-                if (counter >= Physics.getMaxStep())
-                {
-                    isJumping = false;
-                    timer.cancel();
-                }
-
-                // End jump task on ground contact
-                if ((y - velocity) + height < panel.getHeight() - tileHeight)
-                {
-                    // Stop performing the jump and end the task
-                    if (!canJump)
-                    {
-                        if (countdown == 0)
-                        {
-                            isJumping = false;
-                            timer.cancel();
-                            return;
-                        }
-                        else
-                            countdown--;
-                    }
-
-                    double newY = y - velocity;
-
-                    if (!(newY + height + 25 > panel.getHeight() - tileHeight))
-                        performJumpAction(velocity);
-                    else
-                        canJump = false;
-                }
-            }
-        };
-
-        timer.scheduleAtFixedRate(jumpTask, 0, Physics.getJumpInterval());
-    }
-
-    private void performJumpAction(double velocity)
-    {
-        double newY = y - velocity;
-        double newX = Physics.calculateHorizComponent(velocity, 0);
-
-        int tileHeight = WorldGeneration.getTileLength();
-
-        // x += newX;
-
-        if (newY + 25 > 0 && newY + height + 25 < panel.getHeight() - tileHeight)
-            y = (int) newY;
+        if (onGround)
+        {
+            setVelocityY(-16);
+            onGround = false;
+        }
     }
 
     @Override

@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.Collection;
 
 public class GamePanel extends Scene {
@@ -114,10 +115,17 @@ public class GamePanel extends Scene {
         // Constantly apply gravity to the player
         Physics.applyGravity(playerEntity, playerEntity.getX(), playerEntity.getY());
 
-        for (Entity entity : EnemyManager.getEnemies().values()) {
-            // Physics.applyGravity(entity, entity.getX(), entity.getY());
-        }
+        // Add them to a separate list to prevent modification during iteration
+        ArrayList<Entity> entityList = new ArrayList<>();
+        for (Entity entity : EnemyManager.getEnemies().values())
+            entityList.add(entity);
 
+        for (Entity entity : entityList)
+        {
+            Physics.applyGravity(entity, entity.getX(), entity.getY());
+            entity.update();
+        }
+            
         playerEntity.update();
 
         // This will keep track of the world and player and update their locations accordingly

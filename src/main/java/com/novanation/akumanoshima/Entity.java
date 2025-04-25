@@ -15,12 +15,14 @@ public interface Entity {
     public int getHeight();
 
     public Chunk getCurrentChunk();
+    public void update();
 
     public double getX();
     public double getY();
     public double getDY();
     public void setY(double newY);
     public void moveY(double dy);
+    public void setWorldPos(int xPos);
 
     public double getVelocityY();
     public void setVelocityY(double vy);

@@ -80,6 +80,7 @@ public class Player implements Entity {
     @Override
     public double getY() { return y; }
     // Locational Mutators
+    @Override
     public void setWorldPos(int xPos) { worldX = xPos; }
 
     // Shape Mutators
@@ -93,6 +94,25 @@ public class Player implements Entity {
     // Physics Accessors
     public boolean isJumping() { return !isGrounded(); }
     public boolean canJump() { return canJump; }
+
+    @Override
+    public Rectangle2D.Double getEntityBounds() { return playerBounds; }
+
+    @Override
+    public void moveY(double dx) { y += dx; }
+
+    @Override
+    public void setY(double newY) { y = newY; }
+
+    @Override
+    public boolean isGrounded() { return onGround; }
+    @Override
+    public void setGrounded(boolean grounded) { onGround = grounded; }
+
+    @Override
+    public double getVelocityY() { return vy; }
+    @Override
+    public void setVelocityY(double vy) { this.vy = vy; }
 
     @Override
     public Health getHealth() { return health; }
@@ -129,24 +149,6 @@ public class Player implements Entity {
     public int getWorldX() { return worldX; }
 
     @Override
-    public Rectangle2D.Double getEntityBounds() { return playerBounds; }
-
-    @Override
-    public void moveY(double dx) { y += dx; }
-
-    @Override
-    public void setY(double newY) { y = newY; }
-
-    @Override
-    public boolean isGrounded() { return onGround; }
-    @Override
-    public void setGrounded(boolean grounded) { onGround = grounded; }
-
-    @Override
-    public double getVelocityY() { return vy; }
-    @Override
-    public void setVelocityY(double vy) { this.vy = vy; }
-
     public void update()
     {
         int tileLength = WorldGeneration.getTileLength();

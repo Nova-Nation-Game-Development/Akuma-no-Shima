@@ -111,15 +111,15 @@ public class EnemyManager {
     public static void destroyEntity(Entity enemy)
     {
         // TODO: Update the Entity Manager to remove it from the list
-        if (enemy instanceof EnemyHellhound enemyHellhound)
-        {
-            enemies.remove(enemyHellhound.getEnemyID());
-        }
+        // if (enemy instanceof EnemyHellhound enemyHellhound)
+        // {
+        //     enemies.remove(enemyHellhound.getEnemyID());
+        // }
 
-        if (enemy instanceof EnemyOni enemyOni)
-        {
-            enemies.remove(enemyOni.getEnemyID());
-        }
+        // if (enemy instanceof EnemyOni enemyOni)
+        // {
+        //     enemies.remove(enemyOni.getEnemyID());
+        // }
     }
 
     private static int getYPosition()
@@ -136,7 +136,11 @@ public class EnemyManager {
     public static void move(int direction)
     {
         for (Entity enemy : enemies.values())
+        {
             enemy.move(direction);
+            // enemy.setWorldPos((int)(direction * 0.1));
+            enemy.setWorldPos(direction);
+        }
     }
 
     public static void draw(Graphics2D g2)
@@ -144,6 +148,13 @@ public class EnemyManager {
         if (enemies == null) return;
 
         for (Entity enemy : enemies.values())
+        {
             enemy.draw(g2);
+
+            // TODO: Testing purposes
+            // g2.setColor(Color.BLUE);
+            // if (enemy.getCurrentChunk() != null)
+            //     g2.fill(enemy.getCurrentChunk().getChunkBounds());
+        }
     }
 }

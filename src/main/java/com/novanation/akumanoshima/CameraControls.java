@@ -81,9 +81,7 @@ public class CameraControls {
 
     private void updatePlayer(int newPlayerSpeed)
     {
-        // if (!inThreshold)
-            xPos += newPlayerSpeed;
-
+        xPos += newPlayerSpeed;
         player.setWorldPos((int) xPos);
     }
 

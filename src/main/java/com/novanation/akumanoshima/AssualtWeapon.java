@@ -92,6 +92,8 @@ public class AssualtWeapon implements Weapon {
         }
     }
 
+   
+
     @Override
     public void reload() { // not in use
       //  if (!isReloading && currentBulletIndex > 0) {

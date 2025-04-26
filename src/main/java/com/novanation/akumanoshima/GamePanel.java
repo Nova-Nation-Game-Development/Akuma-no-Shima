@@ -107,6 +107,11 @@ public class GamePanel extends Scene {
         // Constantly apply gravity to the player
         Physics.applyGravity(playerEntity, playerEntity.getX(), playerEntity.getY());
 
+         for (Entity enemy : EnemyManager.getAllEnemies()) {
+            if (enemy instanceof EnemyOni oni) {
+                oni.performAction();
+            }
+    }
         // This will keep track of the world and player and update their locations accordingly
         camera.update();
         if(ar != null) {
@@ -137,6 +142,8 @@ public class GamePanel extends Scene {
         // Fix spawn height
         playerEntity = new Player(this, 30, (getHeight() - playerHeight) - (int) (WorldGeneration.getTileLength() * 1.5), playerWidth, playerHeight);
         playerInput = new InputHandler(playerEntity);
+        EnemyManager.setPlayer(playerEntity); // Set player instance before generating enemies
+        EnemyManager.generateEnemies(window.getConfig().getDifficulty());
         camera = new CameraControls(playerEntity, playerInput, backgroundManager);
         ar = new AssualtWeapon(playerEntity);
         ar.setInputHandler(playerInput);

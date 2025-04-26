@@ -61,6 +61,7 @@ public class Player implements Entity {
         isJumping = false;
         playerImage = ImageManager.loadImage("/gfx/characters/char_noroi.png");
         health = new Health();
+        playerBounds = new Rectangle2D.Double(x, y, width, height);
     }
 
     // Directional mutators
@@ -73,6 +74,8 @@ public class Player implements Entity {
     // Locational Accessors
     public double getX() { return x; }
     public double getY() { return y; }
+    public int getWorldX() { return worldX; }
+   
     // Locational Mutators
     public void setWorldPos(int xPos) { worldX = xPos; }
 
@@ -127,6 +130,8 @@ public class Player implements Entity {
 
         if (x + dx > 0 && x + dx < panel.getWidth() - width)
             x += dx;
+
+            playerBounds.setRect(x, y, width, height);
     }
 
     @Override

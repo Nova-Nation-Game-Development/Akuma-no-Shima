@@ -1,10 +1,9 @@
 package com.novanation.akumanoshima;
 
-
 import java.util.HashMap;
 import java.util.Random;
 
-public class ForestLevel implements Level {
+public class VolcanicLevel implements Level {
 
     private static final HashMap<Integer, Tile> tileMap = new HashMap<>();
     private static final HashMap<Integer, Tile> tileDepthMap = new HashMap<>();
@@ -19,14 +18,14 @@ public class ForestLevel implements Level {
     private static final int ELEVATION_PERCENT = 60;
     private static final int CHUNK_WIDTH = 1;
 
-    private static final int MAIN_TILE_PERCENT = 40;            // Represents grass, lava stone, snowy dirt
-    private static final int SECONDARY_TILE_PERCENT = 50;       // Represents dirt, stone, snow pile
-    private static final int TERTIARY_TILE_PERCENT = 75;        // Represents water, lava, ice
+    private static final int MAIN_TILE_PERCENT = 60;            // Represents grass, lava stone, snowy dirt
+    private static final int SECONDARY_TILE_PERCENT = 85;       // Represents dirt, stone, snow pile
+    private static final int TERTIARY_TILE_PERCENT = 95;        // Represents water, lava, ice
     private static final int VOID_PERCENT = 100;                // Represents air gaps that can cause an individual to fall
 
-    private static final int FIRST_HEIGHT_PRESET = 20;
-    private static final int SECOND_HEIGHT_PRESET = 60;
-    private static final int THRID_HEIGHT_PRESET = 90;
+    private static final int FIRST_HEIGHT_PRESET = 60;
+    private static final int SECOND_HEIGHT_PRESET = 70;
+    private static final int THRID_HEIGHT_PRESET = 95;
     private static final int FOURTH_HEIGHT_PRESET = 100;
 
     // Temporary level presets
@@ -54,7 +53,7 @@ public class ForestLevel implements Level {
     private final GamePanel panel;
     private int panelHeight;
 
-    public ForestLevel(GamePanel panel) { this.panel = panel; }
+    public VolcanicLevel(GamePanel panel) { this.panel = panel; }
 
     @Override
     public int getTileLength() { return TILE_LENGTH; }
@@ -69,7 +68,7 @@ public class ForestLevel implements Level {
 
     private void createChunk(int elevation)
     {
-        Chunk newChunk = new Chunk((currentTile * TILE_LENGTH), yPos, CHUNK_WIDTH, (elevation / TILE_LENGTH), TILE_LENGTH, previousTile, WorldType.FOREST);
+        Chunk newChunk = new Chunk((currentTile * TILE_LENGTH), yPos, CHUNK_WIDTH, (elevation / TILE_LENGTH), TILE_LENGTH, previousTile, WorldType.VOLCANIC);
         chunkMap.put(currentTile * TILE_LENGTH, newChunk);
     }
     
@@ -157,7 +156,7 @@ public class ForestLevel implements Level {
 
     private void iterateGaps(int tileOffset, int i, TileType tileType)
     {
-        Tile newTile = new Tile(panel, (tileOffset * TILE_LENGTH), yPos + (i * TILE_LENGTH), TILE_LENGTH, tileType, WorldType.FOREST);
+        Tile newTile = new Tile(panel, (tileOffset * TILE_LENGTH), yPos + (i * TILE_LENGTH), TILE_LENGTH, tileType, WorldType.VOLCANIC);
         tileDepthMap.put(tileDepth, newTile);
         tileDepth++;
     }
@@ -180,7 +179,7 @@ public class ForestLevel implements Level {
                 platformY, 
                 platformWidth, 
                 TileType.SECONDARY, 
-                WorldType.FOREST
+                WorldType.VOLCANIC
             );
             
             tileMap.put(platformTile.getX(), platformTile);
@@ -227,7 +226,7 @@ public class ForestLevel implements Level {
         {
             if (currentTile < SPAWN_LENGTH) // Setup Spawn Area
             {
-                Tile newTile = new Tile(panel, (currentTile * TILE_LENGTH), panelHeight, TILE_LENGTH, TileType.PRIMARY, WorldType.FOREST);
+                Tile newTile = new Tile(panel, (currentTile * TILE_LENGTH), panelHeight, TILE_LENGTH, TileType.PRIMARY, WorldType.VOLCANIC);
                 tileMap.put(newTile.getX(), newTile);
 
                 yPos = panelHeight;
@@ -290,7 +289,7 @@ public class ForestLevel implements Level {
         // Compare previous tile
         if (previousTile == TileType.PRIMARY)
         {
-            Tile newTile = new Tile(panel, (currentTile * 64), yPos, TILE_LENGTH, TileType.PRIMARY, WorldType.FOREST);
+            Tile newTile = new Tile(panel, (currentTile * 64), yPos, TILE_LENGTH, TileType.PRIMARY, WorldType.VOLCANIC);
             tileMap.put(newTile.getX(), newTile);
 
             // Increase weighting for main percent by an exponential value
@@ -326,7 +325,7 @@ public class ForestLevel implements Level {
             newMainPercent += 20;
             newSecondaryPercent -= 20;
 
-            Tile newTile = new Tile(panel, (currentTile * 64), yPos, TILE_LENGTH, TileType.PRIMARY, WorldType.FOREST);
+            Tile newTile = new Tile(panel, (currentTile * 64), yPos, TILE_LENGTH, TileType.PRIMARY, WorldType.VOLCANIC);
             tileMap.put(newTile.getX(), newTile);
 
             previousTile = TileType.PRIMARY;
@@ -343,7 +342,7 @@ public class ForestLevel implements Level {
         // Compare previous tile
         if (previousTile == TileType.SECONDARY)
         {
-            Tile newTile = new Tile(panel, (currentTile * 64), yPos, TILE_LENGTH, TileType.SECONDARY, WorldType.FOREST);
+            Tile newTile = new Tile(panel, (currentTile * 64), yPos, TILE_LENGTH, TileType.SECONDARY, WorldType.VOLCANIC);
             tileMap.put(newTile.getX(), newTile);
 
             // Increase weighting for main percent by an exponential value
@@ -379,7 +378,7 @@ public class ForestLevel implements Level {
             newSecondaryPercent += 20;
             newMainPercent -= 20;
 
-            Tile newTile = new Tile(panel, (currentTile * 64), yPos, TILE_LENGTH, TileType.SECONDARY, WorldType.FOREST);
+            Tile newTile = new Tile(panel, (currentTile * 64), yPos, TILE_LENGTH, TileType.SECONDARY, WorldType.VOLCANIC);
             tileMap.put(newTile.getX(), newTile);
 
             previousTile = TileType.SECONDARY;
@@ -406,7 +405,7 @@ public class ForestLevel implements Level {
         // Compare previous tile
         if (previousTile == TileType.TERTIARY)
         {
-            Tile newTile = new Tile(panel, (currentTile * 64), yPos, TILE_LENGTH, TileType.TERTIARY, WorldType.FOREST);
+            Tile newTile = new Tile(panel, (currentTile * 64), yPos, TILE_LENGTH, TileType.TERTIARY, WorldType.VOLCANIC);
             tileMap.put(newTile.getX(), newTile);
 
             // Increase weighting for main percent by an exponential value
@@ -440,7 +439,7 @@ public class ForestLevel implements Level {
             newTertiaryPercent += 20;
             newVoidPercent -= 20;
 
-            Tile newTile = new Tile(panel, (currentTile * 64), yPos, TILE_LENGTH, TileType.TERTIARY, WorldType.FOREST);
+            Tile newTile = new Tile(panel, (currentTile * 64), yPos, TILE_LENGTH, TileType.TERTIARY, WorldType.VOLCANIC);
             tileMap.put(newTile.getX(), newTile);
 
             previousTile = TileType.TERTIARY;

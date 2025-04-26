@@ -4,9 +4,13 @@ package com.novanation.akumanoshima;
 import java.awt.Graphics2D;
 import java.awt.Image;
 
+import javax.swing.ImageIcon;
+
 public class Background {
 	
   	private Image bgImage;
+	private ImageIcon animImage;
+
   	private int bgImageWidth;      		// width of the background (>= panel Width)
 
 	private GamePanel panel;
@@ -21,8 +25,16 @@ public class Background {
 	public Background(GamePanel panel, String imageFile, int bgDX)
 	{
 		this.panel = panel;
-		this.bgImage = ImageManager.loadImage(imageFile);
-		bgImageWidth = bgImage.getWidth(null);	// get width of the background
+
+		if (imageFile.endsWith(".gif"))
+			this.animImage = ImageManager.loadGif(imageFile);
+		else
+			this.bgImage = ImageManager.loadImage(imageFile);
+
+		if (bgImage != null)
+			bgImageWidth = bgImage.getWidth(null);	// get width of the background
+		else
+			bgImageWidth = animImage.getImage().getWidth(null);
 
 		this.bgDX = bgDX;
 
@@ -70,7 +82,18 @@ public class Background {
 
 	public void draw (Graphics2D g2, GameWindow window)
 	{
-		g2.drawImage(bgImage, bg1X, 0, bgImageWidth, window.getHeight() - 35, null);
-		g2.drawImage(bgImage, bg2X, 0, bgImageWidth, window.getHeight() - 35, null);
+		if (bgImage != null)
+		{
+			g2.drawImage(bgImage, bg1X, 0, bgImageWidth, window.getHeight() - 35, null);
+			g2.drawImage(bgImage, bg2X, 0, bgImageWidth, window.getHeight() - 35, null);
+		}
+		
+		if (animImage != null)
+		{
+			Image newAnim = animImage.getImage();
+
+			g2.drawImage(newAnim, bg1X, 0, window.getWidth(), window.getHeight() - 35, null);
+			g2.drawImage(newAnim, bg2X, 0, window.getWidth(), window.getHeight() - 35, null);
+		}
 	}
 }

@@ -71,6 +71,7 @@ public class EnemyManager {
         }
 
         LevelManager.setTotalEnemies(enemyCount);
+        LevelManager.update();
 
         List<String> enemyTypes = new ArrayList<>();
 

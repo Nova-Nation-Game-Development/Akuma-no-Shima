@@ -14,7 +14,8 @@ public interface Level {
 
     public void setElevation(int randHeight);
     public void fillAirGaps(TileType tileType);
-    // public void generateFloatingPlatform();
+    public void generateFloatingPlatform();
+    public int getTileLength();
 
     public HashMap<Integer, Tile> getTileDictionary();
     public HashMap<Integer, Tile> getTileDepthDictionary();

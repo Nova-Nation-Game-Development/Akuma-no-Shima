@@ -2,7 +2,12 @@ package com.novanation.akumanoshima;
 
 
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
+
+import javax.imageio.ImageIO;
 
 public class AssualtWeapon implements Weapon {
 
@@ -27,6 +32,12 @@ public class AssualtWeapon implements Weapon {
     private double ammoMultiplier = 1.0;
     private double damageMultiplier = 1.0;
 
+    //Rendering
+    private BufferedImage weaponImage;
+    private int x, y; 
+    private double rotation; 
+    private boolean facingLeft = false;
+
     public AssualtWeapon(Player player){
         this.player = player;
         // Set the weapon on the player after the constructor finishes
@@ -35,6 +46,12 @@ public class AssualtWeapon implements Weapon {
         arFiring = false;
         arCanFire = true;
         
+         try {
+            weaponImage = ImageIO.read(getClass().getResourceAsStream("/gfx/weapons/weapon_assault.png"));
+            // If your image is elsewhere, adjust the path accordingly
+        } catch (IOException e) {
+            System.err.println("Could not load weapon image: " + e.getMessage());
+        }
 
     }
 
@@ -114,10 +131,42 @@ public class AssualtWeapon implements Weapon {
                 arIsEmpty = false;
                 arCanFire = true;
                 isReloading = false;
-                System.out.println("Reload complete! New ammo count: " + usableBullets.size());
+               // System.out.println("Reload complete! New ammo count: " + usableBullets.size());
             }
         }
     }
+
+    public void render(Graphics2D g) {
+        if (weaponImage == null) return;
+        
+        // Save the current transform
+        AffineTransform oldTransform = g.getTransform();
+        
+        // Create a new transform for the weapon
+        AffineTransform transform = new AffineTransform();
+        
+        // Move to the weapon position
+        transform.translate(x, y);
+        
+        // Rotate around the weapon position
+        transform.rotate(rotation);
+        
+        // If facing left, flip the image horizontally
+        if (facingLeft) {
+            transform.scale(1, -1);
+        }
+
+         // Apply the transform
+         g.setTransform(transform);
+        
+         // Draw the weapon image centered at origin point
+         g.drawImage(weaponImage, -weaponImage.getWidth()/2, -weaponImage.getHeight()/2, null);
+         
+         // Restore the original transform
+         g.setTransform(oldTransform);
+     }
+
+
 
     public boolean isArFiring() {
         return arFiring;
@@ -207,6 +256,15 @@ public class AssualtWeapon implements Weapon {
      public boolean isReloading() {
         return isReloading;
     }
+
+    public int getX() { return x; }
+    public void setX(int x) { this.x = x; }
+    public int getY() { return y; }
+    public void setY(int y) { this.y = y; }
+    public double getRotation() { return rotation; }
+    public void setRotation(double rotation) { this.rotation = rotation; }
+    public boolean isFacingLeft() { return facingLeft; }
+    public void setFacingLeft(boolean facingLeft) { this.facingLeft = facingLeft; }
     
     
     

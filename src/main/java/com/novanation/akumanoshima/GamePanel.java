@@ -69,9 +69,10 @@ public class GamePanel extends Scene {
             for (Tile tile : tileDepths)
                 tile.draw(imageContext);
         
-        if(ar != null) 
+        if(ar != null) {
+            ar.render(imageContext);
             ar.drawBullets(imageContext);
-
+        }
         if (playerEntity != null)
         {
             playerEntity.draw(imageContext);

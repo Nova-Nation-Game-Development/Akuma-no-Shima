@@ -2,6 +2,7 @@ package com.novanation.akumanoshima;
 
 import java.awt.Graphics2D;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -14,6 +15,8 @@ public class EnemyManager {
     private static HashMap<String, Entity> enemies = new HashMap<>();
     private static HashMap<String, Entity> enemiesAlive = new HashMap<>();
     private static int worldWidth;
+
+    private static Player player;
 
     // Difficulty Presets
 
@@ -119,7 +122,7 @@ public class EnemyManager {
                 EnemyHellhound hellHound = new EnemyHellhound(enemyWidth, enemyHeight, x, y, "Enemy " + i);
                 enemies.put("Enemy " + i, hellHound);
             } else {
-                EnemyOni oni = new EnemyOni(enemyWidth, enemyHeight, x, y, "Enemy " + i);
+                EnemyOni oni = new EnemyOni(enemyWidth, enemyHeight, x, y, "Enemy " + i, player);
                 enemies.put("Enemy " + i, oni);
             }
         }
@@ -244,4 +247,22 @@ public class EnemyManager {
             //     g2.fill(enemy.getCurrentChunk().getChunkBounds());
         }
     }
+
+    public static Collection<Entity> getAllEnemies() {
+    return enemies.values();
+}
+
+    public static void setPlayer(Player player) {
+        EnemyManager.player = player;
+    }
+
+    public static Player getPlayer() {
+        return player;
+    }
+
+    public static void clearEnemies() {
+        enemies.clear();
+    }
+
+    
 }

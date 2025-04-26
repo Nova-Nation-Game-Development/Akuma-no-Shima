@@ -3,6 +3,7 @@ package com.novanation.akumanoshima;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
 
 public class Bullet implements Projectile{
 
@@ -12,17 +13,37 @@ public class Bullet implements Projectile{
     private final double width = 10;
     private final double speed = 6;
     private double angle;
+    private static final int BULLET_DAMAGE = 10; // 10 bullets to kill an Oni
+    private boolean active = true;
 
     @Override
     public void move() {
        x += speed * Math.cos(angle);
        y += speed * Math.sin(angle);
+
+      
     }
+    
 
     @Override
     public void hit() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'hit'");
+        active = false;
+    }
+
+    public boolean checkCollision(EnemyOni enemy) {
+        if (!active) return false;
+        
+        Rectangle2D.Double bulletBounds = new Rectangle2D.Double(
+            x - width/2, y - height/2, width, height
+        );
+        
+        Rectangle2D.Double enemyBounds = enemy.getEntityBounds();
+        if (bulletBounds.intersects(enemyBounds)) {
+            hit();
+            enemy.takeDamage(BULLET_DAMAGE);
+            return true;
+        }
+        return false;
     }
 
     @Override

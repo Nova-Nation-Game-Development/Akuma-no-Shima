@@ -50,6 +50,8 @@ public class ForestLevel implements Level {
     
     private TileType previousTile;
 
+   
+
     // Game Panel
     private final GamePanel panel;
     private int panelHeight;

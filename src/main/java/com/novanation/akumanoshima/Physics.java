@@ -1,7 +1,7 @@
 package com.novanation.akumanoshima;
 
-import java.awt.geom.Rectangle2D;
 
+import java.awt.geom.Rectangle2D;
 
 public class Physics {
     

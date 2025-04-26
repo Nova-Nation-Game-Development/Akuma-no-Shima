@@ -35,9 +35,6 @@ public class GamePanel extends Scene {
     private Collection<Tile> tiles;
     private Collection<Tile> tileDepths;
 
-    
-    
-
     public GamePanel(GameWindow window)
     {
         this.window = window;
@@ -180,6 +177,11 @@ public class GamePanel extends Scene {
         playerEntity.update();
         
 
+         for (Entity enemy : EnemyManager.getAllEnemies()) {
+            if (enemy instanceof EnemyOni oni) {
+                oni.performAction();
+            }
+    }
         // This will keep track of the world and player and update their locations accordingly
         camera.update();
         if(ar != null) {
@@ -216,9 +218,9 @@ public class GamePanel extends Scene {
         playerEntity = new Player(this, 30, (getHeight() - playerHeight) - (int) (WorldGeneration.getTileLength() * 1.5) - 30, playerWidth, playerHeight);
         playerEntity.setWorldPos((int) playerEntity.getX());
 
-       
-
         playerInput = new InputHandler(playerEntity);
+        EnemyManager.setPlayer(playerEntity); // Set player instance before generating enemies
+        EnemyManager.generateEnemies(window.getConfig().getDifficulty());
         camera = new CameraControls(playerEntity, playerInput, backgroundManager);
         ar = new AssualtWeapon(playerEntity);
         ar.setInputHandler(playerInput);

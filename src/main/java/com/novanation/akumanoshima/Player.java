@@ -66,6 +66,7 @@ public class Player implements Entity {
         isJumping = false;
         playerImage = ImageManager.loadImage("/src/main/resources/gfx/animations/PlayerWalking/playerRight1.jpg");
         health = new Health();
+        playerBounds = new Rectangle2D.Double(x, y, width, height);
 
         this.playerAnimation = new PlayerAnimation(this);
         System.out.println("Player created with animation: " + (this.playerAnimation != null));
@@ -84,6 +85,8 @@ public class Player implements Entity {
     public double getX() { return x; }
     @Override
     public double getY() { return y; }
+    public int getWorldX() { return worldX; }
+   
     // Locational Mutators
     @Override
     public void setWorldPos(int xPos) { worldX = xPos; }
@@ -187,7 +190,24 @@ public class Player implements Entity {
         if (x + dx > 0 && x + dx < panel.getWidth() - width)
             x += dx;
     }
-    
+
+    @Override
+    public Rectangle2D.Double getEntityBounds()
+    {
+        return playerBounds;
+    }
+
+    @Override
+    public void moveY(double dx) { y += dx; }
+
+    @Override
+    public void onGround(boolean onGround) { }
+
+    @Override
+    public Chunk getCurrentChunk() { return currentChunk; }
+
+    public void stopMoving() { dx = 0; }
+
     public boolean isColliding(int dx)
     {
         int tileLength = WorldGeneration.getTileLength();

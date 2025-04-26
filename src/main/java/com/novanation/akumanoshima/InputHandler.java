@@ -31,8 +31,19 @@ public class InputHandler implements KeyListener, MouseListener, MouseMotionList
     public int damage;
     public int health;
 
+    PlayerAnimation playerAnimation;
+
     // In case of multiplayer, this will be instantiated
-    public InputHandler(Player player) { this.player = player; }
+    public InputHandler(Player player) { 
+        this.player = player; 
+        this.playerAnimation = player.getPlayerAnimation();
+
+        if (this.playerAnimation != null) {
+            this.playerAnimation.start();
+        }
+
+        System.out.println("InputHandler initialized with playerAnimation: " + (this.playerAnimation != null));
+    }
 
     // Accessors
     public boolean canJump() { return canJump; }
@@ -49,10 +60,12 @@ public class InputHandler implements KeyListener, MouseListener, MouseMotionList
             case KeyEvent.VK_A -> {
                 isMoving = true;
                 direction = -1;
+                playerAnimation.moveLeft(true);
             }
             case KeyEvent.VK_D -> {
                  isMoving = true;
                  direction = 1;
+                 playerAnimation.moveRight(true);
             }
             case KeyEvent.VK_SPACE -> {
                 if (!canJump)
@@ -85,11 +98,14 @@ public class InputHandler implements KeyListener, MouseListener, MouseMotionList
     @Override
     public void keyReleased(KeyEvent e)
     {
-        if (direction == 1 && e.getKeyCode() == KeyEvent.VK_D)
+        if (direction == 1 && e.getKeyCode() == KeyEvent.VK_D){
             stopMovement();
-        if (direction == -1 && e.getKeyCode() == KeyEvent.VK_A)
+            playerAnimation.moveLeft(false);
+        }
+        if (direction == -1 && e.getKeyCode() == KeyEvent.VK_A){
             stopMovement();
-      
+            playerAnimation.moveRight(false);
+        }
       //  if (e.getKeyCode() == KeyEvent.VK_L){
          //   ar.setArIsFiring(false);
            
@@ -102,6 +118,8 @@ public class InputHandler implements KeyListener, MouseListener, MouseMotionList
 
         if (e.getKeyCode() == KeyEvent.VK_L)
             health = 1;
+        if (e.getKeyCode() == KeyEvent.VK_ENTER)
+            EnemyManager.killAllEntities();
     }
 
     private void stopMovement()

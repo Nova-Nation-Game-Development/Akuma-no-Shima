@@ -39,6 +39,11 @@ public class SceneLoader extends JFrame {
         scenes.add(sceneName);
     }
 
+    public static boolean alreadyInScene(String newScene)
+    {
+        return !scenes.contains(newScene);
+    }
+
     public static void switchScene(String newScene)
     {
         if (!scenes.contains(newScene))

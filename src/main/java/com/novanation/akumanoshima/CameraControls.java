@@ -18,6 +18,7 @@ public class CameraControls {
     
     // Location
     private double xPos;
+    private boolean inThreshold = false;
 
     public CameraControls(Player player, InputHandler playerInput, BackgroundManager backgroundManager)
     {
@@ -80,41 +81,45 @@ public class CameraControls {
 
     private void updatePlayer(int newPlayerSpeed)
     {
-        xPos += (newPlayerSpeed);
+        xPos += newPlayerSpeed;
         player.setWorldPos((int) xPos);
     }
 
     public void moveWorld(int newPlayerSpeed, int newWorldSpeed, int bgDirection)
     {
         // Increase player speed while jumping
-        // if (player.isJumping())
-        //     newPlayerSpeed *= 1.5;
+        if (player.isJumping())
+        {
+            newPlayerSpeed *= 1.5;
+            newWorldSpeed *= 1.5;
+        }
+            
+
+        if (!player.isColliding(newPlayerSpeed))
+            updatePlayer(newPlayerSpeed);
+        else
+        {
+            // If is colliding right, allow left movement
+            if (player.getCollisionDirection() == 0 && newPlayerSpeed < 0)
+                updatePlayer(newPlayerSpeed);
+
+            // If is colliding left, allow right movement
+            if (player.getCollisionDirection() == 1 && newPlayerSpeed > 0)
+                updatePlayer(newPlayerSpeed);
+        }
 
         // Handle collisions
-        // if (!player.isColliding(newPlayerSpeed))
-        //     updatePlayer(newPlayerSpeed);
-        // else
-        // {
-        //     if (player.getCollisionDirection() == 0 && newPlayerSpeed < 0)
-        //         updatePlayer(newPlayerSpeed);
-
-        //     if (player.getCollisionDirection() == 1 && newPlayerSpeed > 0)
-        //         updatePlayer(newPlayerSpeed);
-        // }
-        
-        // For testing purposes only
-        updatePlayer(newPlayerSpeed);
-
         if ((int) xPos < LEFT_THRESHOLD || (int) xPos > RIGHT_THRESHOLD)
             if (!player.isColliding(newPlayerSpeed))
                 player.move(newPlayerSpeed);
-    
+                
         if ((int) xPos > LEFT_THRESHOLD && (int) xPos < RIGHT_THRESHOLD)
         {
             if (!player.isColliding(newPlayerSpeed))
             {
                 backgroundManager.move(bgDirection);
                 WorldGeneration.move(newWorldSpeed);
+                EnemyManager.move(newWorldSpeed);
             }
         }
     }

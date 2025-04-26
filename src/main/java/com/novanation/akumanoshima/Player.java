@@ -7,8 +7,6 @@ import java.awt.Image;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class Player implements Entity {
     
@@ -27,15 +25,20 @@ public class Player implements Entity {
     private double startY;
     private boolean isJumping;
     private boolean canJump;
+    private boolean onGround;
+
+    private double vy;
 
     private Health health;
    
-
     // Shape and Collisions
     private int width;
     private int height;
+
     private Chunk currentChunk;
     private Chunk previousChunk;
+    private Chunk nextChunk;
+    
     private Rectangle2D.Double chunk;
     Rectangle2D.Double playerBounds;
     private final Image playerImage;
@@ -48,6 +51,8 @@ public class Player implements Entity {
     private double moveSpeedMultiplier = 1.0;
     private Weapon currentWeapon;
 
+    public PlayerAnimation playerAnimation;
+
     public Player(GamePanel panel, int x, int y, int width, int height)
     {
         this.width = width;
@@ -59,9 +64,12 @@ public class Player implements Entity {
         this.panel = panel;
 
         isJumping = false;
-        playerImage = ImageManager.loadImage("/gfx/characters/char_noroi.png");
+        playerImage = ImageManager.loadImage("/src/main/resources/gfx/animations/PlayerWalking/playerRight1.jpg");
         health = new Health();
         playerBounds = new Rectangle2D.Double(x, y, width, height);
+
+        this.playerAnimation = new PlayerAnimation(this);
+        System.out.println("Player created with animation: " + (this.playerAnimation != null));
     }
 
     // Directional mutators
@@ -69,14 +77,18 @@ public class Player implements Entity {
     public void setDY(int newDY) { dy = newDY; }
     // Directional accessors
     public int getDX() { return dx; }
-    public int getDY() { return dy; }
+    @Override
+    public double getDY() { return dy; }
 
     // Locational Accessors
+    @Override
     public double getX() { return x; }
+    @Override
     public double getY() { return y; }
     public int getWorldX() { return worldX; }
    
     // Locational Mutators
+    @Override
     public void setWorldPos(int xPos) { worldX = xPos; }
 
     // Shape Mutators
@@ -84,15 +96,39 @@ public class Player implements Entity {
     public void setHeight(int newHeight) { height = newHeight; }
     // Shape Accessors
     public int getWidth() { return width; }
+    @Override
     public int getHeight() { return height; }
 
     // Physics Accessors
-    public boolean isJumping() { return isJumping; }
+    public boolean isJumping() { return !isGrounded(); }
     public boolean canJump() { return canJump; }
+
+    @Override
+    public Rectangle2D.Double getEntityBounds() { return playerBounds; }
+
+    @Override
+    public void moveY(double dx) { y += dx; }
+
+    @Override
+    public void setY(double newY) { y = newY; }
+
+    @Override
+    public boolean isGrounded() { return onGround; }
+    @Override
+    public void setGrounded(boolean grounded) { onGround = grounded; }
+
+    @Override
+    public double getVelocityY() { return vy; }
+    @Override
+    public void setVelocityY(double vy) { this.vy = vy; }
+
+    @Override
     public Health getHealth() { return health; }
 
     // Panel Dimension Accessors
     public Dimension getPanelDimensions() { return panel.getSize(); }
+
+    public GamePanel getPanel() { return panel; }
 
     //Perk Accessors
     public Weapon getWeapon() { return currentWeapon; }
@@ -120,18 +156,39 @@ public class Player implements Entity {
         return moveSpeedMultiplier;
     }
 
+    public int getWorldX() { return worldX; }
+
+    @Override
+    public void update()
+    {
+        int tileLength = WorldGeneration.getTileLength();
+        currentChunk = WorldGeneration.getChunk((((int) worldX) / tileLength) * tileLength);
+
+        playerBounds = new Rectangle2D.Double(x, y - 2, width, height);
+
+        Chunk newChunk = WorldGeneration.getChunk((((int) worldX + tileLength) / tileLength) * tileLength);
+        determineChunkTile(newChunk);
+
+        if (playerAnimation != null)
+            playerAnimation.update();
+    }
+
+    public void setPlayerAnimation(PlayerAnimation playerAnimation) {
+        this.playerAnimation = playerAnimation;
+    }
+
+    @Override
+    public Chunk getCurrentChunk() { return currentChunk; }
+
+    public void stopMoving() { dx = 0; }
 
     @Override
     public void move(int direction)
     {
         dx = (int)(direction * moveSpeedMultiplier);
 
-        currentChunk = WorldGeneration.getChunk(2);
-
         if (x + dx > 0 && x + dx < panel.getWidth() - width)
             x += dx;
-
-            playerBounds.setRect(x, y, width, height);
     }
 
     @Override
@@ -153,33 +210,50 @@ public class Player implements Entity {
 
     public boolean isColliding(int dx)
     {
-        // Check collision upto dx
-        for (int i = 0; i < Math.abs(dx); i++)
+        int tileLength = WorldGeneration.getTileLength();
+
+        if (dx > 0)
         {
-            if (dx > 0)
-                currentChunk = WorldGeneration.getChunk(worldX + (width / 2) + i);
-            else 
-                currentChunk = WorldGeneration.getChunk(worldX + (width / 2) - i);
-
-            // Player is about to enter a chunk
-            if (currentChunk != null)
-            {
-                previousChunk = WorldGeneration.getChunk((worldX + (width / 2) - i) - WorldGeneration.getTileLength());
-
-                if (dx < 0 && previousChunk != null) // Check if the player is moving backwards, and not over air
-                    currentChunk = previousChunk;
-                    
-                chunk = currentChunk.getChunkBounds();
-
-                int tileHeight = WorldGeneration.getTileLength();
-                playerBounds = new Rectangle2D.Double(worldX, y - tileHeight, width, height + tileHeight);
-
-                if (playerBounds.intersects(chunk) || chunk.contains(playerBounds))
-                    return true;
-            }
+            nextChunk = WorldGeneration.getChunk((((int) worldX + tileLength) / tileLength) * tileLength);
+            if (nextChunk != null) // Next chunk is not air and exists
+                return getCollision(nextChunk);
+        }
+        else if (dx < 0)
+        {
+            previousChunk = WorldGeneration.getChunk((((int) worldX - tileLength) / tileLength) * tileLength);
+            if (previousChunk != null) // Previous chunk is not air and exists
+                return getCollision(previousChunk);
         }
 
         return false;
+    }
+
+    private void determineChunkTile(Chunk newChunk)
+    {
+        if (newChunk != null && newChunk.getTileType() == TileType.TERTIARY)
+        {
+            // TODO: Reduce player speed, damage player or increase player speed
+            switch (newChunk.getWorldType())
+            {
+                case FOREST -> {
+                    System.out.println("In Water!");
+                }
+                case VOLCANIC -> {
+                    System.out.println("In Lava!");
+                }
+                case BLIZZARD -> {
+                    System.out.println("On Ice!");
+                }
+                case END -> {}
+            }
+        }
+    }
+
+    private boolean getCollision(Chunk newChunk)
+    {
+        // Check collision
+        chunk = newChunk.getChunkBounds();
+        return playerBounds.intersects(chunk) || chunk.contains(playerBounds);
     }
 
     public int getCollisionDirection()
@@ -192,86 +266,11 @@ public class Player implements Entity {
     @Override
     public void jump()
     {
-        isJumping = true;
-        canJump = true;
-
-        Timer timer = new Timer();
-
-        // Perform jump over a period of time
-        TimerTask jumpTask = new TimerTask() {
-            int counter = 0;
-            int countdown = 1;
-
-            int tileHeight = WorldGeneration.getTileLength();
-            int decrementCounter = 0;
-            double velocity = 0;
-
-            @Override
-            public void run() {
-                counter++;
-                // Perform jump actions
-
-                // First half
-                if (counter < (Physics.getMaxStep() * 0.20))
-                    velocity = Physics.getSpeedScale() * counter;
-                
-                // Second half
-                if (counter >= (Physics.getMaxStep() * 0.20))
-                {
-                    decrementCounter++;
-                    velocity = -(Physics.getGravity() * decrementCounter * 2);
-                }
-
-                // Prevent a jump loop
-                if (counter + Physics.getJumpInterval() >= Physics.getMaxStep())
-                    canJump = false;
-
-                if (counter >= Physics.getMaxStep())
-                {
-                    isJumping = false;
-                    timer.cancel();
-                }
-
-                // End jump task on ground contact
-                if ((y - velocity) + height < panel.getHeight() - tileHeight)
-                {
-                    // Stop performing the jump and end the task
-                    if (!canJump)
-                    {
-                        if (countdown == 0)
-                        {
-                            isJumping = false;
-                            timer.cancel();
-                            return;
-                        }
-                        else
-                            countdown--;
-                    }
-
-                    double newY = y - velocity;
-
-                    if (!(newY + height + 25 > panel.getHeight() - tileHeight))
-                        performJumpAction(velocity);
-                    else
-                        canJump = false;
-                }
-            }
-        };
-
-        timer.scheduleAtFixedRate(jumpTask, 0, Physics.getJumpInterval());
-    }
-
-    private void performJumpAction(double velocity)
-    {
-        double newY = y - velocity;
-        double newX = Physics.calculateHorizComponent(velocity, 0);
-
-        int tileHeight = WorldGeneration.getTileLength();
-
-        // x += newX;
-
-        if (newY + 25 > 0 && newY + height + 25 < panel.getHeight() - tileHeight)
-            y = (int) newY;
+        if (onGround)
+        {
+            setVelocityY(-16);
+            onGround = false;
+        }
     }
 
     @Override
@@ -282,6 +281,17 @@ public class Player implements Entity {
 
     @Override
     public void draw(Graphics2D g2) {
-        g2.drawImage(playerImage, (int) x, (int) y, width, height, null);
+        if (playerAnimation != null) {
+            // Let the animation handle drawing
+            playerAnimation.setPosition((int)x, (int)y);
+            playerAnimation.draw(g2);
+        } else {
+            // Fallback to static image
+            g2.drawImage(playerImage, (int)x, (int)y, width, height, null);
+        }
     }  
+
+    public PlayerAnimation getPlayerAnimation() {
+        return this.playerAnimation;
+    }
 }

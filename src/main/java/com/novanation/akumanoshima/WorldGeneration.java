@@ -12,7 +12,26 @@ public class WorldGeneration {
     private static HashMap<Integer, Chunk> chunkMap = new HashMap<>();
 
     private static ForestLevel forestLevel;
+    private static VolcanicLevel volcanicLevel;
+    private static BlizzardLevel blizzardLevel;
+
+    private static Level currentLevel;
     
+    public static void reset()
+    {
+        forestLevel = null;
+        volcanicLevel = null;
+        blizzardLevel = null;
+
+        if (tileMap != null) tileMap.clear();
+        if (tileDepthMap != null) tileDepthMap.clear();
+        if (chunkMap != null) chunkMap.clear();
+        
+        tileMap = new HashMap<>();
+        tileDepthMap = new HashMap<>();
+        chunkMap = new HashMap<>();
+    }
+
     public static void generateLevel(GamePanel panel, WorldType world)
     {
         switch (world) {
@@ -23,17 +42,39 @@ public class WorldGeneration {
                 tileMap = forestLevel.getTileDictionary();
                 tileDepthMap = forestLevel.getTileDepthDictionary();
                 chunkMap = forestLevel.getChunkDictionary();
+
+                currentLevel = forestLevel;
             }
 
-            case VOLCANIC -> { }
+            case VOLCANIC -> { 
+                volcanicLevel = new VolcanicLevel(panel);
+                volcanicLevel.createLevel();
 
-            case BLIZZARD -> { }
+                tileMap = volcanicLevel.getTileDictionary();
+                tileDepthMap = volcanicLevel.getTileDepthDictionary();
+                chunkMap = volcanicLevel.getChunkDictionary();
 
-            case END -> { }
+                currentLevel = volcanicLevel;
+            }
+
+            case BLIZZARD -> {
+                blizzardLevel = new BlizzardLevel(panel);
+                blizzardLevel.createLevel();
+
+                tileMap = blizzardLevel.getTileDictionary();
+                tileDepthMap = blizzardLevel.getTileDepthDictionary();
+                chunkMap = blizzardLevel.getChunkDictionary();
+
+                currentLevel = blizzardLevel;
+            }
+
+            case END -> { 
+                generateEndLevel();
+            }
         }
     }
 
-    public static int getTileLength() { return forestLevel.getTileLength(); }
+    public static int getTileLength() { return currentLevel.getTileLength(); }
     public static Chunk getChunk(int xPos) 
     {
         if (chunkMap.get(xPos) != null)
@@ -49,22 +90,19 @@ public class WorldGeneration {
         Random random = new Random();
         int randWorld = random.nextInt(100);
 
-        return WorldType.FOREST;
-
-        // This will remain commented until I draw the remaining tiles
-
-        // if (randWorld < 50)
-        //     return WorldType.FOREST;
-        // else
-        //     if (randWorld < 80)
-        //         return WorldType.BLIZZARD; // 30% Chance of snow
-        //     else
-        //         return WorldType.VOLCANIC; // 20% Chance of the hardest possible level
+        if (randWorld < 40)
+            return WorldType.FOREST;
+        else
+            if (randWorld < 70)
+                return WorldType.BLIZZARD; // 30% Chance of snow
+            else
+                return WorldType.VOLCANIC; // 30% Chance of the hardest possible level
     }
 
     public static Tile getTile(int key) { return tileMap.get(key); }
     public static Collection<Tile> getAllTiles() { return tileMap.values(); }
     public static Collection<Tile> getAllDepthTiles() { return tileDepthMap.values(); }
+    public static Collection<Chunk> getAllChunks() { return chunkMap.values(); }
 
     // This is called in InputHandler
     public static void move(int worldSpeed)
@@ -79,7 +117,7 @@ public class WorldGeneration {
         for (Tile tile : tileDepthMap.values())
             tile.move(worldSpeed);
 
-        // for (Chunk chunk : chunkMap.values())
-        //     chunk.move(worldSpeed);
+        for (Chunk chunk : chunkMap.values())
+            chunk.move(worldSpeed);
     }
 }

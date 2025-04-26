@@ -1,6 +1,7 @@
 package com.novanation.akumanoshima;
 
-import java.awt.geom.Point2D;
+
+import java.awt.geom.Rectangle2D;
 
 public class Physics {
     
@@ -13,7 +14,10 @@ public class Physics {
     private static final double COUNT_SCALE = 0.3f;
     private static final double SPEED_SCALE = 0.2f;
 
-    private static double gravity = 0.1f; // gravity = 9.8 m/s
+    public static GamePanel panel;
+
+    private static double gravity = 0.5f; // gravity = 9.8 m/s
+    private static double terminalVelocity = 10;
 
     public boolean isJumping = false;
     private double currTime = 0;
@@ -30,33 +34,53 @@ public class Physics {
 
     // Functions
     
+    private static int count;
+
+    public static void setPanel(GamePanel gamePanel) { panel = gamePanel; }
+
     public static void applyGravity(Entity entity, double x, double y)
     {
-        // if (entity == null) return;
+        if (entity == null) return;
 
-        // if (entity.getCurrentChunk() == null) // Assume air gap
-        //     entity.moveY((gravity * 10));
-        // else
-        // {
-        //     Rectangle2D.Double chunkBounds = entity.getCurrentChunk().getChunkBounds();
+        // Apply gravity
+        if (!entity.isGrounded())
+        {
+            double newVelocityY = Math.min(entity.getVelocityY() + gravity, terminalVelocity);
+            entity.setVelocityY(newVelocityY);
+        }
 
-        //     if (y + (gravity * 10) + 64 <= chunkBounds.getY()) // Fix
-        //         entity.moveY((gravity * 10));
-        // }
-    }
+        entity.moveY(entity.getVelocityY());
 
-    public static Point2D.Double calculateBezierPoint(double startX, double startY, 
-                                                    double controlX, double controlY, 
-                                                    double endX, double endY, 
-                                                    double t) {
-        double u = 1 - t;
-        double tSq = t * t;
-        double uSq = u * u;
-        
-        double x = uSq * startX + 2 * u * t * controlX + tSq * endX;
-        double y = uSq * startY + 2 * u * t * controlY + tSq * endY;
-        
-        return new Point2D.Double(x, y);
+        // Check if player is landing
+        Rectangle2D.Double chunkBounds = entity.getCurrentChunk() != null
+            ? entity.getCurrentChunk().getChunkBounds()
+            : null;
+
+        if (chunkBounds != null)
+        {
+            double entityBottom = entity.getY() + entity.getHeight();
+            double groundY = chunkBounds.getY();
+
+            // Only snap the entity to the ground if they are falling on the ground (not air gap)
+            if (entityBottom >= groundY && entity.getVelocityY() >= 0)
+            {
+                entity.setY(groundY - entity.getHeight());
+                entity.setGrounded(true);
+                entity.setVelocityY(0);
+            }
+            else
+                entity.setGrounded(false);
+        }
+        else
+            entity.setGrounded(false);
+
+        if (entity.getY() > panel.getHeight())
+        {
+            if (entity instanceof Player)
+                entity.getHealth().killPlayer();
+            else
+                entity.getHealth().destroyEntity(entity);
+        }
     }
 
     // kinematics 

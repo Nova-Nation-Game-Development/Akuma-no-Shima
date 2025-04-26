@@ -12,7 +12,23 @@ public interface Entity {
     public void performAction();
 
     public Rectangle2D.Double getEntityBounds();
+    public int getHeight();
+
     public Chunk getCurrentChunk();
-    public void onGround(boolean onGround);
-    public void moveY(double dx);
+    public void update();
+
+    public double getX();
+    public double getY();
+    public double getDY();
+    public void setY(double newY);
+    public void moveY(double dy);
+    public void setWorldPos(int xPos);
+
+    public double getVelocityY();
+    public void setVelocityY(double vy);
+
+    public boolean isGrounded();
+    public void setGrounded(boolean grounded);
+
+    public Health getHealth();
 }

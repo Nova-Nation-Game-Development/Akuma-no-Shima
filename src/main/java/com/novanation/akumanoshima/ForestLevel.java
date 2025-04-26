@@ -58,6 +58,7 @@ public class ForestLevel implements Level {
 
     public ForestLevel(GamePanel panel) { this.panel = panel; }
 
+    @Override
     public int getTileLength() { return TILE_LENGTH; }
     public int getMaxWorld() { return TILE_LENGTH * WORLD_LENGTH * 2; }
 
@@ -70,7 +71,7 @@ public class ForestLevel implements Level {
 
     private void createChunk(int elevation)
     {
-        Chunk newChunk = new Chunk((currentTile * TILE_LENGTH), yPos, CHUNK_WIDTH, (elevation / TILE_LENGTH), TILE_LENGTH);
+        Chunk newChunk = new Chunk((currentTile * TILE_LENGTH), yPos, CHUNK_WIDTH, (elevation / TILE_LENGTH), TILE_LENGTH, previousTile, WorldType.FOREST);
         chunkMap.put(currentTile * TILE_LENGTH, newChunk);
     }
     
@@ -87,6 +88,7 @@ public class ForestLevel implements Level {
                 randChance -= 10;
             else
             {
+                createChunk(chunkHeight);
                 randChance = ELEVATION_PERCENT;
                 elevationDistance = 0;
                 return;
@@ -162,21 +164,64 @@ public class ForestLevel implements Level {
         tileDepth++;
     }
 
-    // TODO: Finish platform stuff
-    public void generateFloatingPlatform()
-    {
-        
+    // TODO: Fix
+    @Override
+    public void generateFloatingPlatform() {
+        // Only generate platform if we have a void tile and at least 2 successive void tiles
+        if (previousTile == TileType.VOID && successiveTiles >= 1)
+        {
+            int platformWidth = 3 * TILE_LENGTH;
+
+            int platformY = yPos - (TILE_LENGTH * 4);
+            int platformX = (currentTile - successiveTiles) * TILE_LENGTH;
+            
+            // Create platform tile that spans the gap
+            Tile platformTile = new Tile(
+                panel, 
+                platformX, 
+                platformY, 
+                platformWidth, 
+                TileType.SECONDARY, 
+                WorldType.FOREST
+            );
+            
+            tileMap.put(platformTile.getX(), platformTile);
+            
+            // Create collision chunk for the platform
+            Chunk platformChunk = new Chunk(
+                platformX,
+                platformY, 
+                3,              // Fixed width of 3 tiles
+                1,              // Height in tiles
+                TILE_LENGTH,
+                TileType.SECONDARY,
+                WorldType.VOLCANIC
+            );
+            
+            // Add to chunk map
+            chunkMap.put(platformX, platformChunk);
+        }
     }
 
     @Override
     public void createLevel()
     {
+        // Reset state
+        currentTile = 0;
+        successiveTiles = 0;
+        yPos = BASE_HEIGHT;
+        tempTileCount = 0;
+        elevationDistance = 0;
+        chunkHeight = 0;
+        randChance = ELEVATION_PERCENT;
+        tileDepth = 0;
+
         panelHeight = panel.getHeight() - BASE_HEIGHT - (TILE_LENGTH / 2);
 
         GameWindow window = panel.getGameWindow();
 
         EnemyManager.setWorldWidth(getMaxWorld());
-        
+        EnemyManager.generateEnemies(window.getConfig().getDifficulty(), false, panel);
 
         // For percentage resets; this means other tiles can have a higher percentage with a weighting > 100
         // The world moves around the player so it must be larger than the visible area
@@ -233,8 +278,10 @@ public class ForestLevel implements Level {
                 }
 
                 // Air tiles
-                if (randTile >= newTertiaryPercent && randTile < newVoidPercent)
+                if (randTile >= newTertiaryPercent && randTile < newVoidPercent) {
+                    yPos = panelHeight; // Reset height for void tiles
                     setVoidTile();
+                }
             }
         }
     }
@@ -407,60 +454,55 @@ public class ForestLevel implements Level {
     }
 
     @Override
-    public void setVoidTile()
-    {
+    public void setVoidTile() {
         // Must not place air after water
-        if (previousTile == TileType.TERTIARY)
-        {
+        if (previousTile == TileType.TERTIARY) {
             Random random = new Random();
             int randomInt = random.nextInt(2);
 
-            if (randomInt == 0) setMainTile(); else setSecondaryTile();
+            if (randomInt == 0) setMainTile(); 
+            else setSecondaryTile();
             return;
         }
 
-        // Compare previous tile
-        if (previousTile == TileType.VOID)
-        {
-            // Increase weighting for main percent by an exponential value
-            if (successiveTiles <= 3)
-            {
-                // Reset percentages for ONLY connected tiles
-                if (successiveTiles <= 1)
-                {
+        // Reset chunk height for void tiles to prevent ghost collision
+        chunkHeight = 0;
+        
+        // For void tiles, we only need to update state
+        if (previousTile == TileType.VOID) {
+            if (successiveTiles <= 3) {
+                if (successiveTiles <= 1) {
                     newMainPercent += MAIN_TILE_PERCENT;
                     newVoidPercent = VOID_PERCENT;
                 }
                 
-                // Significantly increase the chances of spawning a consecutive air gap
+                // Increase chance of ending void sequence
                 newVoidPercent = 90;
                 newMainPercent = 95;
                 newSecondaryPercent = 98;
                 newTertiaryPercent = 100;
-            }   
-            else
-            {
-                // Reset successive percentages
+            } else {
+                // Reset after too many voids
                 newVoidPercent = VOID_PERCENT;
-
-                // Raise the other percentages
-                newMainPercent = MAIN_TILE_PERCENT + 10; // 40 -> 50
-                newSecondaryPercent = SECONDARY_TILE_PERCENT + 10; // 50 -> 60
-                newTertiaryPercent = TERTIARY_TILE_PERCENT + 15; // 75 -> 90
-                newVoidPercent = VOID_PERCENT; // 100
+                newMainPercent = MAIN_TILE_PERCENT + 10;
+                newSecondaryPercent = SECONDARY_TILE_PERCENT + 10;
+                newTertiaryPercent = TERTIARY_TILE_PERCENT + 15;
             }
-
             successiveTiles++;
-        }
-        else
-        {
+        } else {
             newVoidPercent += 20;
-
             previousTile = TileType.VOID;
             successiveTiles = 0;
         }
 
-        currentTile += 1 + tempTileCount;
+        // Check if we should generate a platform before incrementing
+        // generateFloatingPlatform();
+        
+        // Force elevation recalculation on next tile
+        elevationDistance = ELEVATION_LENGTH + 1;
+        
+        // Increment without creating a tile or chunk
+        currentTile++;
         tempTileCount = 0;
     }
 }

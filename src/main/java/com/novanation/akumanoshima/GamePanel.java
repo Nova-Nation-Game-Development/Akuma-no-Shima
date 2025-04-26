@@ -188,9 +188,6 @@ public class GamePanel extends Scene {
 
     public void createGameEntities()
     {
-        System.out.println("\n Creating new entities");
-
-        backgroundManager = new BackgroundManager(this, window);
         Physics.setPanel(this);
 
         LevelManager.setupToast(this);
@@ -201,6 +198,7 @@ public class GamePanel extends Scene {
         int playerWidth = (playerHeight / 2);
 
         WorldType world = WorldGeneration.getRandomWorld();
+        backgroundManager = new BackgroundManager(this, window, world);
 
         if (currentLevel >= finalLevel && !isEndless)
             WorldGeneration.generateLevel(this, WorldType.END);

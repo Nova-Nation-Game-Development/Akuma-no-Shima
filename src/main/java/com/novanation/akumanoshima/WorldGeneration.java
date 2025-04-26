@@ -14,6 +14,8 @@ public class WorldGeneration {
     private static ForestLevel forestLevel;
     private static VolcanicLevel volcanicLevel;
     private static BlizzardLevel blizzardLevel;
+
+    private static Level currentLevel;
     
     public static void reset()
     {
@@ -40,24 +42,30 @@ public class WorldGeneration {
                 tileMap = forestLevel.getTileDictionary();
                 tileDepthMap = forestLevel.getTileDepthDictionary();
                 chunkMap = forestLevel.getChunkDictionary();
+
+                currentLevel = forestLevel;
             }
 
             case VOLCANIC -> { 
-                // volcanicLevel = new VolcanicLevel(panel);
-                // volcanicLevel.createLevel();
+                volcanicLevel = new VolcanicLevel(panel);
+                volcanicLevel.createLevel();
 
-                // tileMap = volcanicLevel.getTileDictionary();
-                // tileDepthMap = volcanicLevel.getTileDepthDictionary();
-                // chunkMap = volcanicLevel.getChunkDictionary();
+                tileMap = volcanicLevel.getTileDictionary();
+                tileDepthMap = volcanicLevel.getTileDepthDictionary();
+                chunkMap = volcanicLevel.getChunkDictionary();
+
+                currentLevel = volcanicLevel;
             }
 
             case BLIZZARD -> {
-                // blizzardLevel = new BlizzardLevel(panel);
-                // blizzardLevel.createLevel();
+                blizzardLevel = new BlizzardLevel(panel);
+                blizzardLevel.createLevel();
 
-                // tileMap = blizzardLevel.getTileDictionary();
-                // tileDepthMap = blizzardLevel.getTileDepthDictionary();
-                // chunkMap = blizzardLevel.getChunkDictionary();
+                tileMap = blizzardLevel.getTileDictionary();
+                tileDepthMap = blizzardLevel.getTileDepthDictionary();
+                chunkMap = blizzardLevel.getChunkDictionary();
+
+                currentLevel = blizzardLevel;
             }
 
             case END -> { 
@@ -66,7 +74,7 @@ public class WorldGeneration {
         }
     }
 
-    public static int getTileLength() { return forestLevel.getTileLength(); }
+    public static int getTileLength() { return currentLevel.getTileLength(); }
     public static Chunk getChunk(int xPos) 
     {
         if (chunkMap.get(xPos) != null)
@@ -82,7 +90,7 @@ public class WorldGeneration {
         Random random = new Random();
         int randWorld = random.nextInt(100);
 
-        return WorldType.FOREST;
+        return WorldType.BLIZZARD;
 
         // if (randWorld < 50)
         //     return WorldType.FOREST;

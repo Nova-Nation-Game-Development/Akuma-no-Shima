@@ -56,6 +56,7 @@ public class ForestLevel implements Level {
 
     public ForestLevel(GamePanel panel) { this.panel = panel; }
 
+    @Override
     public int getTileLength() { return TILE_LENGTH; }
     public int getMaxWorld() { return TILE_LENGTH * WORLD_LENGTH * 2; }
 
@@ -162,6 +163,7 @@ public class ForestLevel implements Level {
     }
 
     // TODO: Fix
+    @Override
     public void generateFloatingPlatform() {
         // Only generate platform if we have a void tile and at least 2 successive void tiles
         if (previousTile == TileType.VOID && successiveTiles >= 1)
@@ -218,8 +220,6 @@ public class ForestLevel implements Level {
 
         EnemyManager.setWorldWidth(getMaxWorld());
         EnemyManager.generateEnemies(window.getConfig().getDifficulty(), false, panel);
-
-        System.out.println("Setting up world!");
 
         // For percentage resets; this means other tiles can have a higher percentage with a weighting > 100
         // The world moves around the player so it must be larger than the visible area
@@ -494,7 +494,7 @@ public class ForestLevel implements Level {
         }
 
         // Check if we should generate a platform before incrementing
-        generateFloatingPlatform();
+        // generateFloatingPlatform();
         
         // Force elevation recalculation on next tile
         elevationDistance = ELEVATION_LENGTH + 1;

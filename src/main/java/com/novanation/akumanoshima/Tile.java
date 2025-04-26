@@ -66,7 +66,7 @@ public class Tile {
         {
             case PRIMARY -> tileImage = ImageManager.loadImage("/gfx/tiles/lava_stone_tile.png");
             case SECONDARY -> tileImage = ImageManager.loadImage("/gfx/tiles/stone_tile.png");
-            case TERTIARY -> tileImage = ImageManager.loadImage("/gfx/tiles/animated/water_tile_1.png"); // TODO: Use animated lava in future
+            case TERTIARY -> tileImage = ImageManager.loadImage("/gfx/tiles/animated/lava_tile.png"); // TODO: Use animated lava in future
             case VOID -> {}
         }
     }
@@ -76,8 +76,8 @@ public class Tile {
         switch (tileType)
         {
             case PRIMARY -> tileImage = ImageManager.loadImage("/gfx/tiles/snowy_dirt_tile.png");
-            case SECONDARY -> tileImage = ImageManager.loadImage("/gfx/tiles/snow_pile_tile.png");
-            case TERTIARY -> tileImage = ImageManager.loadImage("/gfx/tiles/animated/water_tile_1.png"); // TODO: Use ice tile
+            case SECONDARY -> tileImage = ImageManager.loadImage("/gfx/tiles/dirt_blizzard_tile.png");
+            case TERTIARY -> tileImage = ImageManager.loadImage("/gfx/tiles/animated/ice_tile.png"); // TODO: Use ice tile
             case VOID -> {}
         }
     }

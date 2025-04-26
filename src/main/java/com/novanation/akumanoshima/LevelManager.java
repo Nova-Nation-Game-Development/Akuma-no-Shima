@@ -6,6 +6,7 @@ public class LevelManager {
     
     private static int totalEnemies;
     private static int remainingEnemies;
+    private static int previousEnemies;
 
     private static boolean isClear = false;
     private static boolean isFinal = false;
@@ -34,17 +35,26 @@ public class LevelManager {
         imgWinX = (panel.getWidth() - gameWinImage.getWidth(null)) / 2;
         imgWinY = (panel.getHeight() - gameWinImage.getHeight(null)) / 2;
 
+        totalEnemies = 0;
+        remainingEnemies = 0;
+        previousEnemies = 0;
+
         setup = true;
     }
 
     public static boolean isSetUp() { return setup; }
 
-    public static void setTotalEnemies(int enemyCount) { totalEnemies = enemyCount; }
+    public static void setTotalEnemies(int enemyCount) { totalEnemies = enemyCount; remainingEnemies = totalEnemies; }
 
     public static void update()
     {
         remainingEnemies = EnemyManager.getRemainingEnemies();
-        
+
+        if (remainingEnemies == 0 && previousEnemies == 0)
+            return;
+
+        previousEnemies = remainingEnemies;
+
         if (!isClear && remainingEnemies <= 0) // The clear condition will be limited to kills
         {
             // Progress to next level
@@ -73,4 +83,5 @@ public class LevelManager {
     public static void setFinal(boolean finalLevel) { isFinal = finalLevel; }
 
     public static long levelClearStartTime () { return startTime; }
+    public static void setSetup(boolean set) { setup = set; }
 }

@@ -120,6 +120,9 @@ public class GamePanel extends Scene {
             }
             else
             {
+                System.out.println("I Changed nothing");
+
+                LevelManager.setSetup(false);
                 LevelManager.setLevelClear(false);
                 startNewLevel();
             }
@@ -185,22 +188,24 @@ public class GamePanel extends Scene {
 
     public void createGameEntities()
     {
+        System.out.println("\n Creating new entities");
+
         backgroundManager = new BackgroundManager(this, window);
         Physics.setPanel(this);
 
         LevelManager.setupToast(this);
+        LevelManager.setLevelClear(false);
+        LevelManager.setFinal(false);
 
         int playerHeight = (window.getHeight() / 164) * 40;
         int playerWidth = (playerHeight / 2);
 
         WorldType world = WorldGeneration.getRandomWorld();
 
-        if (currentLevel == finalLevel && !isEndless)
+        if (currentLevel >= finalLevel && !isEndless)
             WorldGeneration.generateLevel(this, WorldType.END);
-        else if (!isEndless)
-            WorldGeneration.generateLevel(this, world);
         else
-            WorldGeneration.generateLevel(this, WorldType.END);
+            WorldGeneration.generateLevel(this, world);
 
         tiles = WorldGeneration.getAllTiles();
         tileDepths = WorldGeneration.getAllDepthTiles();
@@ -234,7 +239,7 @@ public class GamePanel extends Scene {
         }
     }
 
-    public void stopGameThread() { gameThread.interrupt(); }
+    public void stopGameThread() { gameThread.interrupt(); gameThread = null; }
 
     @Override
     public void run()

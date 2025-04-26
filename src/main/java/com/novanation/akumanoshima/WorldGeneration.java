@@ -12,7 +12,24 @@ public class WorldGeneration {
     private static HashMap<Integer, Chunk> chunkMap = new HashMap<>();
 
     private static ForestLevel forestLevel;
+    private static VolcanicLevel volcanicLevel;
+    private static BlizzardLevel blizzardLevel;
     
+    public static void reset()
+    {
+        forestLevel = null;
+        volcanicLevel = null;
+        blizzardLevel = null;
+
+        if (tileMap != null) tileMap.clear();
+        if (tileDepthMap != null) tileDepthMap.clear();
+        if (chunkMap != null) chunkMap.clear();
+        
+        tileMap = new HashMap<>();
+        tileDepthMap = new HashMap<>();
+        chunkMap = new HashMap<>();
+    }
+
     public static void generateLevel(GamePanel panel, WorldType world)
     {
         switch (world) {
@@ -25,11 +42,27 @@ public class WorldGeneration {
                 chunkMap = forestLevel.getChunkDictionary();
             }
 
-            case VOLCANIC -> { }
+            case VOLCANIC -> { 
+                // volcanicLevel = new VolcanicLevel(panel);
+                // volcanicLevel.createLevel();
 
-            case BLIZZARD -> { }
+                // tileMap = volcanicLevel.getTileDictionary();
+                // tileDepthMap = volcanicLevel.getTileDepthDictionary();
+                // chunkMap = volcanicLevel.getChunkDictionary();
+            }
 
-            case END -> { }
+            case BLIZZARD -> {
+                // blizzardLevel = new BlizzardLevel(panel);
+                // blizzardLevel.createLevel();
+
+                // tileMap = blizzardLevel.getTileDictionary();
+                // tileDepthMap = blizzardLevel.getTileDepthDictionary();
+                // chunkMap = blizzardLevel.getChunkDictionary();
+            }
+
+            case END -> { 
+                generateEndLevel();
+            }
         }
     }
 
@@ -50,8 +83,6 @@ public class WorldGeneration {
         int randWorld = random.nextInt(100);
 
         return WorldType.FOREST;
-
-        // This will remain commented until I draw the remaining tiles
 
         // if (randWorld < 50)
         //     return WorldType.FOREST;

@@ -51,6 +51,8 @@ public class Player implements Entity {
     private double moveSpeedMultiplier = 1.0;
     private Weapon currentWeapon;
 
+    public PlayerAnimation playerAnimation;
+
     public Player(GamePanel panel, int x, int y, int width, int height)
     {
         this.width = width;
@@ -62,8 +64,11 @@ public class Player implements Entity {
         this.panel = panel;
 
         isJumping = false;
-        playerImage = ImageManager.loadImage("/gfx/characters/char_noroi.png");
+        playerImage = ImageManager.loadImage("/src/main/resources/gfx/animations/PlayerWalking/playerRight1.jpg");
         health = new Health();
+
+        this.playerAnimation = new PlayerAnimation(this);
+        System.out.println("Player created with animation: " + (this.playerAnimation != null));
     }
 
     // Directional mutators
@@ -120,6 +125,8 @@ public class Player implements Entity {
     // Panel Dimension Accessors
     public Dimension getPanelDimensions() { return panel.getSize(); }
 
+    public GamePanel getPanel() { return panel; }
+
     //Perk Accessors
     public Weapon getWeapon() { return currentWeapon; }
     public void setCurrentWeapon(Weapon weapon) { currentWeapon = weapon; }
@@ -158,6 +165,13 @@ public class Player implements Entity {
 
         Chunk newChunk = WorldGeneration.getChunk((((int) worldX + tileLength) / tileLength) * tileLength);
         determineChunkTile(newChunk);
+
+        if (playerAnimation != null)
+            playerAnimation.update();
+    }
+
+    public void setPlayerAnimation(PlayerAnimation playerAnimation) {
+        this.playerAnimation = playerAnimation;
     }
 
     @Override
@@ -247,6 +261,17 @@ public class Player implements Entity {
 
     @Override
     public void draw(Graphics2D g2) {
-        g2.drawImage(playerImage, (int) x, (int) y, width, height, null);
+        if (playerAnimation != null) {
+            // Let the animation handle drawing
+            playerAnimation.setPosition((int)x, (int)y);
+            playerAnimation.draw(g2);
+        } else {
+            // Fallback to static image
+            g2.drawImage(playerImage, (int)x, (int)y, width, height, null);
+        }
     }  
+
+    public PlayerAnimation getPlayerAnimation() {
+        return this.playerAnimation;
+    }
 }

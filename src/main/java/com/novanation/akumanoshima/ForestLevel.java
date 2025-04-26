@@ -174,7 +174,7 @@ public class ForestLevel implements Level {
         GameWindow window = panel.getGameWindow();
 
         EnemyManager.setWorldWidth(getMaxWorld());
-        EnemyManager.generateEnemies(window.getConfig().getDifficulty());
+        EnemyManager.generateEnemies(window.getConfig().getDifficulty(), false, panel);
 
         // For percentage resets; this means other tiles can have a higher percentage with a weighting > 100
         // The world moves around the player so it must be larger than the visible area

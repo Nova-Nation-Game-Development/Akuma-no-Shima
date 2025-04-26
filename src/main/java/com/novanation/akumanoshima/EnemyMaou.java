@@ -29,7 +29,7 @@ public class EnemyMaou implements Entity {
     private Rectangle2D.Double entityBounds;
 
     // Design variables
-    private final String enemyID;
+    private String enemyID;
     private final Image maouImage;
 
     public EnemyMaou(int width, int height, int xPos, int yPos, String enemyID)
@@ -77,6 +77,7 @@ public class EnemyMaou implements Entity {
     }
 
     public String getEnemyID() { return enemyID; }
+    public void setEnemyID(String enemyID) { this.enemyID = enemyID; }
 
     @Override
     public int getHeight() { return height; }

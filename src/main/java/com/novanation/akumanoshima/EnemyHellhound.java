@@ -28,7 +28,7 @@ public class EnemyHellhound implements Entity {
 
     private Rectangle2D.Double entityBounds;
 
-    private final String enemyID;
+    private String enemyID;
     private final Image hellhoundImage;
 
     public EnemyHellhound(int width, int height, int xPos, int yPos, String enemyID)
@@ -77,6 +77,7 @@ public class EnemyHellhound implements Entity {
     }
 
     public String getEnemyID() { return enemyID; }
+    public void setEnemyID(String enemyID) { this.enemyID = enemyID; }
 
     @Override
     public int getHeight() { return height; }

@@ -35,6 +35,9 @@ public class GamePanel extends Scene {
     private Collection<Tile> tiles;
     private Collection<Tile> tileDepths;
 
+    
+    
+
     public GamePanel(GameWindow window)
     {
         this.window = window;
@@ -175,6 +178,7 @@ public class GamePanel extends Scene {
         }
             
         playerEntity.update();
+        
 
         // This will keep track of the world and player and update their locations accordingly
         camera.update();
@@ -186,10 +190,11 @@ public class GamePanel extends Scene {
 
     public GameWindow getGameWindow() { return window; }
 
+
     public void createGameEntities()
     {
         Physics.setPanel(this);
-
+      
         LevelManager.setupToast(this);
         LevelManager.setLevelClear(false);
         LevelManager.setFinal(false);
@@ -210,6 +215,8 @@ public class GamePanel extends Scene {
 
         playerEntity = new Player(this, 30, (getHeight() - playerHeight) - (int) (WorldGeneration.getTileLength() * 1.5) - 30, playerWidth, playerHeight);
         playerEntity.setWorldPos((int) playerEntity.getX());
+
+       
 
         playerInput = new InputHandler(playerEntity);
         camera = new CameraControls(playerEntity, playerInput, backgroundManager);

@@ -43,7 +43,6 @@ public class EnemyManager {
     public static void generateEnemies(Difficulty difficulty, boolean isFinal, GamePanel panel)
     {
         isFinalLevel = isFinal;
-
         Random random = new Random();
 
         int enemyCount = 0;
@@ -67,7 +66,7 @@ public class EnemyManager {
 
         if (isFinal)
         {
-            EnemyMaou demonLord = new EnemyMaou(150, 190, panel.getWidth() - 150 - 30, 50, "The Demon Lord");
+            EnemyMaou demonLord = new EnemyMaou(150, 190, panel.getWidth() - 150 - 30, 50, "The Demon Lord", panel);
             enemies.put(demonLord.getEnemyID(), demonLord);
             enemiesAlive.put(demonLord.getEnemyID(), demonLord);
             return; // Only the demon lord will be initially created
@@ -119,10 +118,10 @@ public class EnemyManager {
             int y = getYPosition();
 
             if (type.equals("HELLHOUND")) {
-                EnemyHellhound hellHound = new EnemyHellhound(enemyWidth, enemyHeight, x, y, "Enemy " + i);
+                EnemyHellhound hellHound = new EnemyHellhound(enemyWidth, enemyHeight, x, y, "Enemy " + i, panel);
                 enemies.put("Enemy " + i, hellHound);
             } else {
-                EnemyOni oni = new EnemyOni(enemyWidth, enemyHeight, x, y, "Enemy " + i, player);
+                EnemyOni oni = new EnemyOni(enemyWidth, enemyHeight, x, y, "Enemy " + i, panel);
                 enemies.put("Enemy " + i, oni);
             }
         }

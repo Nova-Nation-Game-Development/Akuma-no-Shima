@@ -90,13 +90,15 @@ public class WorldGeneration {
         Random random = new Random();
         int randWorld = random.nextInt(100);
 
-        if (randWorld < 40)
-            return WorldType.FOREST;
-        else
-            if (randWorld < 70)
-                return WorldType.BLIZZARD; // 30% Chance of snow
-            else
-                return WorldType.VOLCANIC; // 30% Chance of the hardest possible level
+        return WorldType.VOLCANIC;
+
+        // if (randWorld < 40)
+        //     return WorldType.FOREST;
+        // else
+        //     if (randWorld < 70)
+        //         return WorldType.BLIZZARD; // 30% Chance of snow
+        //     else
+        //         return WorldType.VOLCANIC; // 30% Chance of the hardest possible level
     }
 
     public static Tile getTile(int key) { return tileMap.get(key); }

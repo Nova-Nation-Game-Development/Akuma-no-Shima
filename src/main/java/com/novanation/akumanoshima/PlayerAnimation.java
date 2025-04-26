@@ -33,9 +33,9 @@ public class PlayerAnimation {
 
         GamePanel panel = player.getPanel();
         // Load walking left frames
-        Image left1 = ImageManager.loadImage("/gfx/animations/PlayerWalking/playerLeft1.jpg");
-        Image left2 = ImageManager.loadImage("/gfx/animations/PlayerWalking/playerLeft2.jpg");
-        Image left3 = ImageManager.loadImage("/gfx/animations/PlayerWalking/playerLeft3.jpg");
+        Image left1 = ImageManager.loadImage("/gfx/animations/PlayerWalking/playerLeft1.png");
+        Image left2 = ImageManager.loadImage("/gfx/animations/PlayerWalking/playerLeft2.png");
+        Image left3 = ImageManager.loadImage("/gfx/animations/PlayerWalking/playerLeft3.png");
 
         walkLeft = new Animation(panel);
         walkLeft.addFrame(left1, 150);
@@ -43,9 +43,9 @@ public class PlayerAnimation {
         walkLeft.addFrame(left3, 150);
 
         // Load walking right frames
-        Image right1 = ImageManager.loadImage("/gfx/animations/PlayerWalking/playerRight1.jpg");
-        Image right2 = ImageManager.loadImage("/gfx/animations/PlayerWalking/playerRight2.jpg");
-        Image right3 = ImageManager.loadImage("/gfx/animations/PlayerWalking/playerRight3.jpg");
+        Image right1 = ImageManager.loadImage("/gfx/animations/PlayerWalking/playerRight1.png");
+        Image right2 = ImageManager.loadImage("/gfx/animations/PlayerWalking/playerRight2.png");
+        Image right3 = ImageManager.loadImage("/gfx/animations/PlayerWalking/playerRight3.png");
 
         walkRight = new Animation(panel);
         walkRight.addFrame(right1, 150);

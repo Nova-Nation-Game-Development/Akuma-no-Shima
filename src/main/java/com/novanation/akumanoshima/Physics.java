@@ -1,6 +1,7 @@
 package com.novanation.akumanoshima;
 
 
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
 public class Physics {
@@ -82,6 +83,21 @@ public class Physics {
                 entity.getHealth().destroyEntity(entity);
         }
     }
+
+    public static Point2D.Double calculateBezierPoint(double startX, double startY, 
+        double controlX, double controlY, 
+        double endX, double endY, 
+        double t) {
+        double u = 1 - t;
+        double tSq = t * t;
+        double uSq = u * u;
+
+        double x = uSq * startX + 2 * u * t * controlX + tSq * endX;
+        double y = uSq * startY + 2 * u * t * controlY + tSq * endY;
+
+        return new Point2D.Double(x, y);
+    }
+
 
     // kinematics 
     // s = ut + 1/2at^2

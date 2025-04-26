@@ -192,6 +192,7 @@ public class GamePanel extends Scene {
 
     public GameWindow getGameWindow() { return window; }
 
+    public Player getPlayerEntity() { return playerEntity; }
 
     public void createGameEntities()
     {
@@ -220,7 +221,6 @@ public class GamePanel extends Scene {
 
         playerInput = new InputHandler(playerEntity);
         EnemyManager.setPlayer(playerEntity); // Set player instance before generating enemies
-        EnemyManager.generateEnemies(window.getConfig().getDifficulty());
         camera = new CameraControls(playerEntity, playerInput, backgroundManager);
         ar = new AssualtWeapon(playerEntity);
         ar.setInputHandler(playerInput);

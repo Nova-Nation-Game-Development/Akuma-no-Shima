@@ -156,8 +156,6 @@ public class Player implements Entity {
         return moveSpeedMultiplier;
     }
 
-    public int getWorldX() { return worldX; }
-
     @Override
     public void update()
     {
@@ -178,11 +176,6 @@ public class Player implements Entity {
     }
 
     @Override
-    public Chunk getCurrentChunk() { return currentChunk; }
-
-    public void stopMoving() { dx = 0; }
-
-    @Override
     public void move(int direction)
     {
         dx = (int)(direction * moveSpeedMultiplier);
@@ -190,18 +183,6 @@ public class Player implements Entity {
         if (x + dx > 0 && x + dx < panel.getWidth() - width)
             x += dx;
     }
-
-    @Override
-    public Rectangle2D.Double getEntityBounds()
-    {
-        return playerBounds;
-    }
-
-    @Override
-    public void moveY(double dx) { y += dx; }
-
-    @Override
-    public void onGround(boolean onGround) { }
 
     @Override
     public Chunk getCurrentChunk() { return currentChunk; }

@@ -32,7 +32,7 @@ public class EnemyMaou implements Entity {
     private String enemyID;
     private final Image maouImage;
 
-    public EnemyMaou(int width, int height, int xPos, int yPos, String enemyID)
+    public EnemyMaou(int width, int height, int xPos, int yPos, String enemyID, GamePanel panel)
     {
         this.width = width;
         this.height = height;

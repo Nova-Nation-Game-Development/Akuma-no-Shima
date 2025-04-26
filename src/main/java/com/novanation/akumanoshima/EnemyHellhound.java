@@ -31,7 +31,7 @@ public class EnemyHellhound implements Entity {
     private String enemyID;
     private final Image hellhoundImage;
 
-    public EnemyHellhound(int width, int height, int xPos, int yPos, String enemyID)
+    public EnemyHellhound(int width, int height, int xPos, int yPos, String enemyID, GamePanel panel)
     {
         this.width = width;
         this.height = height;

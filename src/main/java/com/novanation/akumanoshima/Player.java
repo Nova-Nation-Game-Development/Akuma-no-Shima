@@ -70,7 +70,7 @@ public class Player implements Entity {
 
         isJumping = false;
         playerImage = ImageManager.loadImage("/gfx/characters/char_noroi.png");
-        health = new Health();
+        health = new Health(true);
         playerBounds = new Rectangle2D.Double(x, y, width, height);
 
         this.playerAnimation = new PlayerAnimation(this);

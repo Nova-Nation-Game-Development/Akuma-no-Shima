@@ -40,7 +40,7 @@ public class CameraControls {
         // TODO: Temporary
         if (playerInput.damage != 0)
         {
-            player.getHealth().dealDamage(playerInput.damage, EntityType.PLAYER, player);
+            player.getHealth().dealDamage(playerInput.damage, true, player);
             playerInput.damage = 0;
         }
         if (playerInput.health != 0)

@@ -14,38 +14,40 @@ public class Health {
     private final Image bonusHealthImage;
 
     // Health values
-    private final int MAX_HP = 5;
+    private int maxHP = 5;
     private final int DEFAULT_HP = 3;
+
     private int currentHealth = 3;
 
     private boolean isDead = false;
 
-    public Health()
+    public Health(boolean isPlayer)
     {
         healthImage = ImageManager.loadImage("/gfx/images/ui/heart_filled.png");
         damagedHealthImage = ImageManager.loadImage("/gfx/images/ui/heart_empty.png");
         bonusHealthImage = ImageManager.loadImage("/gfx/images/ui/heart_filled_bonus.png");
+
+        if (!isPlayer)
+        {
+            maxHP = 100;
+            currentHealth = maxHP;
+        }
     }
 
-    public void dealDamage(int damage, EntityType entityType, Entity entity)
+    public void dealDamage(int damage, boolean isPlayer, Entity entity)
     {
         damage = Math.abs(damage); // In case of damage being negative
 
         if (currentHealth - damage <= 0)
-            switch (entityType) {
-                case PLAYER -> { killPlayer(); }
-                case ONI -> { destroyEntity(entity); }
-                case HELLHOUND -> { destroyEntity(entity); }
-                case MAOU -> { killFinalBoss(); }
-            }
+            if (isPlayer)
+                killPlayer();
+            else
+                destroyEntity(entity);
         else
             currentHealth -= damage;
     }
 
-    public void destroyEntity(Entity entity)
-    {
-        EnemyManager.destroyEntity(entity);
-    }
+    public void destroyEntity(Entity entity) { EnemyManager.destroyEntity(entity); }
 
     // TODO: Complete (Add Death Screen, etc)
     public void killPlayer()
@@ -59,14 +61,18 @@ public class Health {
         }
     }
 
-    public void killFinalBoss() {}
+    public int getCurrentHealth() { return currentHealth; }
+    public int getMaxHealth() { return maxHP; }
+
+    public void setCurrentHealth(int hp) { currentHealth = hp; }
+    public void setMaxHealth(int hp) { maxHP = hp; }
 
     public void addHealth(int hp)
     {
         hp = Math.abs(hp); // In case of health being negative
 
-        if (hp + currentHealth > MAX_HP)
-            currentHealth = MAX_HP;
+        if (hp + currentHealth > maxHP)
+            currentHealth = maxHP;
         else
             currentHealth += hp;
     }

@@ -127,7 +127,7 @@ public class EnemyProjectile implements Projectile {
         Rectangle2D.Double playerBounds = player.getEntityBounds();
         if (projectileBounds.intersects(playerBounds)) {
             hit();
-            player.getHealth().dealDamage(FIREBALL_DAMAGE, EntityType.PLAYER, player);
+            player.getHealth().dealDamage(FIREBALL_DAMAGE, true, player);
             System.out.println("Player hit by fireball! Dealing " + FIREBALL_DAMAGE + " damage");
             return true;
         }

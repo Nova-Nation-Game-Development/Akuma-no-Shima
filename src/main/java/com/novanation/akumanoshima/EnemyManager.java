@@ -33,6 +33,9 @@ public class EnemyManager {
 
     private static final double MINION_SCALE = 0.2f;
 
+    private static final int EXPLOSION_FRAMES = 250;
+    private static int frameCount = 0;
+
     // Enemy Health
     private static final int HEALTH_EASY = 2;
     private static final int HEALTH_NORMAL = 3;
@@ -224,6 +227,12 @@ public class EnemyManager {
         enemy.setID("DESTROYED");
         enemiesAlive.remove(enemy.getID());
 
+        if (enemy instanceof EnemyMaou enemyMaou)
+        {
+            enemyMaou.setDefeated(true);
+            killAllEntities();
+        }
+        
         LevelManager.update();
     }
 
@@ -275,6 +284,14 @@ public class EnemyManager {
         {
             if (!"DESTROYED".equals(enemy.getID()))
                 enemy.draw(g2);
+            else
+                if (enemy instanceof EnemyMaou enemyMaou)
+                {
+                    frameCount++;
+
+                    if (frameCount < EXPLOSION_FRAMES)
+                        enemyMaou.draw(g2);
+                }
 
             // TODO: Testing purposes
             // g2.setColor(Color.BLUE);

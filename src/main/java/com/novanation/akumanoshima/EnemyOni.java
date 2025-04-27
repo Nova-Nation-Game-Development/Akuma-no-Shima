@@ -46,8 +46,6 @@ public class EnemyOni implements Entity {
     private List<EnemyProjectile> projectiles = new ArrayList<>();
     private Player targetPlayer;
 
-    private static final int MAX_HEALTH = 100;
-    private int currentHealth = MAX_HEALTH;
     private static final int FIREBALL_DAMAGE = 25;
 
     private final GamePanel panel;
@@ -65,7 +63,7 @@ public class EnemyOni implements Entity {
         this.worldX = xPos;
         this.projectiles = new ArrayList<>();
 
-        health = new Health();
+        health = new Health(false);
         oniImage = ImageManager.loadImage("/gfx/characters/char_oni.png");
     }
 
@@ -122,11 +120,11 @@ public class EnemyOni implements Entity {
         
         // Draw remaining health (green)
         g2.setColor(Color.GREEN);
-        int currentHealthWidth = (int)((currentHealth / (float)MAX_HEALTH) * healthBarWidth);
+        int currentHealthWidth = (int)((health.getCurrentHealth() / (float) health.getMaxHealth()) * healthBarWidth);
         g2.fillRect((int) healthBarX, (int) healthBarY, currentHealthWidth, healthBarHeight);
 
         g2.setColor(Color.WHITE);
-        String healthText = currentHealth + "/" + MAX_HEALTH;
+        String healthText = health.getCurrentHealth() + "/" + health.getMaxHealth();
         g2.drawString(healthText, (int)healthBarX, (int)healthBarY - 2);
     }
 
@@ -141,6 +139,7 @@ public class EnemyOni implements Entity {
 
     @Override
     public void setWorldPos(int xPos) { worldX += xPos; }
+    @Override
     public void draw(Graphics2D g2) {
 
         g2.drawImage(oniImage, (int) xPos, (int) yPos, width, height, null);
@@ -155,16 +154,6 @@ public class EnemyOni implements Entity {
     public Chunk getNextChunk() { return nextChunk; }
     @Override
     public Chunk getPreviousChunk() { return previousChunk; }
-
-    public void takeDamage(int damage) {
-        System.out.println("EnemyOni taking damage: " + damage + ", Current health: " + currentHealth);
-        currentHealth -= damage;
-        if(currentHealth <= 0) {
-            currentHealth = 0;
-            health.dealDamage(MAX_HEALTH, EntityType.ONI, this);
-        }
-        System.out.println("EnemyOni health after damage: " + currentHealth);
-    }
 
    /*  private void checkProjectileCollisions() {
         for (EnemyProjectile projectile : projectiles) {

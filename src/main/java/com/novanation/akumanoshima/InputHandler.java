@@ -249,7 +249,7 @@ private double clampAngle(double rawAngle) {
             int mouseScreenY = e.getYOnScreen();
 
             // Make a slightly bigger bounds if you want (like 800x800)
-            Rectangle bounds = new Rectangle(panelPos.x, panelPos.y + 50, 800, 650);
+            Rectangle bounds = new Rectangle((int) (player.getPanel().getWidth() / 2) + (int) player.getX(), panelPos.y + 30, 1, 630);
 
             // Clamp mouse position
             int clampedX = Math.max(bounds.x, Math.min(mouseScreenX, bounds.x + bounds.width - 1));

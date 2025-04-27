@@ -26,7 +26,7 @@ public class BackgroundManager {
             case FOREST -> setupForest();
             case VOLCANIC -> setupVolcanic();
             case BLIZZARD -> setupBlizzard();
-            case END -> {}
+            case END -> setupEnd();
         }
 
         numBackgrounds = bgImages.size();
@@ -63,6 +63,11 @@ public class BackgroundManager {
             else
                 bgImages.add("/gfx/images/blizzard/blizzard_" + i + ".png");
         } 
+    }
+    
+    private void setupEnd()
+    {
+        bgImages.add("/gfx/images/end/end_scene.png");
     }
 
     public void move(int direction) {

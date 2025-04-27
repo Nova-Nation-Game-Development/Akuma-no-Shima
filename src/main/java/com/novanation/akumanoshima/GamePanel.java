@@ -21,8 +21,7 @@ public class GamePanel extends Scene {
 
     private int worldOffsetX;
 
-    private final int finalLevel = 10;
-    private int currentLevel = 1;
+    private final int FINAL_LEVEL = 10;
     private boolean isEndless = false;
 
     // Parallax background variables
@@ -115,6 +114,7 @@ public class GamePanel extends Scene {
             // imageContext.setColor(new Color(255, 255, 255, 128));
             // if (playerEntity.getEntityBounds() != null)
             //     imageContext.fill(playerEntity.getEntityBounds());
+
              // Draw custom crosshair at clamped position
             if (playerInput != null) {
                 int crosshairX = playerInput.getMouseX();
@@ -125,7 +125,7 @@ public class GamePanel extends Scene {
                 imageContext.setColor(Color.WHITE);
                 
                 // Outer circle
-            // imageContext.drawOval(crosshairX - size, crosshairY - size, size * 2, size * 2);
+                // imageContext.drawOval(crosshairX - size, crosshairY - size, size * 2, size * 2);
                 
                 // Inner dot
                 imageContext.fillOval(crosshairX - 2, crosshairY - 2, 4, 4);
@@ -224,12 +224,12 @@ public class GamePanel extends Scene {
             
         playerEntity.update();
         
-
-         for (Entity enemy : EnemyManager.getAllEnemies()) {
+        for (Entity enemy : EnemyManager.getAllEnemies()) {
             if (enemy instanceof EnemyOni oni) {
                 oni.performAction();
             }
-    }
+        }
+
         // This will keep track of the world and player and update their locations accordingly
         camera.update();
         if(ar != null) {
@@ -260,12 +260,18 @@ public class GamePanel extends Scene {
         LevelManager.setFinal(false);
 
         WorldType world = WorldGeneration.getRandomWorld();
-        backgroundManager = new BackgroundManager(this, window, world);
 
-        if (currentLevel >= finalLevel && !isEndless)
+        if (window.getCurrentLevel() >= FINAL_LEVEL && !isEndless)
+        {
             WorldGeneration.generateLevel(this, WorldType.END);
+            backgroundManager = new BackgroundManager(this, window, WorldType.END);
+        }
         else
+        {
             WorldGeneration.generateLevel(this, world);
+            backgroundManager = new BackgroundManager(this, window, world);
+        }
+            
 
         tiles = WorldGeneration.getAllTiles();
         tileDepths = WorldGeneration.getAllDepthTiles();
@@ -286,7 +292,7 @@ public class GamePanel extends Scene {
         addMouseListener(playerInput);
         addMouseMotionListener(playerInput);
 
-        currentLevel++; // Create entities will only be called at the start of a new level
+        window.setCurrentLevel(window.getCurrentLevel() + 1);; // Create entities will only be called at the start of a new level
         repaint();
     }
 

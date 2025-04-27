@@ -1,6 +1,5 @@
 package com.novanation.akumanoshima;
 
-
 import java.util.HashMap;
 import java.util.Random;
 
@@ -49,8 +48,6 @@ public class ForestLevel implements Level {
     private int successiveTiles = 0;
     
     private TileType previousTile;
-
-   
 
     // Game Panel
     private final GamePanel panel;
@@ -292,7 +289,7 @@ public class ForestLevel implements Level {
         // Compare previous tile
         if (previousTile == TileType.PRIMARY)
         {
-            Tile newTile = new Tile(panel, (currentTile * 64), yPos, TILE_LENGTH, TileType.PRIMARY, WorldType.FOREST);
+            Tile newTile = new Tile(panel, (currentTile * TILE_LENGTH), yPos, TILE_LENGTH, TileType.PRIMARY, WorldType.FOREST);
             tileMap.put(newTile.getX(), newTile);
 
             // Increase weighting for main percent by an exponential value
@@ -328,7 +325,7 @@ public class ForestLevel implements Level {
             newMainPercent += 20;
             newSecondaryPercent -= 20;
 
-            Tile newTile = new Tile(panel, (currentTile * 64), yPos, TILE_LENGTH, TileType.PRIMARY, WorldType.FOREST);
+            Tile newTile = new Tile(panel, (currentTile * TILE_LENGTH), yPos, TILE_LENGTH, TileType.PRIMARY, WorldType.FOREST);
             tileMap.put(newTile.getX(), newTile);
 
             previousTile = TileType.PRIMARY;
@@ -345,7 +342,7 @@ public class ForestLevel implements Level {
         // Compare previous tile
         if (previousTile == TileType.SECONDARY)
         {
-            Tile newTile = new Tile(panel, (currentTile * 64), yPos, TILE_LENGTH, TileType.SECONDARY, WorldType.FOREST);
+            Tile newTile = new Tile(panel, (currentTile * TILE_LENGTH), yPos, TILE_LENGTH, TileType.SECONDARY, WorldType.FOREST);
             tileMap.put(newTile.getX(), newTile);
 
             // Increase weighting for main percent by an exponential value
@@ -381,7 +378,7 @@ public class ForestLevel implements Level {
             newSecondaryPercent += 20;
             newMainPercent -= 20;
 
-            Tile newTile = new Tile(panel, (currentTile * 64), yPos, TILE_LENGTH, TileType.SECONDARY, WorldType.FOREST);
+            Tile newTile = new Tile(panel, (currentTile * TILE_LENGTH), yPos, TILE_LENGTH, TileType.SECONDARY, WorldType.FOREST);
             tileMap.put(newTile.getX(), newTile);
 
             previousTile = TileType.SECONDARY;
@@ -408,7 +405,7 @@ public class ForestLevel implements Level {
         // Compare previous tile
         if (previousTile == TileType.TERTIARY)
         {
-            Tile newTile = new Tile(panel, (currentTile * 64), yPos, TILE_LENGTH, TileType.TERTIARY, WorldType.FOREST);
+            Tile newTile = new Tile(panel, (currentTile * TILE_LENGTH), yPos, TILE_LENGTH, TileType.TERTIARY, WorldType.FOREST);
             tileMap.put(newTile.getX(), newTile);
 
             // Increase weighting for main percent by an exponential value
@@ -442,7 +439,7 @@ public class ForestLevel implements Level {
             newTertiaryPercent += 20;
             newVoidPercent -= 20;
 
-            Tile newTile = new Tile(panel, (currentTile * 64), yPos, TILE_LENGTH, TileType.TERTIARY, WorldType.FOREST);
+            Tile newTile = new Tile(panel, (currentTile * TILE_LENGTH), yPos, TILE_LENGTH, TileType.TERTIARY, WorldType.FOREST);
             tileMap.put(newTile.getX(), newTile);
 
             previousTile = TileType.TERTIARY;

@@ -183,7 +183,7 @@ public class Player implements Entity {
     {
         dx = (int)(direction * moveSpeedMultiplier);
 
-        if (x + dx > 0 && x + dx < panel.getWidth() - width)
+        if (x + dx > 0 && x + dx < panel.getWidth() - Math.abs(width))
             x += dx;
     }
 

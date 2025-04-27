@@ -66,7 +66,14 @@ public class EnemyManager {
 
         if (isFinal)
         {
-            EnemyMaou demonLord = new EnemyMaou(150, 190, panel.getWidth() - 150 - 30, 50, "The Demon Lord", panel);
+            double widthScale = (double) panel.getGameWindow().getConfig().getResolutionWidth() / panel.getGameWindow().getWidth();
+            double heightScale = (double) panel.getGameWindow().getConfig().getResolutionHeight() / panel.getGameWindow().getHeight();
+
+            int bossHeight = (int) (260 * heightScale);
+            int bossWidth = (int) (120 * widthScale);
+
+            // TODO: Update Boss y level
+            EnemyMaou demonLord = new EnemyMaou(bossWidth, bossHeight, panel.getWidth() - bossWidth - 30, 50, "The Demon Lord", panel);
             enemies.put(demonLord.getEnemyID(), demonLord);
             enemiesAlive.put(demonLord.getEnemyID(), demonLord);
             return; // Only the demon lord will be initially created
@@ -95,8 +102,8 @@ public class EnemyManager {
         {
             String type = enemyTypes.get(i);
 
-            int enemyWidth = type.equals("HELLHOUND") ? 128 : 64;
-            int enemyHeight = type.equals("HELLHOUND") ? 64 : 128;
+            int enemyWidth = type.equals("HELLHOUND") ? panel.getScaledHeight() : panel.getScaledWidth();
+            int enemyHeight = type.equals("HELLHOUND") ? panel.getScaledWidth() : panel.getScaledHeight();
 
             int segmentStart = i * segmentWidth;
             int segmentEnd = segmentStart + segmentWidth;
@@ -250,10 +257,6 @@ public class EnemyManager {
     public static Collection<Entity> getAllEnemies() {
     return enemies.values();
 }
-
-    public static void setPlayer(Player player) {
-        EnemyManager.player = player;
-    }
 
     public static Player getPlayer() {
         return player;

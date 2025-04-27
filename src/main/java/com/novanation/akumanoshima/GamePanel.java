@@ -13,6 +13,9 @@ public class GamePanel extends Scene {
 
     private final GameWindow window;
 
+    private int playerHeight;
+    private int playerWidth;
+
     private final int finalLevel = 10;
     private int currentLevel = 1;
     private boolean isEndless = false;
@@ -206,19 +209,22 @@ public class GamePanel extends Scene {
 
     public Player getPlayerEntity() { return playerEntity; }
 
+    public int getScaledWidth() { return playerWidth; }
+    public int getScaledHeight() { return playerHeight; }
+
     public void createGameEntities()
     {
+        double widthScale = (double) window.getConfig().getResolutionWidth() / window.getWidth();
+        double heightScale = (double) window.getConfig().getResolutionHeight() / window.getHeight();
+
+        playerHeight = (int) (130 * heightScale);
+        playerWidth = (int) (60 * widthScale);
+
         Physics.setPanel(this);
       
         LevelManager.setupToast(this);
         LevelManager.setLevelClear(false);
         LevelManager.setFinal(false);
-
-        double widthScale = (double) window.getConfig().getResolutionWidth() / window.getWidth();
-        double heightScale = (double) window.getConfig().getResolutionHeight() / window.getHeight();
-
-        int playerHeight = (int) (130 * heightScale);
-        int playerWidth = (int) (60 * widthScale);
 
         WorldType world = WorldGeneration.getRandomWorld();
         backgroundManager = new BackgroundManager(this, window, world);
@@ -235,7 +241,6 @@ public class GamePanel extends Scene {
         playerEntity.setWorldPos((int) playerEntity.getX());
 
         playerInput = new InputHandler(playerEntity);
-        EnemyManager.setPlayer(playerEntity); // Set player instance before generating enemies
         camera = new CameraControls(playerEntity, playerInput, backgroundManager);
         ar = new AssualtWeapon(playerEntity);
         ar.setInputHandler(playerInput);

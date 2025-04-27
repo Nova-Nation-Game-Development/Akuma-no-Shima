@@ -25,7 +25,8 @@ public class InputHandler implements KeyListener, MouseListener, MouseMotionList
     private VandalPerk vandalPerk = new VandalPerk();
     private VitalityPerk vitalityPerk = new VitalityPerk();
     private SpeedsterPerk speedsterPerk = new SpeedsterPerk();
-    private int direction;
+
+    private int direction = 0;
 
     // TODO: Temporary
     public int damage;
@@ -66,7 +67,6 @@ public class InputHandler implements KeyListener, MouseListener, MouseMotionList
                     vandalPerk.applyEffect(player);
                     System.out.println("Vandal Perk Applied!");
                     vandalPerk.setActive(true);
-
                 }
             }
             case KeyEvent.VK_B -> { 

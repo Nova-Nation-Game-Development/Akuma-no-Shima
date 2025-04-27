@@ -117,10 +117,10 @@ public class InputHandler implements KeyListener, MouseListener, MouseMotionList
             stopMovement();
       
         // Temporary
-        // if (e.getKeyCode() == KeyEvent.VK_K)
-        //     damage = 1;
-        // if (e.getKeyCode() == KeyEvent.VK_L)
-        //     health = 1;
+        if (e.getKeyCode() == KeyEvent.VK_K)
+            damage = 1;
+        if (e.getKeyCode() == KeyEvent.VK_L)
+            health = 1;
         // if (e.getKeyCode() == KeyEvent.VK_ENTER)
         //     EnemyManager.killAllEntities();
         // if (e.getKeyCode() == KeyEvent.VK_SLASH)

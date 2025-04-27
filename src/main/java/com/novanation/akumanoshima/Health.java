@@ -10,20 +10,22 @@ public class Health {
     private final int heartOffset = 48; // Distance in pixels
 
     private final Image healthImage;
+    private final Image halfHealthImage;
     private final Image damagedHealthImage;
     private final Image bonusHealthImage;
 
     // Health values
-    private int maxHP = 5;
-    private final int DEFAULT_HP = 3;
+    private int maxHP = 24;
+    private final int DEFAULT_HP = 20;
 
-    private int currentHealth = 3;
+    private int currentHealth = 20;
 
     private boolean isDead = false;
 
     public Health(boolean isPlayer)
     {
         healthImage = ImageManager.loadImage("/gfx/images/ui/heart_filled.png");
+        halfHealthImage = ImageManager.loadImage("/gfx/images/ui/heart_half_filled.png");
         damagedHealthImage = ImageManager.loadImage("/gfx/images/ui/heart_empty.png");
         bonusHealthImage = ImageManager.loadImage("/gfx/images/ui/heart_filled_bonus.png");
 
@@ -38,7 +40,9 @@ public class Health {
     {
         damage = Math.abs(damage); // In case of damage being negative
 
-        if (currentHealth - damage <= 0)
+        if (currentHealth > DEFAULT_HP)
+            currentHealth -= 2;
+        else if (currentHealth - damage <= 0)
             if (isPlayer)
                 killPlayer();
             else
@@ -72,31 +76,39 @@ public class Health {
     {
         hp = Math.abs(hp); // In case of health being negative
 
-        if (hp + currentHealth > maxHP)
+        if (currentHealth + hp >= DEFAULT_HP)
+            currentHealth += 2;
+        else if (hp + currentHealth > maxHP)
             currentHealth = maxHP;
         else
             currentHealth += hp;
+
+        if (currentHealth > maxHP)
+            currentHealth = maxHP;
     }
 
     public void draw(Graphics2D g2)
     {
-        if (currentHealth <= DEFAULT_HP)
-            for (int i = 0; i < currentHealth; i++)
-                g2.drawImage(healthImage, (i * heartOffset) + (heartOffset / 2), (heartOffset / 2), heartSize, heartSize, null);
+        int x = heartOffset / 2;
+        int y = heartOffset / 2;
 
-        if (currentHealth > DEFAULT_HP)
-        {
-            for (int i = 0; i < DEFAULT_HP; i++)
-                g2.drawImage(healthImage, (i * heartOffset) + (heartOffset / 2), (heartOffset / 2), heartSize, heartSize, null);
+        double hp = Math.ceil((double) (DEFAULT_HP / 2.0));
+    
+        int fullHearts = currentHealth / 2;
+        boolean hasHalfHeart = (currentHealth % 2) == 1;
 
-            for (int i = DEFAULT_HP; i < currentHealth; i++)
-                g2.drawImage(bonusHealthImage, (i * heartOffset) + (heartOffset / 2), (heartOffset / 2), heartSize, heartSize, null); 
-        }
+        for (int i = 0; i < fullHearts; i++)
+            g2.drawImage(healthImage, (i * heartOffset) + (heartOffset / 2), y, heartSize, heartSize, null);
 
-        if (currentHealth < DEFAULT_HP)
-        {
-            for (int i = currentHealth; i < DEFAULT_HP; i++)
-                g2.drawImage(damagedHealthImage, (i * heartOffset) + (heartOffset / 2), (heartOffset / 2), heartSize, heartSize, null);
-        }
+        if (hasHalfHeart && (int)(currentHealth / 2) < hp)
+            g2.drawImage(halfHealthImage, x + (fullHearts * heartOffset), y, heartSize, heartSize, null);
+
+        if ((int)(currentHealth / 2) < hp)
+            for (int i = (currentHealth / 2); i < hp; i++)
+                g2.drawImage(damagedHealthImage, (i * heartOffset) + (heartOffset / 2), y, heartSize, heartSize, null);
+    
+        if ((int)(currentHealth / 2) > hp)
+            for (int i = (int) hp; i < (currentHealth / 2); i++)
+                g2.drawImage(bonusHealthImage, (i * heartOffset) + (heartOffset / 2), y, heartSize, heartSize, null);
     }
 }

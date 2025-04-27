@@ -9,10 +9,15 @@ public class EnemyProjectile implements Projectile {
 
     private double x, y;
     private double t = 0; // Time parameter for bezier curve (0 to 1)
-    private double speed = 0.02; // Speed of projectile movement
+    private double speed = 0.001; // Speed of projectile movement
     private int size = 30; // Size of projectile
     private boolean active = true;
     private static final int FIREBALL_DAMAGE = 10; // Damage dealt by the fireball
+
+    private double directionX;
+    private double directionY;
+    private double targetX, targetY;
+   
 
     // Bezier curve points
     private double startX, startY;
@@ -87,6 +92,7 @@ public class EnemyProjectile implements Projectile {
         if (projectileBounds.intersects(playerBounds)) {
             hit();
             player.getHealth().dealDamage(FIREBALL_DAMAGE, EntityType.PLAYER, player);
+            System.out.println("Player hit by fireball! Dealing " + FIREBALL_DAMAGE + " damage");
             return true;
         }
         return false;

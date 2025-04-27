@@ -2,9 +2,12 @@ package com.novanation.akumanoshima;
 
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,11 +38,21 @@ public class GamePanel extends Scene {
     private Collection<Tile> tiles;
     private Collection<Tile> tileDepths;
 
+    //cursor
+    private Cursor blankCursor;
+    private BufferedImage cursorImg;
+
     public GamePanel(GameWindow window)
     {
         this.window = window;
         setPreferredSize(new Dimension(this.window.getWidth(), this.window.getHeight()));
 
+        cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+        blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(
+            cursorImg, new Point(0, 0), "blank cursor");
+        
+        // Set blank cursor to hide default cursor
+        setCursor(blankCursor);
         image = new BufferedImage(this.window.getWidth(), this.window.getHeight(), BufferedImage.TYPE_INT_RGB);
     }
 
@@ -88,26 +101,31 @@ public class GamePanel extends Scene {
             // imageContext.setColor(new Color(255, 255, 255, 128));
             // if (playerEntity.getEntityBounds() != null)
             //     imageContext.fill(playerEntity.getEntityBounds());
+             // Draw custom crosshair at clamped position
+        if (playerInput != null) {
+            int crosshairX = playerInput.getMouseX();
+            int crosshairY = playerInput.getMouseY();
+            
+            // Draw crosshair
+            int size = 10;
+            imageContext.setColor(Color.WHITE);
+            
+            // Outer circle
+           // imageContext.drawOval(crosshairX - size, crosshairY - size, size * 2, size * 2);
+            
+            // Inner dot
+            imageContext.fillOval(crosshairX - 2, crosshairY - 2, 4, 4);
+            
+            // Cross lines
+            imageContext.drawLine(crosshairX - size, crosshairY, crosshairX + size, crosshairY);
+            imageContext.drawLine(crosshairX, crosshairY - size, crosshairX, crosshairY + size);
+        }
         }
         
         EnemyManager.draw(imageContext);
 
         imageContext.setColor(Color.WHITE);  // cross hair
         
-        if(playerInput != null) {
-            int x = InputHandler.getMouseX();
-            int y = InputHandler.getMouseY();
-            int size = 20; // Size of crosshair
-            
-            imageContext.setColor(Color.WHITE);
-            // Draw horizontal line
-            imageContext.drawLine(x - size/2, y, x + size/2, y);
-            // Draw vertical line
-            imageContext.drawLine(x, y - size/2, x, y + size/2);
-            
-            // Optional: Add a small dot in the center
-            imageContext.fillOval(x - 2, y - 2, 4, 4);
-        }
 
         if (LevelManager.showLevelClear() && LevelManager.isSetUp())
         {

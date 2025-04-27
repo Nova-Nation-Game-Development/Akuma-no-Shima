@@ -18,6 +18,8 @@ public final class GameWindow extends JFrame {
     private final LoadingPanel loadingPanel;
     private final Menu menuPanel;
 
+    private int currentLevel;
+
     private final SoundManager soundManager;
     private final Config config;
 
@@ -25,6 +27,7 @@ public final class GameWindow extends JFrame {
     {
         // Load Game Files
         config = ConfigManager.loadConfig();
+        currentLevel = config.getLevel();
 
         // Setup window and container
         setTitle("Akuma no Shima");
@@ -63,6 +66,9 @@ public final class GameWindow extends JFrame {
         container.add(SceneLoader.getCardPanel());
         setVisible(true);
     }
+
+    public int getCurrentLevel() { return currentLevel; }
+    public void setCurrentLevel(int level) { currentLevel = level; }
 
     public Config getConfig() { return config; } 
 

@@ -19,8 +19,9 @@ public class GamePanel extends Scene {
     private int playerHeight;
     private int playerWidth;
 
-    private final int finalLevel = 10;
-    private int currentLevel = 1;
+    private int worldOffsetX;
+
+    private final int FINAL_LEVEL = 1; // TODO: Reset back to 10
     private boolean isEndless = false;
 
     // Parallax background variables
@@ -50,14 +51,19 @@ public class GamePanel extends Scene {
         this.window = window;
         setPreferredSize(new Dimension(this.window.getWidth(), this.window.getHeight()));
 
+        worldOffsetX = 0;
+
         cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
         blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(
-            cursorImg, new Point(0, 0), "blank cursor");
+        cursorImg, new Point(0, 0), "blank cursor");
         
         // Set blank cursor to hide default cursor
         setCursor(blankCursor);
         image = new BufferedImage(this.window.getWidth(), this.window.getHeight(), BufferedImage.TYPE_INT_RGB);
     }
+
+    public void setWorldOffsetX(int speed) { worldOffsetX += speed; }
+    public int getWorldOffsetX() { return -worldOffsetX; }
 
     @Override
     protected void paintComponent(Graphics g)
@@ -76,14 +82,6 @@ public class GamePanel extends Scene {
 
         if (backgroundManager != null)
             backgroundManager.draw(imageContext);
-
-        if (tiles != null)
-            for (Tile tile : tiles)
-                tile.draw(imageContext);
-
-        if (tileDepths != null)
-            for (Tile tile : tileDepths)
-                tile.draw(imageContext);
         
         if(ar != null) {
             ar.render(imageContext);
@@ -116,25 +114,28 @@ public class GamePanel extends Scene {
             // imageContext.setColor(new Color(255, 255, 255, 128));
             // if (playerEntity.getEntityBounds() != null)
             //     imageContext.fill(playerEntity.getEntityBounds());
+
              // Draw custom crosshair at clamped position
-        if (playerInput != null) {
-            int crosshairX = playerInput.getMouseX();
-            int crosshairY = playerInput.getMouseY();
-            
-            // Draw crosshair
-            int size = 10;
-            imageContext.setColor(Color.WHITE);
-            
-            // Outer circle
-           // imageContext.drawOval(crosshairX - size, crosshairY - size, size * 2, size * 2);
-            
-            // Inner dot
-            imageContext.fillOval(crosshairX - 2, crosshairY - 2, 4, 4);
-            
-            // Cross lines
-            imageContext.drawLine(crosshairX - size, crosshairY, crosshairX + size, crosshairY);
-            imageContext.drawLine(crosshairX, crosshairY - size, crosshairX, crosshairY + size);
-        }
+            if (playerInput != null) {
+                int crosshairX = playerInput.getMouseX();
+                int crosshairY = playerInput.getMouseY();
+                
+                playerInput.updateWeaponPosition();
+
+                // Draw crosshair
+                int size = 10;
+                imageContext.setColor(Color.WHITE);
+                
+                // Outer circle
+                // imageContext.drawOval(crosshairX - size, crosshairY - size, size * 2, size * 2);
+                
+                // Inner dot
+                imageContext.fillOval(crosshairX - 2, crosshairY - 2, 4, 4);
+                
+                // Cross lines
+                imageContext.drawLine(crosshairX - size, crosshairY, crosshairX + size, crosshairY);
+                imageContext.drawLine(crosshairX, crosshairY - size, crosshairX, crosshairY + size);
+            }
         }
         
         EnemyManager.draw(imageContext);
@@ -182,6 +183,15 @@ public class GamePanel extends Scene {
             }
         }
 
+        // Draw the tiles last to ensure that the lava or water is over the player
+        if (tiles != null)
+            for (Tile tile : tiles)
+                tile.draw(imageContext);
+
+        if (tileDepths != null)
+            for (Tile tile : tileDepths)
+                tile.draw(imageContext);
+
         imageContext.dispose();
     }
 
@@ -194,6 +204,12 @@ public class GamePanel extends Scene {
 
     public void updateEntityCalculations()
     {
+        if (playerInput != null)
+            if (!playerInput.getLocking())
+                setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+            else
+                setCursor(blankCursor);
+
         // Constantly apply gravity to the player
         Physics.applyGravity(playerEntity, playerEntity.getX(), playerEntity.getY());
 
@@ -210,12 +226,12 @@ public class GamePanel extends Scene {
             
         playerEntity.update();
         
-
-         for (Entity enemy : EnemyManager.getAllEnemies()) {
+        for (Entity enemy : EnemyManager.getAllEnemies()) {
             if (enemy instanceof EnemyOni oni) {
                 oni.performAction();
             }
-    }
+        }
+
         // This will keep track of the world and player and update their locations accordingly
         camera.update();
         if(ar != null) {
@@ -246,18 +262,25 @@ public class GamePanel extends Scene {
         LevelManager.setFinal(false);
 
         WorldType world = WorldGeneration.getRandomWorld();
-        backgroundManager = new BackgroundManager(this, window, world);
 
-        if (currentLevel >= finalLevel && !isEndless)
+        if (window.getCurrentLevel() >= FINAL_LEVEL && !isEndless)
+        {
             WorldGeneration.generateLevel(this, WorldType.END);
+            backgroundManager = new BackgroundManager(this, window, WorldType.END);
+        }
         else
+        {
             WorldGeneration.generateLevel(this, world);
-
+            backgroundManager = new BackgroundManager(this, window, world);
+        }
+            
         tiles = WorldGeneration.getAllTiles();
         tileDepths = WorldGeneration.getAllDepthTiles();
 
         playerEntity = new Player(this, 30, (getHeight() - playerHeight) - (int) (WorldGeneration.getTileLength() * 1.5) - 30, playerWidth, playerHeight);
         playerEntity.setWorldPos((int) playerEntity.getX());
+
+        EnemyManager.setPlayer(playerEntity);
 
         playerInput = new InputHandler(playerEntity);
         camera = new CameraControls(playerEntity, playerInput, backgroundManager);
@@ -272,7 +295,7 @@ public class GamePanel extends Scene {
         addMouseListener(playerInput);
         addMouseMotionListener(playerInput);
 
-        currentLevel++; // Create entities will only be called at the start of a new level
+        window.setCurrentLevel(window.getCurrentLevel() + 1);; // Create entities will only be called at the start of a new level
         repaint();
     }
 

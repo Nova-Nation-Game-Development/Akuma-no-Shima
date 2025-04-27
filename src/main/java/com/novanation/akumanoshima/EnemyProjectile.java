@@ -11,7 +11,7 @@ public class EnemyProjectile implements Projectile {
 
     private double x, y;
     private double t = 0; // Time parameter for bezier curve (0 to 1)
-    private double speed = 0.001; // Speed of projectile movement
+    private double speed = 0.003; // Speed of projectile movement
     private int size = 30; // Size of projectile
     private boolean active = true;
     private static final int FIREBALL_DAMAGE = 10; // Damage dealt by the fireball
@@ -20,11 +20,18 @@ public class EnemyProjectile implements Projectile {
     private double directionY;
     private double targetX, targetY;
    
+    private double worldX, worldY;
 
     // Bezier curve points
     private double startX, startY;
     private double controlX, controlY;
     private double endX, endY;
+
+    private int worldSpeed;
+
+    private GamePanel panel;
+
+    public void setPanel(GamePanel panel) { this.panel = panel; }
 
     @Override
     public void move() {
@@ -35,12 +42,17 @@ public class EnemyProjectile implements Projectile {
                 endX, endY,
                 t
             );
-            x = pos.x;
-            y = pos.y;
+            worldX = pos.x;
+            worldY = pos.y;
             t += speed;
         } else {
             active = false;
         }
+    }
+
+    public void moveWithWorld(int worldSpeed)
+    {
+        this.worldSpeed = worldSpeed;
     }
 
     @Override
@@ -52,10 +64,12 @@ public class EnemyProjectile implements Projectile {
     public void draw(Graphics2D g2) {
         if (!active) return;
 
+        int worldOffsetX = panel.getWorldOffsetX();
+    
         ImageIcon fireballGif = ImageManager.loadGif("/gfx/animations/oni/gif/fireball.gif");
         int imgWidth = fireballGif.getIconWidth();
         int imgHeight = fireballGif.getIconHeight();
-
+    
         // Get direction of movement
         Point2D.Double velocity = Physics.calculateBezierDerivative(
             startX, startY,
@@ -63,20 +77,20 @@ public class EnemyProjectile implements Projectile {
             endX, endY,
             t
         );
+            
         double angleRadians = Math.atan2(velocity.y, velocity.x);
-
+    
         AffineTransform oldTransform = g2.getTransform();
-
+    
         // Move to the center of the projectile
-        g2.translate(x, y);
-
+        g2.translate(worldX - worldOffsetX, worldY);
+    
         // Rotate to match direction
         g2.rotate(angleRadians);
-
+    
         // Draw image centered
         g2.drawImage(fireballGif.getImage(), -imgWidth/2, -imgHeight/2, null);
-
-        // Reset transform
+    
         g2.setTransform(oldTransform);
     }
 
@@ -113,7 +127,7 @@ public class EnemyProjectile implements Projectile {
         Rectangle2D.Double playerBounds = player.getEntityBounds();
         if (projectileBounds.intersects(playerBounds)) {
             hit();
-            player.getHealth().dealDamage(FIREBALL_DAMAGE, EntityType.PLAYER, player);
+            player.getHealth().dealDamage(FIREBALL_DAMAGE, true, player);
             System.out.println("Player hit by fireball! Dealing " + FIREBALL_DAMAGE + " damage");
             return true;
         }

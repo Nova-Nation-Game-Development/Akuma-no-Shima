@@ -1,6 +1,10 @@
 package com.novanation.akumanoshima;
 
 
+import java.awt.AWTException;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Robot;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -17,8 +21,8 @@ public class InputHandler implements KeyListener, MouseListener, MouseMotionList
     private double angle;
 
     private static final double CONE_ANGLE = Math.PI / 2; // 90 degrees in radians
-private static final double BASE_ANGLE = 0; 
-private static final double FIXED_DISTANCE = 400; 
+    private static final double BASE_ANGLE = 0; 
+    private static final double FIXED_DISTANCE = 400; 
 
     // for Jumping
     private boolean isMoving;
@@ -30,6 +34,10 @@ private static final double FIXED_DISTANCE = 400;
     private VitalityPerk vitalityPerk = new VitalityPerk();
     private SpeedsterPerk speedsterPerk = new SpeedsterPerk();
 
+    private boolean lockingEnabled = true;
+    private Robot robot;
+    private boolean isRecentering = false;
+
     private int direction = 0;
 
     // TODO: Temporary
@@ -37,7 +45,14 @@ private static final double FIXED_DISTANCE = 400;
     public int health;
 
     // In case of multiplayer, this will be instantiated
-    public InputHandler(Player player) { this.player = player; }
+    public InputHandler(Player player)
+    {
+        this.player = player;
+
+        try {
+            robot = new Robot();
+        } catch (AWTException e) { }
+    }
 
     // Accessors
     public boolean canJump() { return canJump; }
@@ -51,6 +66,7 @@ private static final double FIXED_DISTANCE = 400;
     public void keyPressed(KeyEvent e) {
         // I will temporarily configure the physics here for the player
         switch (e.getKeyCode()) {
+            // Movement
             case KeyEvent.VK_A -> {
                 isMoving = true;
                 direction = -1;
@@ -66,6 +82,13 @@ private static final double FIXED_DISTANCE = 400;
                     canJump = true;
                 }
             }
+
+            // Mouse
+            case KeyEvent.VK_ESCAPE -> {
+                lockingEnabled = !lockingEnabled;
+            }
+
+            // Perks
             case KeyEvent.VK_V -> {
                 if(!vandalPerk.isActive()) {
                     vandalPerk.applyEffect(player);
@@ -78,13 +101,13 @@ private static final double FIXED_DISTANCE = 400;
                   vitalityPerk.applyEffect(player);
                    vitalityPerk.setActive(true);
                  }
-        }
-        case KeyEvent.VK_N -> {
-            if (!speedsterPerk.isActive()) {
-                speedsterPerk.applyEffect(player);
+            }
+            case KeyEvent.VK_N -> {
+                if (!speedsterPerk.isActive()) {
+                    speedsterPerk.applyEffect(player);
+                }
             }
         }
-    }
     }
     @Override
     public void keyReleased(KeyEvent e)
@@ -107,7 +130,11 @@ private static final double FIXED_DISTANCE = 400;
             health = 1;
         if (e.getKeyCode() == KeyEvent.VK_ENTER)
             EnemyManager.killAllEntities();
+        if (e.getKeyCode() == KeyEvent.VK_SLASH)
+            EnemyManager.summonMinions();
     }
+
+    public boolean getLocking() { return lockingEnabled; }
 
     public boolean getIsMoving() { return isMoving; }
 
@@ -129,9 +156,9 @@ private static final double FIXED_DISTANCE = 400;
     // Mouse controls
 
     //getters and setters
-    public static int getMouseX() { return mouseX; }
-    public static int getMouseY() { return mouseY; }
-    public static int getButton() { return mouseB; }
+    public int getMouseX() { return mouseX; }
+    public int getMouseY() { return mouseY; }
+    public int getButton() { return mouseB; }
     public double getAngle() { return angle; }
 
 
@@ -203,18 +230,41 @@ private double clampAngle(double rawAngle) {
         mouseX = e.getX();
         mouseY = e.getY();
         updateMouseAngle();
-        updateWeaponPosition();
     }
 
 
     @Override
     public void mouseMoved(MouseEvent e) {
+        if (isRecentering) {
+            isRecentering = false;
+            return;
+        }
+
         mouseX = e.getX();
         mouseY = e.getY();
         updateMouseAngle();
         updateWeaponPosition();
-    }
 
+        if (lockingEnabled && player != null)
+        {
+            Point panelPos = player.getPanel().getLocationOnScreen();
+            
+            int mouseScreenX = e.getXOnScreen();
+            int mouseScreenY = e.getYOnScreen();
+
+            Rectangle bounds = new Rectangle((int) (player.getPanel().getWidth() / 3) + (int) player.getX(), panelPos.y + 30, 1, 630);
+
+            // Clamp mouse position
+            int clampedX = Math.max(bounds.x, Math.min(mouseScreenX, bounds.x + bounds.width - 1));
+            int clampedY = Math.max(bounds.y, Math.min(mouseScreenY, bounds.y + bounds.height - 1));
+
+            if (mouseScreenX != clampedX || mouseScreenY != clampedY)
+            {
+                isRecentering = true;
+                robot.mouseMove(clampedX, clampedY);
+            }
+        }
+    }
 
     @Override
     public void mouseClicked(MouseEvent e) {

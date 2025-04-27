@@ -14,26 +14,23 @@ public class Bullet implements Projectile{
     private double y;
     private final double height = 6;
     private final double width = 15;
-    private final double speed = 6;
+    private final double speed = 10;
     private double angle;
-    private static final int BULLET_DAMAGE = 10; // 10 bullets to kill an Oni
+    private static final int BULLET_DAMAGE = 1;
     private boolean active = true;
 
     @Override
     public void move() {
        x += speed * Math.cos(angle);
-       y += speed * Math.sin(angle);
-
-      
+       y += speed * Math.sin(angle); 
     }
-    
 
     @Override
     public void hit() {
         active = false;
     }
 
-    public boolean checkCollision(EnemyOni enemy) {
+    public boolean checkCollision(Entity enemy) {
         if (!active) return false;
         
         Rectangle2D.Double bulletBounds = new Rectangle2D.Double(
@@ -41,10 +38,10 @@ public class Bullet implements Projectile{
         );
         
         Rectangle2D.Double enemyBounds = enemy.getEntityBounds();
-        if (bulletBounds.intersects(enemyBounds)) {
+        if (enemyBounds != null && bulletBounds.intersects(enemyBounds)) {
             System.out.println("Bullet hit enemy! Dealing " + BULLET_DAMAGE + " damage");
             hit();
-            enemy.takeDamage(BULLET_DAMAGE);
+            enemy.getHealth().dealDamage(BULLET_DAMAGE, false, enemy);
             return true;
         }
         return false;

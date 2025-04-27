@@ -1,5 +1,6 @@
 package com.novanation.akumanoshima;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.geom.Rectangle2D;
@@ -41,10 +42,18 @@ public class EnemyHellhound implements Entity {
 
         this.worldX = xPos;
 
-        health = new Health();
-        // TODO: Get Hellhound Image
+        health = new Health(false);
+
+        health.setMaxHealth(EnemyManager.getHealthBase() - 1);
+        health.setCurrentHealth(health.getMaxHealth());
+
         hellhoundImage = ImageManager.loadImage("/gfx/characters/char_hellhound.png");
     }
+
+    @Override
+    public void setID(String id) { this.enemyID = id; }
+    @Override
+    public String getID() { return enemyID; }
 
     @Override
     public void update()
@@ -52,7 +61,10 @@ public class EnemyHellhound implements Entity {
         int tileLength = WorldGeneration.getTileLength();
         currentChunk = WorldGeneration.getChunk((((int) xPos) / tileLength) * tileLength);
 
-        entityBounds = new Rectangle2D.Double(xPos, yPos - 2, width, height);
+        if ("DESTROYED".equals(enemyID))
+            entityBounds = null;
+        else
+            entityBounds = new Rectangle2D.Double(xPos, yPos - 2, width, height);
 
         Chunk newChunk = WorldGeneration.getChunk((((int) xPos + tileLength) / tileLength) * tileLength);
         determineChunkTile(newChunk);
@@ -76,9 +88,6 @@ public class EnemyHellhound implements Entity {
         }
     }
 
-    public String getEnemyID() { return enemyID; }
-    public void setEnemyID(String enemyID) { this.enemyID = enemyID; }
-
     @Override
     public int getHeight() { return height; }
     @Override
@@ -92,7 +101,32 @@ public class EnemyHellhound implements Entity {
     public void setWorldPos(int xPos) { worldX += xPos; }
 
     @Override
-    public void draw(Graphics2D g2) { g2.drawImage(hellhoundImage, (int) xPos, (int) yPos, width, height, null); }
+    public void draw(Graphics2D g2) { g2.drawImage(hellhoundImage, (int) xPos, (int) yPos, width, height, null); drawHealthBar(g2); }
+
+    @Override
+    public Chunk getNextChunk() { return null; } // TODO: add checks
+    @Override
+    public Chunk getPreviousChunk() { return null; } // TODO: add checks
+
+    public void drawHealthBar(Graphics2D g2) {
+        int healthBarWidth = 50;
+        int healthBarHeight = 5;
+        double healthBarX = xPos + (width - healthBarWidth) / 2;
+        double healthBarY = yPos - 10;
+        
+        // Draw background (red)
+        g2.setColor(Color.RED);
+        g2.fillRect((int) healthBarX, (int) healthBarY, healthBarWidth, healthBarHeight);
+        
+        // Draw remaining health (green)
+        g2.setColor(Color.GREEN);
+        int currentHealthWidth = (int)((health.getCurrentHealth() / (float) health.getMaxHealth()) * healthBarWidth);
+        g2.fillRect((int) healthBarX, (int) healthBarY, currentHealthWidth, healthBarHeight);
+
+        g2.setColor(Color.WHITE);
+        String healthText = health.getCurrentHealth() + "/" + health.getMaxHealth();
+        g2.drawString(healthText, (int)healthBarX, (int)healthBarY - 2);
+    }
 
     // Movement
     @Override
@@ -115,7 +149,7 @@ public class EnemyHellhound implements Entity {
 
     // Shape
     @Override
-    public Rectangle2D.Double getEntityBounds() { return new Rectangle2D.Double(xPos, yPos, width, height); }
+    public Rectangle2D.Double getEntityBounds() { return entityBounds; }
     @Override
     public Chunk getCurrentChunk() { return currentChunk; }
 

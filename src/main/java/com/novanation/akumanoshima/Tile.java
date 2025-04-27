@@ -86,8 +86,8 @@ public class Tile {
     {
         switch (tileType)
         {
-            case PRIMARY -> tileImage = ImageManager.loadImage("/gfx/tiles/grass_tile.png"); // TODO: Use brick tiles
-            case SECONDARY -> tileImage = ImageManager.loadImage("/gfx/tiles/dirt_tile.png"); // TODO: Use cracked brick tiles
+            case PRIMARY -> tileImage = ImageManager.loadImage("/gfx/tiles/brick_tile.png");
+            case SECONDARY -> {}
             case TERTIARY -> {}
             case VOID -> {}
         }

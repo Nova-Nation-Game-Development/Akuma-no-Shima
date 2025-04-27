@@ -124,9 +124,7 @@ public class AssualtWeapon implements Weapon {
 
             if (bullet.isActive()) {
                 for (Entity enemy : EnemyManager.getAllEnemies()) {
-                    if (enemy instanceof EnemyOni oni) {
-                        bullet.checkCollision(oni);
-                    }
+                    bullet.checkCollision(enemy);
                 }
             }
         }

@@ -46,8 +46,6 @@ public class EnemyOni implements Entity {
     private List<EnemyProjectile> projectiles = new ArrayList<>();
     private Player targetPlayer;
 
-    private static final int MAX_HEALTH = 100;
-    private int currentHealth = MAX_HEALTH;
     private static final int FIREBALL_DAMAGE = 25;
 
     private final GamePanel panel;
@@ -65,9 +63,18 @@ public class EnemyOni implements Entity {
         this.worldX = xPos;
         this.projectiles = new ArrayList<>();
 
-        health = new Health();
+        health = new Health(false);
+        
+        health.setMaxHealth(EnemyManager.getHealthBase());
+        health.setCurrentHealth(health.getMaxHealth());
+
         oniImage = ImageManager.loadImage("/gfx/characters/char_oni.png");
     }
+
+    @Override
+    public void setID(String id) { this.enemyID = id; }
+    @Override
+    public String getID() { return enemyID; }
 
     @Override
     public void update()
@@ -75,7 +82,10 @@ public class EnemyOni implements Entity {
         int tileLength = WorldGeneration.getTileLength();
         currentChunk = WorldGeneration.getChunk((((int) worldX) / tileLength) * tileLength);
 
-        entityBounds = new Rectangle2D.Double(xPos, yPos - 2, width, height);
+        if ("DESTROYED".equals(enemyID))
+            entityBounds = null;
+        else
+            entityBounds = new Rectangle2D.Double(xPos, yPos - 2, width, height);
         
         if (targetPlayer == null)
             targetPlayer = panel.getPlayerEntity();
@@ -114,16 +124,13 @@ public class EnemyOni implements Entity {
         
         // Draw remaining health (green)
         g2.setColor(Color.GREEN);
-        int currentHealthWidth = (int)((currentHealth / (float)MAX_HEALTH) * healthBarWidth);
+        int currentHealthWidth = (int)((health.getCurrentHealth() / (float) health.getMaxHealth()) * healthBarWidth);
         g2.fillRect((int) healthBarX, (int) healthBarY, currentHealthWidth, healthBarHeight);
 
         g2.setColor(Color.WHITE);
-        String healthText = currentHealth + "/" + MAX_HEALTH;
+        String healthText = health.getCurrentHealth() + "/" + health.getMaxHealth();
         g2.drawString(healthText, (int)healthBarX, (int)healthBarY - 2);
     }
-    
-    public String getEnemyID() { return enemyID; }
-    public void setEnemyID(String enemyID) { this.enemyID = enemyID; }
 
     @Override
     public int getHeight() { return height; }
@@ -136,25 +143,21 @@ public class EnemyOni implements Entity {
 
     @Override
     public void setWorldPos(int xPos) { worldX += xPos; }
+    @Override
     public void draw(Graphics2D g2) {
 
         g2.drawImage(oniImage, (int) xPos, (int) yPos, width, height, null);
         drawHealthBar(g2);
-        for (EnemyProjectile projectile : projectiles) {
+        for (int i = 0; i < projectiles.size(); i++) {
+            EnemyProjectile projectile = projectiles.get(i);
             projectile.draw(g2);
         }
-     }
-
-
-     public void takeDamage(int damage) {
-        System.out.println("EnemyOni taking damage: " + damage + ", Current health: " + currentHealth);
-        currentHealth -= damage;
-        if(currentHealth <= 0) {
-            currentHealth = 0;
-            health.dealDamage(MAX_HEALTH, EntityType.ONI, this);
-        }
-        System.out.println("EnemyOni health after damage: " + currentHealth);
     }
+    
+    @Override
+    public Chunk getNextChunk() { return nextChunk; }
+    @Override
+    public Chunk getPreviousChunk() { return previousChunk; }
 
    /*  private void checkProjectileCollisions() {
         for (EnemyProjectile projectile : projectiles) {
@@ -187,7 +190,7 @@ public class EnemyOni implements Entity {
 
     // Shape
     @Override
-    public Rectangle2D.Double getEntityBounds() { return new Rectangle2D.Double(xPos, yPos, width, height); }
+    public Rectangle2D.Double getEntityBounds() { return entityBounds; }
     @Override
     public Chunk getCurrentChunk() { return currentChunk; }
 
@@ -215,18 +218,16 @@ public class EnemyOni implements Entity {
 
         // Update active projectiles
         updateProjectiles();
-        //checkProjectileCollisions();
-       
     }
 
-
-    private void shootFireball() {
+    private void shootFireball()
+    {
         EnemyProjectile projectile = new EnemyProjectile();
         
         // Calculate trajectory points
         double startX = xPos + width/2;
         double startY = yPos + height/2;
-        double playerWorldX = targetPlayer.getWorldX() + targetPlayer.getWidth()/2;
+
         double playerScreenX = targetPlayer.getX() + targetPlayer.getWidth()/2;
         double playerScreenY = targetPlayer.getY() + targetPlayer.getHeight()/2;
         
@@ -238,11 +239,20 @@ public class EnemyOni implements Entity {
         double controlX = (startX + targetX) / 2;
         double controlY = Math.min(startY, targetY) - 400;
         
+        projectile.setPanel(panel);
+
         projectile.spawn(startX, startY, 0);
         projectile.setTargetPoints(startX, startY, controlX, controlY, targetX, targetY);
         projectiles.add(projectile);
     }
 
+    public void moveWithWorld(int worldSpeed)
+    {
+        if (projectiles == null) return;
+
+        for (EnemyProjectile proj : projectiles)
+            proj.moveWithWorld(worldSpeed);
+    }
 
     private void updateProjectiles() {
         projectiles.removeIf(p -> !p.isActive());

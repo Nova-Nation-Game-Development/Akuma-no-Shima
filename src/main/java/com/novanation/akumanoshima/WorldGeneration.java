@@ -14,14 +14,17 @@ public class WorldGeneration {
     private static ForestLevel forestLevel;
     private static VolcanicLevel volcanicLevel;
     private static BlizzardLevel blizzardLevel;
+    private static EndLevel endLevel;
 
     private static Level currentLevel;
+    private static WorldType worldType;
     
     public static void reset()
     {
         forestLevel = null;
         volcanicLevel = null;
         blizzardLevel = null;
+        endLevel = null;
 
         if (tileMap != null) tileMap.clear();
         if (tileDepthMap != null) tileDepthMap.clear();
@@ -34,6 +37,8 @@ public class WorldGeneration {
 
     public static void generateLevel(GamePanel panel, WorldType world)
     {
+        worldType = world;
+
         switch (world) {
             case FOREST -> {
                 forestLevel = new ForestLevel(panel);
@@ -69,11 +74,18 @@ public class WorldGeneration {
             }
 
             case END -> { 
-                generateEndLevel();
+                endLevel = new EndLevel(panel);
+                endLevel.createLevel();
+
+                tileMap = endLevel.getTileDictionary();
+                chunkMap = endLevel.getChunkDictionary();
+
+                currentLevel = endLevel;
             }
         }
     }
 
+    public static WorldType getWorldType() { return worldType; }
     public static int getTileLength() { return currentLevel.getTileLength(); }
     public static Chunk getChunk(int xPos) 
     {
@@ -83,15 +95,13 @@ public class WorldGeneration {
         return null;
     }
 
-    private static void generateEndLevel() {}
-
     public static WorldType getRandomWorld()
     {
         Random random = new Random();
         int randWorld = random.nextInt(100);
-        
-        if (randWorld < 40)
-            return WorldType.FOREST;
+
+        if (randWorld < 100)
+            return WorldType.FOREST; // 40% Chance of pitfalls
         else
             if (randWorld < 70)
                 return WorldType.BLIZZARD; // 30% Chance of snow

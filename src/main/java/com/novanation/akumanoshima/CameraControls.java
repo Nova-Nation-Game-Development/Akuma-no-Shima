@@ -40,7 +40,7 @@ public class CameraControls {
         // TODO: Temporary
         if (playerInput.damage != 0)
         {
-            player.getHealth().dealDamage(playerInput.damage, EntityType.PLAYER, player);
+            player.getHealth().dealDamage(playerInput.damage, true, player);
             playerInput.damage = 0;
         }
         if (playerInput.health != 0)
@@ -85,6 +85,8 @@ public class CameraControls {
 
     private void updatePlayer(int newPlayerSpeed)
     {
+        if (WorldGeneration.getWorldType() == WorldType.END) return;
+
         xPos += newPlayerSpeed;
         player.setWorldPos((int) xPos);
     }
@@ -96,6 +98,12 @@ public class CameraControls {
         {
             newPlayerSpeed *= 1.5;
             newWorldSpeed *= 1.5;
+        }
+
+        if (player.getInLiquid())
+        {
+            newPlayerSpeed /= 1.5;
+            newWorldSpeed /= 1.5;
         }
         
         if (playerInput.getDirection() == -1 && playerInput.getIsMoving())
@@ -140,11 +148,18 @@ public class CameraControls {
                 
         if ((int) xPos > LEFT_THRESHOLD && (int) xPos < RIGHT_THRESHOLD)
         {
-            if (!player.isColliding(newPlayerSpeed))
+            if (!player.isColliding(newPlayerSpeed) && WorldGeneration.getWorldType() == WorldType.END) // TODO: Add Shop here
+                player.move(newPlayerSpeed);
+
+            if (!player.isColliding(newPlayerSpeed) && WorldGeneration.getWorldType() != WorldType.END) // TODO: Add Shop here
             {
+                player.getPanel().setWorldOffsetX(newWorldSpeed);
+
                 backgroundManager.move(bgDirection);
                 WorldGeneration.move(newWorldSpeed);
+                
                 EnemyManager.move(newWorldSpeed);
+                EnemyManager.moveProjectileWithWorld(Math.abs(newWorldSpeed));
             }
         }
     }

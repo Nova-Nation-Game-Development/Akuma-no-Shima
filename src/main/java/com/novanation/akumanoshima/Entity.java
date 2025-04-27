@@ -15,7 +15,12 @@ public interface Entity {
     public int getHeight();
 
     public Chunk getCurrentChunk();
+    public Chunk getNextChunk();
+    public Chunk getPreviousChunk();
     public void update();
+
+    public void setID(String id);
+    public String getID();
 
     public double getX();
     public double getY();

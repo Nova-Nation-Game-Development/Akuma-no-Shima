@@ -4,6 +4,11 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class EnemyMaou implements Entity {
 
@@ -32,10 +37,42 @@ public class EnemyMaou implements Entity {
 
     private Rectangle2D.Double entityBounds;
 
+    private final Timer timer = new Timer();
+    private boolean inAction = false;
+    private boolean isLanded = false;
+
     // Design variables
     private String enemyID;
     private final Image maouImage;
+
     private final Image explosionGif;
+    private Image landingGif;
+
+    private final int LANDING_FRAMES = 250;
+    private int frameCount = 0;
+    private int randAction = 0;
+
+    private boolean isBackingAway = false;
+    private boolean isCharging = false;
+    private boolean isShooting = false;
+
+    private int backingAwayTimer = 0;
+    private final int MAX_BACKING_AWAY_TIME = 120; // Two seconds
+
+    private int chargeTimer = 0;
+    private final int MAX_CHARGE_TIME = 180; // Three second charge
+
+    private int shootTimer = 0;
+    private final int MAX_SHOOT_TIME = 1000; // Three second barrage
+
+    //Attacking variables
+    private static final int ATTACK_RANGE = 1000; // Horizontal range to start attacking
+    private static final int ATTACK_INTERVAL = 500; // Milliseconds between shots
+    private long lastAttackTime = 0;
+    private List<EnemyProjectile> projectiles = new ArrayList<>();
+
+    private GamePanel panel;
+    private Player player;
 
     public EnemyMaou(int width, int height, int xPos, int yPos, String enemyID, GamePanel panel)
     {
@@ -46,15 +83,19 @@ public class EnemyMaou implements Entity {
         this.enemyID = enemyID;
 
         this.worldX = xPos;
+        this.panel = panel;
+
+        this.projectiles = new ArrayList<>();
 
         isDead = false;
 
         health = new Health(false);
-        health.setMaxHealth(10);
+        health.setMaxHealth(30);
         health.setCurrentHealth(health.getMaxHealth());
 
         maouImage = ImageManager.loadImage("/gfx/characters/char_maou.png");
-        explosionGif = (ImageManager.loadGif("/gfx/animations/maou/death/explosion.gif")).getImage();
+        explosionGif = (ImageManager.loadGif("/gfx/animations/maou/gifs/explosion.gif")).getImage();
+        landingGif = (ImageManager.loadGif("/gfx/animations/maou/gifs/landing.gif")).getImage();
     }
 
     @Override
@@ -68,6 +109,13 @@ public class EnemyMaou implements Entity {
         int tileLength = WorldGeneration.getTileLength();
         currentChunk = WorldGeneration.getChunk((((int) xPos) / tileLength) * tileLength);
 
+        if (player == null)
+            player = panel.getPlayerEntity();
+
+        updateBackingAway();
+        updateCharging();
+        updateShooting();
+
         if ("DESTROYED".equals(enemyID))
             entityBounds = null;
         else
@@ -75,6 +123,18 @@ public class EnemyMaou implements Entity {
 
         Chunk newChunk = WorldGeneration.getChunk((((int) xPos + tileLength) / tileLength) * tileLength);
         determineChunkTile(newChunk);
+
+        if (randAction != 0)
+            switch (randAction)
+            {
+                case 1 -> actionSummon();
+                case 2 -> actionCharge();
+                case 3 -> actionShoot();
+                case 4 -> actionSlam();
+            }
+
+        if (!inAction)
+            performAction();
     }
 
     private void determineChunkTile(Chunk newChunk)
@@ -117,10 +177,31 @@ public class EnemyMaou implements Entity {
             g2.drawImage(explosionGif, (int) xPos, (int) yPos, width, height, null);
         else
         {
+            if (isLanded)
+            {
+                if (frameCount == 0)
+                    // TODO: Fix reset
+                    landingGif = ImageManager.loadGif("/gfx/animations/maou/gifs/landing.gif").getImage();
+                    
+                if (frameCount < LANDING_FRAMES)
+                {
+                    frameCount++;
+                    g2.drawImage(landingGif, (int) xPos - (int) (Math.abs(width)), (int) yPos + 80, 300, height, null);
+                }
+            }
+
+            for (int i = 0; i < projectiles.size(); i++)
+            {
+                EnemyProjectile projectile = projectiles.get(i);
+                projectile.draw(g2);
+            }
+
             g2.drawImage(maouImage, (int) xPos, (int) yPos, width, height, null);
             drawHealthBar(g2);
         }
     }
+
+    public void resetFrames() { frameCount = 0;}
 
     public void drawHealthBar(Graphics2D g2) {
         int healthBarWidth = 150;
@@ -173,18 +254,227 @@ public class EnemyMaou implements Entity {
     @Override
     public Chunk getCurrentChunk() { return currentChunk; }
 
+    public boolean isLanded() { return isLanded; }
+    public void setLanded(boolean isLanded) { this.isLanded = isLanded; }
+
     // Actions
     @Override
-    public void jump() { // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'jump'"); }
+    public void jump() 
+    { 
+        if (onGround)
+        {
+            setVelocityY(-16);
+            onGround = false;
+            isLanded = false;
+        }
+     }
     @Override
-    public void performAction() { // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'performAction'"); }
+    public void performAction()
+    {
+        Random random = new Random();
+        inAction = true;
 
-    private void actionSummon() {}
-    private void actionCharge() {}
-    private void actionShoot() {}
-    private void actionSlam() {}
+        timer.schedule(new TimerTask()
+        {
+            @Override
+            public void run()
+            {
+                randAction = random.nextInt(1, 5); // [1..4]
+
+                switch (randAction)
+                {
+                    case 1 -> actionSummon();
+                    case 2 -> actionCharge();
+                    case 3 -> actionShoot();
+                    case 4 -> actionSlam();
+                }
+
+                inAction = false;
+                randAction = 0;
+            }
+        }, 2_500, 2_500);
+    }
+
+    private void actionSummon()
+    {
+        if (EnemyManager.getRemainingEnemies() != 1) return; // If it's just the boss
+
+        if (player != null)
+        {
+            isBackingAway = true;
+            backingAwayTimer = MAX_BACKING_AWAY_TIME;
+        }
+
+        EnemyManager.summonMinions();
+    }
+
+    private void updateBackingAway()
+    {
+        if (isBackingAway)
+        {
+            if (player != null)
+            {
+                dx = (int) (xPos - player.getX());
+                dy = (int) (yPos - player.getY());
+                double distance = Math.sqrt(dx * dx + dy * dy);
+    
+                if (distance != 0)
+                {
+                    double moveSpeed = 2.0;
+
+                    if (xPos + dx > 0 && xPos + dx < panel.getWidth() - Math.abs(width))
+                        xPos += (dx / distance) * moveSpeed;
+
+                    yPos += (dy / distance) * moveSpeed;
+                }
+            }
+    
+            backingAwayTimer--;
+    
+            if (backingAwayTimer <= 0)
+                isBackingAway = false;
+        }
+    }
+
+    private void actionCharge()
+    {
+        if (player != null)
+        {
+            isCharging = true;
+            chargeTimer = MAX_CHARGE_TIME;
+        }
+    }
+
+    private void updateCharging()
+    {
+        if (isCharging)
+        {
+            if (player != null)
+            {
+                dx = (int) (xPos - player.getX());
+                dy = (int) (yPos - player.getY());
+                double distance = Math.sqrt(dx * dx + dy * dy);
+    
+                if (distance > (int) Math.abs((player.getWidth() / 2)))
+                {
+                    double moveSpeed = 2.0;
+
+                    if (xPos - dx > 0 && xPos - dx < panel.getWidth() - Math.abs(width))
+                        xPos -= (dx / distance) * moveSpeed;
+
+                    yPos += (dy / distance) * moveSpeed;
+                }
+            }
+    
+            chargeTimer--;
+    
+            if (chargeTimer <= 0)
+            {
+                isCharging = false;
+                // TODO: Perform attack animation
+                if (player == null) return;
+
+                if (player.getEntityBounds().intersects(getEntityBounds()))
+                {
+                    // Damage player
+                    System.out.println("Player got yeeted lol!");
+                }
+            }
+        }
+    }
+
+    private void actionShoot()
+    {
+        if (player != null)
+        {
+            isShooting = true;
+            shootTimer = MAX_SHOOT_TIME;
+        }
+    }
+
+    private void updateShooting()
+    {
+        if (isShooting)
+        {
+            if (player != null)
+            {
+                long currentTime = System.currentTimeMillis();
+        
+                // Check attack timing
+                if (currentTime - lastAttackTime >= ATTACK_INTERVAL)
+                {
+                    // Use world position for distance check
+                    if (player != null)
+                    {
+                        dx = (int) (xPos - player.getX());
+                        dy = (int) (yPos - player.getY());
+                        double distance = Math.sqrt(dx * dx + dy * dy);
+
+                        if (distance <= ATTACK_RANGE)
+                        {
+                            shootFireball();
+                            lastAttackTime = currentTime;
+                        }
+                    }
+                }
+
+                // Update active projectiles
+                updateProjectiles();
+            }
+
+            shootTimer--;
+    
+            if (shootTimer <= 0)
+            {
+                isShooting = false;
+                // TODO: Damage player
+                if (player == null) return;
+            }
+        }
+    }
+
+    private void shootFireball()
+    {
+        EnemyProjectile projectile = new EnemyProjectile();
+        
+        // Calculate trajectory points
+        double startX = xPos + width/2;
+        double startY = yPos + height/2;
+
+        double playerScreenX = player.getX() + player.getWidth()/2;
+        double playerScreenY = player.getY() + player.getHeight()/2;
+        
+        double targetX = playerScreenX;
+        double targetY = playerScreenY;
+
+        // Calculate control point for arc
+        double controlX = (startX + targetX) / 2;
+        double controlY = Math.min(startY, targetY) - 400;
+        
+        projectile.setPanel(panel);
+
+        projectile.spawn(startX, startY, 0);
+        projectile.setTargetPoints(startX, startY, controlX, controlY, targetX, targetY);
+        projectiles.add(projectile);
+    }
+
+    private void updateProjectiles()
+    {
+        projectiles.removeIf(p -> !p.isActive());
+
+        for (EnemyProjectile projectile : projectiles) {
+            projectile.move();
+            //collision
+            if (projectile.isActive() && player != null)
+                projectile.checkCollision(player);
+        }
+    }
+
+    private void actionSlam()
+    {
+        jump();
+        // TODO: Damage on landing
+    }
 
     public void setDefeated(boolean isDead) { this.isDead = isDead; }
 }

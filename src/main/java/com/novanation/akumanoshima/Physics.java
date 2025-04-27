@@ -76,6 +76,16 @@ public class Physics {
                 entity.setY(groundY - entity.getHeight());
                 entity.setGrounded(true);
                 entity.setVelocityY(0);
+
+                if (entity instanceof EnemyMaou enemyMaou)
+                {
+                    if (!enemyMaou.isLanded())
+                    {
+                        enemyMaou.setLanded(true);
+                        enemyMaou.resetFrames();
+                    }
+                        
+                }
             }
             else
                 entity.setGrounded(false);

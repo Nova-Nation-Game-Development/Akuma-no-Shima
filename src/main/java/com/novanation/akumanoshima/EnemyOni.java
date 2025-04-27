@@ -64,6 +64,10 @@ public class EnemyOni implements Entity {
         this.projectiles = new ArrayList<>();
 
         health = new Health(false);
+        
+        health.setMaxHealth(EnemyManager.getHealthBase());
+        health.setCurrentHealth(health.getMaxHealth());
+
         oniImage = ImageManager.loadImage("/gfx/characters/char_oni.png");
     }
 
@@ -214,18 +218,16 @@ public class EnemyOni implements Entity {
 
         // Update active projectiles
         updateProjectiles();
-        //checkProjectileCollisions();
-       
     }
 
-
-    private void shootFireball() {
+    private void shootFireball()
+    {
         EnemyProjectile projectile = new EnemyProjectile();
         
         // Calculate trajectory points
         double startX = xPos + width/2;
         double startY = yPos + height/2;
-        double playerWorldX = targetPlayer.getWorldX() + targetPlayer.getWidth()/2;
+
         double playerScreenX = targetPlayer.getX() + targetPlayer.getWidth()/2;
         double playerScreenY = targetPlayer.getY() + targetPlayer.getHeight()/2;
         

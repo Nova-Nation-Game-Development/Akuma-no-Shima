@@ -120,6 +120,8 @@ public class GamePanel extends Scene {
                 int crosshairX = playerInput.getMouseX();
                 int crosshairY = playerInput.getMouseY();
                 
+                playerInput.updateWeaponPosition();
+
                 // Draw crosshair
                 int size = 10;
                 imageContext.setColor(Color.WHITE);

@@ -197,6 +197,20 @@ public class EnemyManager {
         }
     }
 
+    public static int getHealthBase()
+    {
+        if (player == null) return 0;
+
+        switch (player.getPanel().getGameWindow().getConfig().getDifficulty())
+        {
+            case EASY -> {return HEALTH_EASY;}
+            case NORMAL -> {return HEALTH_NORMAL;}
+            case HARD -> {return HEALTH_HARD;}
+        }
+
+        return HEALTH_NORMAL;
+    }
+
     public static void moveProjectileWithWorld(int worldSpeed)
     {
         if (enemies == null) return;
@@ -258,7 +272,13 @@ public class EnemyManager {
         int remainingEnemies = 0;
         if (enemies.values() == null) return 0;
 
+        // Save List
+        HashMap<String, Entity> newEnemies = new HashMap<>();
+
         for (Entity entity : enemies.values())
+            newEnemies.put(entity.getID(), entity);
+
+        for (Entity entity : newEnemies.values())
             if (!"DESTROYED".equals(entity.getID()))
                 remainingEnemies++;
 

@@ -14,9 +14,9 @@ public class Bullet implements Projectile{
     private double y;
     private final double height = 6;
     private final double width = 15;
-    private final double speed = 6;
+    private final double speed = 10;
     private double angle;
-    private static final int BULLET_DAMAGE = 10; // 10 bullets to kill an Oni
+    private static final int BULLET_DAMAGE = 1;
     private boolean active = true;
 
     @Override

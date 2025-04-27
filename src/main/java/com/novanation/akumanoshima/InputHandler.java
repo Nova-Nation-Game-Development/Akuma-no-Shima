@@ -156,9 +156,9 @@ public class InputHandler implements KeyListener, MouseListener, MouseMotionList
     // Mouse controls
 
     //getters and setters
-    public static int getMouseX() { return mouseX; }
-    public static int getMouseY() { return mouseY; }
-    public static int getButton() { return mouseB; }
+    public int getMouseX() { return mouseX; }
+    public int getMouseY() { return mouseY; }
+    public int getButton() { return mouseB; }
     public double getAngle() { return angle; }
 
 
@@ -230,7 +230,6 @@ private double clampAngle(double rawAngle) {
         mouseX = e.getX();
         mouseY = e.getY();
         updateMouseAngle();
-        updateWeaponPosition();
     }
 
 

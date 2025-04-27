@@ -43,6 +43,10 @@ public class EnemyHellhound implements Entity {
         this.worldX = xPos;
 
         health = new Health(false);
+
+        health.setMaxHealth(EnemyManager.getHealthBase() - 1);
+        health.setCurrentHealth(health.getMaxHealth());
+
         hellhoundImage = ImageManager.loadImage("/gfx/characters/char_hellhound.png");
     }
 

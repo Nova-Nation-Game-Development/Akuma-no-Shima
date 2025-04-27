@@ -140,7 +140,8 @@ public class EnemyOni implements Entity {
 
         g2.drawImage(oniImage, (int) xPos, (int) yPos, width, height, null);
         drawHealthBar(g2);
-        for (EnemyProjectile projectile : projectiles) {
+        for (int i = 0; i < projectiles.size(); i++) {
+            EnemyProjectile projectile = projectiles.get(i);
             projectile.draw(g2);
         }
      }

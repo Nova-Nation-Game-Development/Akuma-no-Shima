@@ -79,6 +79,18 @@ public class GamePanel extends Scene {
             if (playerEntity.getHealth() != null)
                 playerEntity.getHealth().draw(imageContext);
 
+            PlayerAnimation playerAnimation = playerEntity.getPlayerAnimation();
+            
+            if (playerInput.getDirection() != 0)
+            {
+                if (!playerAnimation.isStillActive())
+                    playerAnimation.start();
+
+                playerAnimation.draw(imageContext);
+            }
+            else
+                playerAnimation.stop();
+
             // Draw the player's current chunk
             // if (playerEntity.getCurrentChunk() != null)
             //     playerEntity.getCurrentChunk().showChunkBounds(imageContext);
@@ -202,8 +214,11 @@ public class GamePanel extends Scene {
         LevelManager.setLevelClear(false);
         LevelManager.setFinal(false);
 
-        int playerHeight = (window.getHeight() / 164) * 40;
-        int playerWidth = (playerHeight / 2);
+        double widthScale = (double) window.getConfig().getResolutionWidth() / window.getWidth();
+        double heightScale = (double) window.getConfig().getResolutionHeight() / window.getHeight();
+
+        int playerHeight = (int) (130 * heightScale);
+        int playerWidth = (int) (60 * widthScale);
 
         WorldType world = WorldGeneration.getRandomWorld();
         backgroundManager = new BackgroundManager(this, window, world);

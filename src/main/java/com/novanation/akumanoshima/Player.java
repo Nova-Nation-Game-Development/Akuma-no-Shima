@@ -69,7 +69,6 @@ public class Player implements Entity {
         playerBounds = new Rectangle2D.Double(x, y, width, height);
 
         this.playerAnimation = new PlayerAnimation(this);
-        System.out.println("Player created with animation: " + (this.playerAnimation != null));
     }
 
     // Directional mutators
@@ -172,9 +171,7 @@ public class Player implements Entity {
         determineChunkTile(newChunk);
     }
 
-    public void setPlayerAnimation(PlayerAnimation playerAnimation) {
-        this.playerAnimation = playerAnimation;
-    }
+    public PlayerAnimation getPlayerAnimation() { return playerAnimation; }
 
     @Override
     public void move(int direction)
@@ -265,12 +262,6 @@ public class Player implements Entity {
     public void draw(Graphics2D g2)
     {
         if (playerAnimation != null && !playerAnimation.isStillActive())
-        {
-            g2.drawImage(playerImage, (int) x + width, (int) y, -width, height, null);   
-        }
-    }  
-
-    public PlayerAnimation getPlayerAnimation() {
-        return this.playerAnimation;
+            g2.drawImage(playerImage, (int) x, (int) y, width, height, null);
     }
 }

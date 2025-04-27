@@ -4,6 +4,7 @@ package com.novanation.akumanoshima;
 public class CameraControls {
     
     private final Player player;
+    private final PlayerAnimation playerAnimation;
     private final InputHandler playerInput;
     private final BackgroundManager backgroundManager;
 
@@ -26,6 +27,8 @@ public class CameraControls {
         this.player = player;
         this.playerInput = playerInput;
         this.backgroundManager = backgroundManager;
+
+        this.playerAnimation = this.player.getPlayerAnimation();
 
         xPos = player.getX() + 30;
     }
@@ -101,6 +104,7 @@ public class CameraControls {
             {
                 player.setWidth(-player.getWidth());
                 player.setX(player.getX() - player.getWidth() - newPlayerSpeed);
+
                 previousDirection = -1;
             }
             
@@ -111,15 +115,13 @@ public class CameraControls {
             {
                 player.setWidth(-player.getWidth());
                 player.setX(player.getX() - player.getWidth() - newPlayerSpeed);
-                    
+                
                 previousDirection = 1;
             }
         }
 
         if (!player.isColliding(newPlayerSpeed))
-        {
             updatePlayer(newPlayerSpeed);
-        }
         else
         {
             // If is colliding right, allow left movement

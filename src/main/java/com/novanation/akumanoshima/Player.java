@@ -94,11 +94,15 @@ public class Player implements Entity {
     public double getX() { return x; }
     @Override
     public double getY() { return y; }
+    @Override
     public int getWorldX() { return worldX; }
    
     // Locational Mutators
     @Override
     public void setWorldPos(int xPos) { worldX = xPos; }
+
+    @Override
+    public void setWorldX(int x) {}
 
     // Shape Mutators
     public void setWidth(int newWidth) { width = newWidth; }
@@ -179,8 +183,11 @@ public class Player implements Entity {
         else
             playerBounds.setRect(x, y - 2, Math.abs(width), height);
 
-        Chunk newChunk = WorldGeneration.getChunk((((int) worldX + tileLength) / tileLength) * tileLength);
-        determineChunkTile(newChunk);
+        if (currentChunk != null)
+            determineChunkTile(currentChunk);
+
+        // Chunk newChunk = WorldGeneration.getChunk((((int) worldX + (tileLength * (width / Math.abs(width)))) / tileLength) * tileLength);
+        // determineChunkTile(newChunk);
     }
 
     public PlayerAnimation getPlayerAnimation() { return playerAnimation; }
@@ -207,13 +214,13 @@ public class Player implements Entity {
 
         if (dx > 0)
         {
-            nextChunk = WorldGeneration.getChunk((((int) worldX + tileLength) / tileLength) * tileLength);
+            nextChunk = WorldGeneration.getChunk((((int) worldX - (tileLength * (Math.abs(width) / width))) / tileLength) * tileLength);
             if (nextChunk != null && nextChunk.getTileType() != TileType.TERTIARY) // Next chunk is not air and exists
                 return getCollision(nextChunk);
         }
         else if (dx < 0)
         {
-            previousChunk = WorldGeneration.getChunk((((int) worldX - tileLength) / tileLength) * tileLength);
+            previousChunk = WorldGeneration.getChunk((((int) worldX + (tileLength * (Math.abs(width) / width))) / tileLength) * tileLength);
             if (previousChunk != null && nextChunk.getTileType() != TileType.TERTIARY) // Previous chunk is not air and exists
                 return getCollision(previousChunk);
         }
@@ -238,6 +245,7 @@ public class Player implements Entity {
                     }
                     case VOLCANIC -> {
                         inLiquid = true;
+                        System.out.println("mr lava lava");
                         // TODO: Deal damage
                     }
                     case BLIZZARD -> {

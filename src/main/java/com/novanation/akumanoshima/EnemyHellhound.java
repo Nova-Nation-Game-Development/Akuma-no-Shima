@@ -32,6 +32,9 @@ public class EnemyHellhound implements Entity {
     private String enemyID;
     private final Image hellhoundImage;
 
+    private Player targetPlayer;
+    private GamePanel panel;
+
     public EnemyHellhound(int width, int height, int xPos, int yPos, String enemyID, GamePanel panel)
     {
         this.width = width;
@@ -41,6 +44,7 @@ public class EnemyHellhound implements Entity {
         this.enemyID = enemyID;
 
         this.worldX = xPos;
+        this.panel = panel;
 
         health = new Health(false);
 
@@ -51,22 +55,29 @@ public class EnemyHellhound implements Entity {
     }
 
     @Override
+    public int getWorldX() { return worldX; }
+    @Override
+    public void setWorldX(int x) { this.worldX = x; }
+
+    @Override
     public void setID(String id) { this.enemyID = id; }
     @Override
     public String getID() { return enemyID; }
 
     @Override
-    public void update()
-    {
+    public void update() {
         int tileLength = WorldGeneration.getTileLength();
-        currentChunk = WorldGeneration.getChunk((((int) xPos) / tileLength) * tileLength);
+        currentChunk = WorldGeneration.getChunk(((worldX) / tileLength) * tileLength);
 
         if ("DESTROYED".equals(enemyID))
             entityBounds = null;
         else
             entityBounds = new Rectangle2D.Double(xPos, yPos - 2, width, height);
 
-        Chunk newChunk = WorldGeneration.getChunk((((int) xPos + tileLength) / tileLength) * tileLength);
+        if (targetPlayer == null)
+            targetPlayer = panel.getPlayerEntity();
+
+        Chunk newChunk = WorldGeneration.getChunk((worldX + tileLength) / tileLength * tileLength);
         determineChunkTile(newChunk);
     }
 
@@ -98,7 +109,11 @@ public class EnemyHellhound implements Entity {
     public Health getHealth() { return health; }
 
     @Override
-    public void setWorldPos(int xPos) { worldX += xPos; }
+    public void setWorldPos(int xPos) { 
+        this.worldX = xPos;
+        // Update screen position relative to world offset
+        this.xPos = this.worldX + panel.getWorldOffsetX();
+    }
 
     @Override
     public void draw(Graphics2D g2) { g2.drawImage(hellhoundImage, (int) xPos, (int) yPos, width, height, null); drawHealthBar(g2); }
@@ -130,7 +145,10 @@ public class EnemyHellhound implements Entity {
 
     // Movement
     @Override
-    public void move(int direction) { xPos += direction; }
+    public void move(int direction) { 
+        xPos += direction; 
+        worldX += direction;
+    }
     @Override
     public void moveY(double dx) { yPos += dx; }
     @Override

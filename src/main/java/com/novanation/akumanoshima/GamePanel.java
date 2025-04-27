@@ -22,7 +22,7 @@ public class GamePanel extends Scene {
 
     private int worldOffsetX;
 
-    private final int FINAL_LEVEL = 10; // TODO: Reset back to 10
+    private final int FINAL_LEVEL = 1; // TODO: Reset back to 10
     private boolean isEndless = false;
 
     // Parallax background variables
@@ -90,6 +90,15 @@ public class GamePanel extends Scene {
 
         if (backgroundManager != null)
             backgroundManager.draw(imageContext);
+
+        // TODO: Temp
+        if (tiles != null)
+            for (Tile tile : tiles)
+                tile.draw(imageContext);
+
+        if (tileDepths != null)
+            for (Tile tile : tileDepths)
+                tile.draw(imageContext);
         
         if(ar != null) {
             ar.render(imageContext);
@@ -115,8 +124,8 @@ public class GamePanel extends Scene {
                 playerAnimation.stop();
 
             // Draw the player's current chunk
-            // if (playerEntity.getCurrentChunk() != null)
-            //     playerEntity.getCurrentChunk().showChunkBounds(imageContext);
+            if (playerEntity.getCurrentChunk() != null)
+                playerEntity.getCurrentChunk().showChunkBounds(imageContext);
 
             // Draw the player collider
             // imageContext.setColor(new Color(255, 255, 255, 128));
@@ -185,13 +194,13 @@ public class GamePanel extends Scene {
         }
 
         // Draw the tiles last to ensure that the lava or water is over the player
-        if (tiles != null)
-            for (Tile tile : tiles)
-                tile.draw(imageContext);
+        // if (tiles != null)
+        //     for (Tile tile : tiles)
+        //         tile.draw(imageContext);
 
-        if (tileDepths != null)
-            for (Tile tile : tileDepths)
-                tile.draw(imageContext);
+        // if (tileDepths != null)
+        //     for (Tile tile : tileDepths)
+        //         tile.draw(imageContext);
 
         if (playerEntity.getHealth().isDead())
             imageContext.drawImage(deathImage, 0, 0, null);

@@ -35,5 +35,8 @@ public interface Entity {
     public boolean isGrounded();
     public void setGrounded(boolean grounded);
 
+    public int getWorldX();
+    public void setWorldX(int x);
+
     public Health getHealth();
 }

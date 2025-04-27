@@ -393,12 +393,12 @@ public class ForestLevel implements Level {
     public void setTertiaryTile()
     {
         // Must not place water after air
-        if (previousTile == TileType.VOID)
-        {
+        if (previousTile == TileType.VOID || elevationDistance <= 1 || elevationDistance >= ELEVATION_LENGTH) {
             Random random = new Random();
             int randomInt = random.nextInt(2);
-
-            if (randomInt == 0) setMainTile(); else setSecondaryTile();
+    
+            if (randomInt == 0) setMainTile(); 
+            else setSecondaryTile();
             return;
         }
 

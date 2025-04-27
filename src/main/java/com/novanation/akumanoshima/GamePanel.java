@@ -22,7 +22,7 @@ public class GamePanel extends Scene {
 
     private int worldOffsetX;
 
-    private final int FINAL_LEVEL = 1; // TODO: Reset back to 10
+    private final int FINAL_LEVEL = 10; // TODO: Reset back to 10
     private boolean isEndless = false;
 
     // Parallax background variables
@@ -124,8 +124,8 @@ public class GamePanel extends Scene {
                 playerAnimation.stop();
 
             // Draw the player's current chunk
-            if (playerEntity.getCurrentChunk() != null)
-                playerEntity.getCurrentChunk().showChunkBounds(imageContext);
+            // if (playerEntity.getCurrentChunk() != null)
+            //     playerEntity.getCurrentChunk().showChunkBounds(imageContext);
 
             // Draw the player collider
             // imageContext.setColor(new Color(255, 255, 255, 128));

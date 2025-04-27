@@ -105,7 +105,7 @@ public class WorldGeneration {
         Random random = new Random();
         int randWorld = random.nextInt(100);
 
-        if (randWorld < 40)
+        if (randWorld < 100)
             return WorldType.FOREST; // 40% Chance of pitfalls
         else
             if (randWorld < 70)

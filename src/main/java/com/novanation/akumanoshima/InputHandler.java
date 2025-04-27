@@ -1,6 +1,10 @@
 package com.novanation.akumanoshima;
 
 
+import java.awt.AWTException;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Robot;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -17,8 +21,8 @@ public class InputHandler implements KeyListener, MouseListener, MouseMotionList
     private double angle;
 
     private static final double CONE_ANGLE = Math.PI / 2; // 90 degrees in radians
-private static final double BASE_ANGLE = 0; 
-private static final double FIXED_DISTANCE = 400; 
+    private static final double BASE_ANGLE = 0; 
+    private static final double FIXED_DISTANCE = 400; 
 
     // for Jumping
     private boolean isMoving;
@@ -30,6 +34,10 @@ private static final double FIXED_DISTANCE = 400;
     private VitalityPerk vitalityPerk = new VitalityPerk();
     private SpeedsterPerk speedsterPerk = new SpeedsterPerk();
 
+    private boolean lockingEnabled = true;
+    private Robot robot;
+    private boolean isRecentering = false;
+
     private int direction = 0;
 
     // TODO: Temporary
@@ -37,7 +45,14 @@ private static final double FIXED_DISTANCE = 400;
     public int health;
 
     // In case of multiplayer, this will be instantiated
-    public InputHandler(Player player) { this.player = player; }
+    public InputHandler(Player player)
+    {
+        this.player = player;
+
+        try {
+            robot = new Robot();
+        } catch (AWTException e) { }
+    }
 
     // Accessors
     public boolean canJump() { return canJump; }
@@ -66,6 +81,11 @@ private static final double FIXED_DISTANCE = 400;
                     canJump = true;
                 }
             }
+
+            case KeyEvent.VK_ESCAPE -> {
+                lockingEnabled = !lockingEnabled;
+            }
+
             case KeyEvent.VK_V -> {
                 if(!vandalPerk.isActive()) {
                     vandalPerk.applyEffect(player);
@@ -108,6 +128,8 @@ private static final double FIXED_DISTANCE = 400;
         if (e.getKeyCode() == KeyEvent.VK_ENTER)
             EnemyManager.killAllEntities();
     }
+
+    public boolean getLocking() { return lockingEnabled; }
 
     public boolean getIsMoving() { return isMoving; }
 
@@ -209,12 +231,37 @@ private double clampAngle(double rawAngle) {
 
     @Override
     public void mouseMoved(MouseEvent e) {
+        if (isRecentering) {
+            isRecentering = false;
+            return;
+        }
+
         mouseX = e.getX();
         mouseY = e.getY();
         updateMouseAngle();
         updateWeaponPosition();
-    }
 
+        if (lockingEnabled && player != null)
+        {
+            Point panelPos = player.getPanel().getLocationOnScreen();
+            
+            int mouseScreenX = e.getXOnScreen();
+            int mouseScreenY = e.getYOnScreen();
+
+            // Make a slightly bigger bounds if you want (like 800x800)
+            Rectangle bounds = new Rectangle(panelPos.x, panelPos.y + 50, 800, 650);
+
+            // Clamp mouse position
+            int clampedX = Math.max(bounds.x, Math.min(mouseScreenX, bounds.x + bounds.width - 1));
+            int clampedY = Math.max(bounds.y, Math.min(mouseScreenY, bounds.y + bounds.height - 1));
+
+            if (mouseScreenX != clampedX || mouseScreenY != clampedY)
+            {
+                isRecentering = true;
+                robot.mouseMove(clampedX, clampedY);
+            }
+        }
+    }
 
     @Override
     public void mouseClicked(MouseEvent e) {

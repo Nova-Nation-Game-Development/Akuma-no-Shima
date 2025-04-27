@@ -6,6 +6,8 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -52,12 +54,12 @@ public class GamePanel extends Scene {
 
         worldOffsetX = 0;
 
-        // cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
-        // blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(
-        //     cursorImg, new Point(0, 0), "blank cursor");
+        cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+        blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(
+        cursorImg, new Point(0, 0), "blank cursor");
         
         // Set blank cursor to hide default cursor
-        // setCursor(blankCursor);
+        setCursor(blankCursor);
         image = new BufferedImage(this.window.getWidth(), this.window.getHeight(), BufferedImage.TYPE_INT_RGB);
     }
 
@@ -199,6 +201,12 @@ public class GamePanel extends Scene {
 
     public void updateEntityCalculations()
     {
+        if (playerInput != null)
+            if (!playerInput.getLocking())
+                setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+            else
+                setCursor(blankCursor);
+
         // Constantly apply gravity to the player
         Physics.applyGravity(playerEntity, playerEntity.getX(), playerEntity.getY());
 

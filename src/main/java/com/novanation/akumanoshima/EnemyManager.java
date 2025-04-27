@@ -102,7 +102,7 @@ public class EnemyManager {
         {
             String type = enemyTypes.get(i);
 
-            int enemyWidth = type.equals("HELLHOUND") ? panel.getScaledHeight() : panel.getScaledWidth();
+            int enemyWidth = type.equals("HELLHOUND") ? panel.getScaledHeight() : panel.getScaledWidth() + 40;
             int enemyHeight = type.equals("HELLHOUND") ? panel.getScaledWidth() : panel.getScaledHeight();
 
             int segmentStart = i * segmentWidth;

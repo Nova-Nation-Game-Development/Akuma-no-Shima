@@ -94,6 +94,12 @@ public class EnemyMaou implements Entity {
     @Override
     public void draw(Graphics2D g2) { g2.drawImage(maouImage, (int) xPos, (int) yPos, width, height, null); }
 
+    // Isn't needed for this particular enemy
+    @Override
+    public Chunk getNextChunk() { return null; }
+    @Override
+    public Chunk getPreviousChunk() { return null; }
+
     // Movement
     @Override
     public void move(int direction) { xPos += direction; }

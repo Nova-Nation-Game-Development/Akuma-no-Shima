@@ -94,6 +94,11 @@ public class EnemyHellhound implements Entity {
     @Override
     public void draw(Graphics2D g2) { g2.drawImage(hellhoundImage, (int) xPos, (int) yPos, width, height, null); }
 
+    @Override
+    public Chunk getNextChunk() { return null; } // TODO: add checks
+    @Override
+    public Chunk getPreviousChunk() { return null; } // TODO: add checks
+
     // Movement
     @Override
     public void move(int direction) { xPos += direction; }

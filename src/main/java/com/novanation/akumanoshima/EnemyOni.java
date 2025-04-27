@@ -144,10 +144,14 @@ public class EnemyOni implements Entity {
             EnemyProjectile projectile = projectiles.get(i);
             projectile.draw(g2);
         }
-     }
+    }
+    
+    @Override
+    public Chunk getNextChunk() { return nextChunk; }
+    @Override
+    public Chunk getPreviousChunk() { return previousChunk; }
 
-
-     public void takeDamage(int damage) {
+    public void takeDamage(int damage) {
         System.out.println("EnemyOni taking damage: " + damage + ", Current health: " + currentHealth);
         currentHealth -= damage;
         if(currentHealth <= 0) {

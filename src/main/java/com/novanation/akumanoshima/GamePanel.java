@@ -83,14 +83,6 @@ public class GamePanel extends Scene {
 
         if (backgroundManager != null)
             backgroundManager.draw(imageContext);
-
-        if (tiles != null)
-            for (Tile tile : tiles)
-                tile.draw(imageContext);
-
-        if (tileDepths != null)
-            for (Tile tile : tileDepths)
-                tile.draw(imageContext);
         
         if(ar != null) {
             ar.render(imageContext);
@@ -124,24 +116,24 @@ public class GamePanel extends Scene {
             // if (playerEntity.getEntityBounds() != null)
             //     imageContext.fill(playerEntity.getEntityBounds());
              // Draw custom crosshair at clamped position
-        if (playerInput != null) {
-            int crosshairX = playerInput.getMouseX();
-            int crosshairY = playerInput.getMouseY();
-            
-            // Draw crosshair
-            int size = 10;
-            imageContext.setColor(Color.WHITE);
-            
-            // Outer circle
-           // imageContext.drawOval(crosshairX - size, crosshairY - size, size * 2, size * 2);
-            
-            // Inner dot
-            imageContext.fillOval(crosshairX - 2, crosshairY - 2, 4, 4);
-            
-            // Cross lines
-            imageContext.drawLine(crosshairX - size, crosshairY, crosshairX + size, crosshairY);
-            imageContext.drawLine(crosshairX, crosshairY - size, crosshairX, crosshairY + size);
-        }
+            if (playerInput != null) {
+                int crosshairX = playerInput.getMouseX();
+                int crosshairY = playerInput.getMouseY();
+                
+                // Draw crosshair
+                int size = 10;
+                imageContext.setColor(Color.WHITE);
+                
+                // Outer circle
+            // imageContext.drawOval(crosshairX - size, crosshairY - size, size * 2, size * 2);
+                
+                // Inner dot
+                imageContext.fillOval(crosshairX - 2, crosshairY - 2, 4, 4);
+                
+                // Cross lines
+                imageContext.drawLine(crosshairX - size, crosshairY, crosshairX + size, crosshairY);
+                imageContext.drawLine(crosshairX, crosshairY - size, crosshairX, crosshairY + size);
+            }
         }
         
         EnemyManager.draw(imageContext);
@@ -188,6 +180,15 @@ public class GamePanel extends Scene {
                 stopGameThread();
             }
         }
+
+        // Draw the tiles last to ensure that the lava or water is over the player
+        if (tiles != null)
+            for (Tile tile : tiles)
+                tile.draw(imageContext);
+
+        if (tileDepths != null)
+            for (Tile tile : tileDepths)
+                tile.draw(imageContext);
 
         imageContext.dispose();
     }

@@ -43,6 +43,9 @@ public class Player implements Entity {
     Rectangle2D.Double playerBounds;
     private final Image playerImage;
 
+    private boolean inLiquid = false;
+    private boolean onIce = false;
+
     // Game Panel
     private final GamePanel panel;
 
@@ -104,6 +107,8 @@ public class Player implements Entity {
 
     @Override
     public Rectangle2D.Double getEntityBounds() { return playerBounds; }
+    @Override
+    public Chunk getNextChunk() { return nextChunk; }
 
     @Override
     public void moveY(double dx) { y += dx; }
@@ -184,6 +189,8 @@ public class Player implements Entity {
 
     @Override
     public Chunk getCurrentChunk() { return currentChunk; }
+    @Override
+    public Chunk getPreviousChunk() { return previousChunk; }
 
     public void stopMoving() { dx = 0; }
 
@@ -194,13 +201,13 @@ public class Player implements Entity {
         if (dx > 0)
         {
             nextChunk = WorldGeneration.getChunk((((int) worldX + tileLength) / tileLength) * tileLength);
-            if (nextChunk != null) // Next chunk is not air and exists
+            if (nextChunk != null && nextChunk.getTileType() != TileType.TERTIARY) // Next chunk is not air and exists
                 return getCollision(nextChunk);
         }
         else if (dx < 0)
         {
             previousChunk = WorldGeneration.getChunk((((int) worldX - tileLength) / tileLength) * tileLength);
-            if (previousChunk != null) // Previous chunk is not air and exists
+            if (previousChunk != null && nextChunk.getTileType() != TileType.TERTIARY) // Previous chunk is not air and exists
                 return getCollision(previousChunk);
         }
 
@@ -211,22 +218,38 @@ public class Player implements Entity {
     {
         if (newChunk != null && newChunk.getTileType() == TileType.TERTIARY)
         {
-            // TODO: Reduce player speed, damage player or increase player speed
-            switch (newChunk.getWorldType())
+            Rectangle2D.Double chunkBounds = getCurrentChunk() != null
+            ? getCurrentChunk().getChunkBounds()
+            : null;
+
+            if (chunkBounds != null) // Actually over the tertiary tile
             {
-                case FOREST -> {
-                    System.out.println("In Water!");
+                switch (newChunk.getWorldType())
+                {
+                    case FOREST -> {
+                        inLiquid = true;
+                    }
+                    case VOLCANIC -> {
+                        inLiquid = true;
+                        // TODO: Deal damage
+                    }
+                    case BLIZZARD -> {
+                        onIce = true;
+                    }
+                    case END -> {}
                 }
-                case VOLCANIC -> {
-                    // System.out.println("In Lava!");
-                }
-                case BLIZZARD -> {
-                    System.out.println("On Ice!");
-                }
-                case END -> {}
             }
+            
+        }
+        else
+        {
+            inLiquid = false;
+            onIce = false;
         }
     }
+
+    public boolean getInLiquid() { return inLiquid; }
+    public boolean getOnIce() { return onIce; }
 
     private boolean getCollision(Chunk newChunk)
     {

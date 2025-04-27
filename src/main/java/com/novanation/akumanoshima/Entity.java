@@ -15,6 +15,8 @@ public interface Entity {
     public int getHeight();
 
     public Chunk getCurrentChunk();
+    public Chunk getNextChunk();
+    public Chunk getPreviousChunk();
     public void update();
 
     public double getX();

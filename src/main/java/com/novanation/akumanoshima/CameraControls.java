@@ -97,6 +97,12 @@ public class CameraControls {
             newPlayerSpeed *= 1.5;
             newWorldSpeed *= 1.5;
         }
+
+        if (player.getInLiquid())
+        {
+            newPlayerSpeed /= 1.5;
+            newWorldSpeed /= 1.5;
+        }
         
         if (playerInput.getDirection() == -1 && playerInput.getIsMoving())
         {

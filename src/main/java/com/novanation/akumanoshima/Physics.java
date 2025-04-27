@@ -59,8 +59,16 @@ public class Physics {
 
         if (chunkBounds != null)
         {
+            int sinkDepth = 0;
+
+            if (entity.getNextChunk() != null && entity.getNextChunk().getTileType() == TileType.TERTIARY)
+            {
+                if (entity.getNextChunk().getWorldType() == WorldType.FOREST || entity.getNextChunk().getWorldType() == WorldType.VOLCANIC)
+                    sinkDepth = WorldGeneration.getTileLength();
+            }
+
             double entityBottom = entity.getY() + entity.getHeight();
-            double groundY = chunkBounds.getY();
+            double groundY = chunkBounds.getY() + sinkDepth;
 
             // Only snap the entity to the ground if they are falling on the ground (not air gap)
             if (entityBottom >= groundY && entity.getVelocityY() >= 0)

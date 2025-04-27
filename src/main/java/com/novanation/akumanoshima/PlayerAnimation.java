@@ -8,7 +8,7 @@ public class PlayerAnimation {
     private final Animation animation;
     private final Player player;
 
-    private final double ANIMATION_LENGTH = 7;
+    private final int ANIMATION_LENGTH = 7;
     private final double SPEED_SCALE = 3.5;
 
     public PlayerAnimation(Player player)

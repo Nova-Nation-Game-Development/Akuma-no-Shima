@@ -1,9 +1,11 @@
 package com.novanation.akumanoshima;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+
+import javax.swing.ImageIcon;
 
 public class EnemyProjectile implements Projectile {
 
@@ -44,13 +46,33 @@ public class EnemyProjectile implements Projectile {
     @Override
     public void draw(Graphics2D g2) {
         if (!active) return;
-        
-        g2.setColor(new Color(255, 50, 0));
-        g2.fillOval((int)x - size/2, (int)y - size/2, size, size);
-        
-        // Draw glow effect
-        g2.setColor(new Color(255, 100, 0, 128));
-        g2.fillOval((int)x - size/2 - 5, (int)y - size/2 - 5, size + 10, size + 10);
+
+        ImageIcon fireballGif = ImageManager.loadGif("/gfx/animations/oni/gif/fireball.gif");
+        int imgWidth = fireballGif.getIconWidth();
+        int imgHeight = fireballGif.getIconHeight();
+
+        // Get direction of movement
+        Point2D.Double velocity = Physics.calculateBezierDerivative(
+            startX, startY,
+            controlX, controlY,
+            endX, endY,
+            t
+        );
+        double angleRadians = Math.atan2(velocity.y, velocity.x);
+
+        AffineTransform oldTransform = g2.getTransform();
+
+        // Move to the center of the projectile
+        g2.translate(x, y);
+
+        // Rotate to match direction
+        g2.rotate(angleRadians);
+
+        // Draw image centered
+        g2.drawImage(fireballGif.getImage(), -imgWidth/2, -imgHeight/2, null);
+
+        // Reset transform
+        g2.setTransform(oldTransform);
     }
 
     @Override

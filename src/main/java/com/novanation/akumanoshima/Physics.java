@@ -98,6 +98,19 @@ public class Physics {
         return new Point2D.Double(x, y);
     }
 
+    public static Point2D.Double calculateBezierDerivative(double startX, double startY, 
+        double controlX, double controlY, 
+        double endX, double endY, 
+        double t) {
+        
+        double u = 1 - t;
+
+        double dx = 2 * u * (controlX - startX) + 2 * t * (endX - controlX);
+        double dy = 2 * u * (controlY - startY) + 2 * t * (endY - controlY);
+
+        return new Point2D.Double(dx, dy);
+    }
+
 
     // kinematics 
     // s = ut + 1/2at^2

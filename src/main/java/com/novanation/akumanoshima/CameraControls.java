@@ -142,9 +142,13 @@ public class CameraControls {
         {
             if (!player.isColliding(newPlayerSpeed))
             {
+                player.getPanel().setWorldOffsetX(newWorldSpeed);
+
                 backgroundManager.move(bgDirection);
                 WorldGeneration.move(newWorldSpeed);
                 EnemyManager.move(newWorldSpeed);
+                
+                EnemyManager.moveProjectileWithWorld(Math.abs(newWorldSpeed) * 100);
             }
         }
     }

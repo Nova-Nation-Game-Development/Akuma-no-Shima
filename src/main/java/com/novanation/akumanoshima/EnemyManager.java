@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
@@ -131,6 +132,19 @@ public class EnemyManager {
                 EnemyOni oni = new EnemyOni(enemyWidth, enemyHeight, x, y, "Enemy " + i, panel);
                 enemies.put("Enemy " + i, oni);
             }
+        }
+    }
+
+    public static void moveProjectileWithWorld(int worldSpeed)
+    {
+        if (enemies == null) return;
+
+        for (Map.Entry<String, Entity> entry : enemies.entrySet())
+        {
+            Entity entity = entry.getValue();
+
+            if (entity instanceof EnemyOni enemyOni)
+                enemyOni.moveWithWorld(worldSpeed);
         }
     }
 

@@ -238,11 +238,20 @@ public class EnemyOni implements Entity {
         double controlX = (startX + targetX) / 2;
         double controlY = Math.min(startY, targetY) - 400;
         
+        projectile.setPanel(panel);
+
         projectile.spawn(startX, startY, 0);
         projectile.setTargetPoints(startX, startY, controlX, controlY, targetX, targetY);
         projectiles.add(projectile);
     }
 
+    public void moveWithWorld(int worldSpeed)
+    {
+        if (projectiles == null) return;
+
+        for (EnemyProjectile proj : projectiles)
+            proj.moveWithWorld(worldSpeed);
+    }
 
     private void updateProjectiles() {
         projectiles.removeIf(p -> !p.isActive());

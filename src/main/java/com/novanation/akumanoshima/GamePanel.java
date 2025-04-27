@@ -6,8 +6,6 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,6 +16,8 @@ public class GamePanel extends Scene {
 
     private int playerHeight;
     private int playerWidth;
+
+    private int worldOffsetX;
 
     private final int finalLevel = 10;
     private int currentLevel = 1;
@@ -50,14 +50,19 @@ public class GamePanel extends Scene {
         this.window = window;
         setPreferredSize(new Dimension(this.window.getWidth(), this.window.getHeight()));
 
-        cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
-        blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(
-            cursorImg, new Point(0, 0), "blank cursor");
+        worldOffsetX = 0;
+
+        // cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+        // blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(
+        //     cursorImg, new Point(0, 0), "blank cursor");
         
         // Set blank cursor to hide default cursor
-        setCursor(blankCursor);
+        // setCursor(blankCursor);
         image = new BufferedImage(this.window.getWidth(), this.window.getHeight(), BufferedImage.TYPE_INT_RGB);
     }
+
+    public void setWorldOffsetX(int speed) { worldOffsetX += speed; }
+    public int getWorldOffsetX() { return -worldOffsetX; }
 
     @Override
     protected void paintComponent(Graphics g)

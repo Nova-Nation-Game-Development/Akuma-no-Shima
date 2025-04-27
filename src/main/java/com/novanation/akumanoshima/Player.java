@@ -283,10 +283,7 @@ public class Player implements Entity {
     }
 
     @Override
-    public void performAction() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'performAction'");
-    }
+    public void performAction() { }
 
     @Override
     public void draw(Graphics2D g2)

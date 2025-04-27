@@ -11,8 +11,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
-public class InputHandler implements KeyListener, MouseListener, MouseMotionListener{
-
+public class InputHandler implements KeyListener, MouseListener, MouseMotionListener {
 
     //Mouse handling 
     private static int mouseX = -1;
@@ -89,24 +88,24 @@ public class InputHandler implements KeyListener, MouseListener, MouseMotionList
             }
 
             // Perks
-            case KeyEvent.VK_V -> {
-                if(!vandalPerk.isActive()) {
-                    vandalPerk.applyEffect(player);
-                    System.out.println("Vandal Perk Applied!");
-                    vandalPerk.setActive(true);
-                }
-            }
-            case KeyEvent.VK_B -> { 
-                if(!vitalityPerk.isActive()) {
-                  vitalityPerk.applyEffect(player);
-                   vitalityPerk.setActive(true);
-                 }
-            }
-            case KeyEvent.VK_N -> {
-                if (!speedsterPerk.isActive()) {
-                    speedsterPerk.applyEffect(player);
-                }
-            }
+            // case KeyEvent.VK_V -> {
+            //     if(!vandalPerk.isActive()) {
+            //         vandalPerk.applyEffect(player);
+            //         System.out.println("Vandal Perk Applied!");
+            //         vandalPerk.setActive(true);
+            //     }
+            // }
+            // case KeyEvent.VK_B -> { 
+            //     if(!vitalityPerk.isActive()) {
+            //       vitalityPerk.applyEffect(player);
+            //        vitalityPerk.setActive(true);
+            //      }
+            // }
+            // case KeyEvent.VK_N -> {
+            //     if (!speedsterPerk.isActive()) {
+            //         speedsterPerk.applyEffect(player);
+            //     }
+            // }
         }
     }
     @Override
@@ -116,22 +115,16 @@ public class InputHandler implements KeyListener, MouseListener, MouseMotionList
             stopMovement();
         if (direction == -1 && e.getKeyCode() == KeyEvent.VK_A)
             stopMovement();
-        
-      //  if (e.getKeyCode() == KeyEvent.VK_L){
-         //   ar.setArIsFiring(false);
-           
-
-       // }
       
-        // TODO: Temporary
-        if (e.getKeyCode() == KeyEvent.VK_K)
-            damage = 1;
-        if (e.getKeyCode() == KeyEvent.VK_L)
-            health = 1;
-        if (e.getKeyCode() == KeyEvent.VK_ENTER)
-            EnemyManager.killAllEntities();
-        if (e.getKeyCode() == KeyEvent.VK_SLASH)
-            EnemyManager.summonMinions();
+        // Temporary
+        // if (e.getKeyCode() == KeyEvent.VK_K)
+        //     damage = 1;
+        // if (e.getKeyCode() == KeyEvent.VK_L)
+        //     health = 1;
+        // if (e.getKeyCode() == KeyEvent.VK_ENTER)
+        //     EnemyManager.killAllEntities();
+        // if (e.getKeyCode() == KeyEvent.VK_SLASH)
+        //     EnemyManager.summonMinions();
     }
 
     public boolean getLocking() { return lockingEnabled; }
@@ -151,8 +144,6 @@ public class InputHandler implements KeyListener, MouseListener, MouseMotionList
     @Override
     public void keyTyped(KeyEvent e) { }
 
-
-
     // Mouse controls
 
     //getters and setters
@@ -160,7 +151,6 @@ public class InputHandler implements KeyListener, MouseListener, MouseMotionList
     public int getMouseY() { return mouseY; }
     public int getButton() { return mouseB; }
     public double getAngle() { return angle; }
-
 
     //Mouse Methods
 
@@ -179,24 +169,23 @@ public class InputHandler implements KeyListener, MouseListener, MouseMotionList
         // Update mouse coordinates to virtual position
         mouseX = (int)virtualX;
         mouseY = (int)virtualY;
-        
     }
 
     
-private double clampAngle(double rawAngle) {
-    // Normalize the angle to be between -PI and PI
-    while (rawAngle > Math.PI) rawAngle -= 2 * Math.PI;
-    while (rawAngle < -Math.PI) rawAngle += 2 * Math.PI;
-    
-    // Calculate the half cone for up and down from horizontal
-    double halfCone = CONE_ANGLE / 2;
-    
-    // Clamp the angle to the cone
-    if (rawAngle > halfCone) rawAngle = halfCone;
-    if (rawAngle < -halfCone) rawAngle = -halfCone;
-    
-    return rawAngle;
-}
+    private double clampAngle(double rawAngle) {
+        // Normalize the angle to be between -PI and PI
+        while (rawAngle > Math.PI) rawAngle -= 2 * Math.PI;
+        while (rawAngle < -Math.PI) rawAngle += 2 * Math.PI;
+        
+        // Calculate the half cone for up and down from horizontal
+        double halfCone = CONE_ANGLE / 2;
+        
+        // Clamp the angle to the cone
+        if (rawAngle > halfCone) rawAngle = halfCone;
+        if (rawAngle < -halfCone) rawAngle = -halfCone;
+        
+        return rawAngle;
+    }
 
     public void updateWeaponPosition() {
         if (ar == null || player == null) return;
@@ -223,7 +212,6 @@ private double clampAngle(double rawAngle) {
         // Set weapon facing direction based on mouse position
         ar.setFacingLeft(false);
     }
-    
 
     @Override
     public void mouseDragged(MouseEvent e) {
@@ -231,7 +219,6 @@ private double clampAngle(double rawAngle) {
         mouseY = e.getY();
         updateMouseAngle();
     }
-
 
     @Override
     public void mouseMoved(MouseEvent e) {
@@ -267,20 +254,16 @@ private double clampAngle(double rawAngle) {
     }
 
     @Override
-    public void mouseClicked(MouseEvent e) {
-        
-    }
-
+    public void mouseClicked(MouseEvent e) { }
 
     @Override
     public void mousePressed(MouseEvent e) {
-       mouseB = e.getButton();
-       if (e.getButton() == MouseEvent.BUTTON1) { // Left click
-        ar.setArCanFire(true);
-        ar.setArIsFiring(true);
+        mouseB = e.getButton();
+        if (e.getButton() == MouseEvent.BUTTON1){ // Left click
+            ar.setArCanFire(true);
+            ar.setArIsFiring(true);
+        }
     }
-    }
-
 
     @Override
     public void mouseReleased(MouseEvent e) {
@@ -291,15 +274,9 @@ private double clampAngle(double rawAngle) {
         }
     }
 
+    @Override
+    public void mouseEntered(MouseEvent e) { }
 
     @Override
-    public void mouseEntered(MouseEvent e) {
-       
-    }
-
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-        
-    }
+    public void mouseExited(MouseEvent e) { }
 }

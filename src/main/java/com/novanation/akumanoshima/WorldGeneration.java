@@ -35,6 +35,11 @@ public class WorldGeneration {
         chunkMap = new HashMap<>();
     }
 
+    public static void resetWorld()
+    { 
+        
+    }
+
     public static void generateLevel(GamePanel panel, WorldType world)
     {
         worldType = world;

@@ -6,6 +6,7 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
@@ -21,7 +22,7 @@ public class GamePanel extends Scene {
 
     private int worldOffsetX;
 
-    private final int FINAL_LEVEL = 1; // TODO: Reset back to 10
+    private final int FINAL_LEVEL = 10; // TODO: Reset back to 10
     private boolean isEndless = false;
 
     // Parallax background variables
@@ -32,6 +33,9 @@ public class GamePanel extends Scene {
     private Thread gameThread;
     private final int FPS = 120;
     private final double frameTimePacing = 8.33f; // milliseconds
+
+    private final int RESPAWN_TIME = 180;
+    private int frameCount = 0;
 
     // Entity Variables
     private Player playerEntity;
@@ -45,6 +49,8 @@ public class GamePanel extends Scene {
     //cursor
     private Cursor blankCursor;
     private BufferedImage cursorImg;
+
+    private final Image deathImage;
 
     public GamePanel(GameWindow window)
     {
@@ -60,6 +66,8 @@ public class GamePanel extends Scene {
         // Set blank cursor to hide default cursor
         setCursor(blankCursor);
         image = new BufferedImage(this.window.getWidth(), this.window.getHeight(), BufferedImage.TYPE_INT_RGB);
+
+        deathImage = ImageManager.loadImage("/gfx/images/ui/player_death.png");
     }
 
     public void setWorldOffsetX(int speed) { worldOffsetX += speed; }
@@ -142,7 +150,6 @@ public class GamePanel extends Scene {
 
         imageContext.setColor(Color.WHITE);  // cross hair
         
-
         if (LevelManager.showLevelClear() && LevelManager.isSetUp())
         {
             long elapsed = System.currentTimeMillis() - LevelManager.levelClearStartTime();
@@ -174,13 +181,7 @@ public class GamePanel extends Scene {
                 imageContext.drawImage(LevelManager.getWinImage(), x, y, this);
             }
             else
-            {
-                LevelManager.setFinal(false);
-                // Return the player to the main menu
-                SceneLoader.switchScene("Menu");
-                window.playAudioClip("Menu", ClipType.MENU, true);
-                stopGameThread();
-            }
+                resetToMenu();
         }
 
         // Draw the tiles last to ensure that the lava or water is over the player
@@ -192,7 +193,20 @@ public class GamePanel extends Scene {
             for (Tile tile : tileDepths)
                 tile.draw(imageContext);
 
+        if (playerEntity.getHealth().isDead())
+            imageContext.drawImage(deathImage, 0, 0, null);
+
         imageContext.dispose();
+    }
+
+    public void resetToMenu()
+    {
+        LevelManager.setFinal(false);
+
+        // Return the player to the main menu
+        SceneLoader.switchScene("Menu");
+        window.playAudioClip("Menu", ClipType.MENU, true);
+        stopGameThread();
     }
 
     public void startNewLevel()
@@ -204,6 +218,19 @@ public class GamePanel extends Scene {
 
     public void updateEntityCalculations()
     {
+        if (playerEntity.getHealth().isDead())
+        {
+            frameCount++;
+
+            if (frameCount > RESPAWN_TIME)
+            {
+                frameCount = 0;
+                playerEntity.getHealth().setDead(false);
+
+                resetToMenu();
+            }
+        }
+
         if (playerInput != null)
             if (!playerInput.getLocking())
                 setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));

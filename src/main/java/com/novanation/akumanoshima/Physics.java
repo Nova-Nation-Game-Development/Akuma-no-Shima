@@ -96,7 +96,10 @@ public class Physics {
         if (entity.getY() > panel.getHeight())
         {
             if (entity instanceof Player)
-                entity.getHealth().killPlayer();
+            {
+                if (!entity.getHealth().isDead())
+                    entity.getHealth().killPlayer();
+            }
             else
                 entity.getHealth().destroyEntity(entity);
         }

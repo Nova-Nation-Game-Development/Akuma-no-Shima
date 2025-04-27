@@ -56,10 +56,11 @@ public class Health {
         {
             currentHealth = 0;
             isDead = true;
-
-            System.out.println("You Died!");
         }
     }
+
+    public boolean isDead() { return isDead; }
+    public void setDead(boolean deadState) { isDead = deadState; }
 
     public int getCurrentHealth() { return currentHealth; }
     public int getMaxHealth() { return maxHP; }
@@ -97,6 +98,5 @@ public class Health {
             for (int i = currentHealth; i < DEFAULT_HP; i++)
                 g2.drawImage(damagedHealthImage, (i * heartOffset) + (heartOffset / 2), (heartOffset / 2), heartSize, heartSize, null);
         }
-            
     }
 }

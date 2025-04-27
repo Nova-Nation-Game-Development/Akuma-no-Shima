@@ -196,8 +196,7 @@ public class EnemyOni implements Entity {
 
     // Actions
     @Override
-    public void jump() { // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'jump'"); }
+    public void jump() { }
     @Override
     public void performAction() { 
         long currentTime = System.currentTimeMillis();

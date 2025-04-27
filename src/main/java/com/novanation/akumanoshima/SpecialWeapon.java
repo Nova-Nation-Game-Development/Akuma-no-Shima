@@ -5,43 +5,17 @@ import java.awt.Graphics2D;
 public class SpecialWeapon implements Weapon{
 
     @Override
-    public void updateShooting() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updateShooting'");
-    }
+    public void updateShooting() { }
     @Override
-    public void reload() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'reload'");
-    }
+    public void reload() { }
     @Override
-    public void setAmmoMultiplier(double multiplier) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'setAmmoMultiplier'");
-    }
+    public void setAmmoMultiplier(double multiplier) { }
     @Override
-    public void setReloadSpeedMultiplier(double multiplier) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'setReloadSpeedMultiplier'");
-    }
+    public void setReloadSpeedMultiplier(double multiplier) { }
     @Override
-    public void resetAmmoMultiplier() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'resetAmmoMultiplier'");
-    }
+    public void resetAmmoMultiplier() { }
     @Override
-    public void resetReloadSpeedMultiplier() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'resetReloadSpeedMultiplier'");
-    }
+    public void resetReloadSpeedMultiplier() { }
     @Override
-    public void drawBullets(Graphics2D g2) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'drawBullets'");
-    }
-
-    
-
-   
-    
+    public void drawBullets(Graphics2D g2) { }
 }

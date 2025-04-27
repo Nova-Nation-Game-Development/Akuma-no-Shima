@@ -16,6 +16,10 @@ public class InputHandler implements KeyListener, MouseListener, MouseMotionList
     private static int mouseB = 1;
     private double angle;
 
+    private static final double CONE_ANGLE = Math.PI / 2; // 90 degrees in radians
+private static final double BASE_ANGLE = 0; 
+private static final double FIXED_DISTANCE = 400; 
+
     // for Jumping
     private boolean isMoving;
     private boolean canJump;
@@ -136,15 +140,70 @@ public class InputHandler implements KeyListener, MouseListener, MouseMotionList
     private void updateMouseAngle(){
         double distX = mouseX - player.getX();
         double distY = mouseY - player.getY();
-
-        angle = Math.atan2(distY, distX);
+        double rawAngle = Math.atan2(distY, distX);
+        
+        // Clamp the angle to our 90-degree cone
+        angle = clampAngle(rawAngle);
+        
+        // Calculate virtual cursor position at fixed distance
+        double virtualX = player.getX() + FIXED_DISTANCE * Math.cos(angle);
+        double virtualY = player.getY() + FIXED_DISTANCE * Math.sin(angle);
+        
+        // Update mouse coordinates to virtual position
+        mouseX = (int)virtualX;
+        mouseY = (int)virtualY;
+        
     }
+
+    
+private double clampAngle(double rawAngle) {
+    // Normalize the angle to be between -PI and PI
+    while (rawAngle > Math.PI) rawAngle -= 2 * Math.PI;
+    while (rawAngle < -Math.PI) rawAngle += 2 * Math.PI;
+    
+    // Calculate the half cone for up and down from horizontal
+    double halfCone = CONE_ANGLE / 2;
+    
+    // Clamp the angle to the cone
+    if (rawAngle > halfCone) rawAngle = halfCone;
+    if (rawAngle < -halfCone) rawAngle = -halfCone;
+    
+    return rawAngle;
+}
+
+    public void updateWeaponPosition() {
+        if (ar == null || player == null) return;
+        
+        // Offset distance from player center
+        int offsetX = 60; // Horizontal offset - adjust as needed
+        int offsetY = 30; // Vertical offset - adjust as needed
+        
+        // Player direction affects where the weapon is positioned
+        int directionMultiplier = (mouseX < player.getX()) ? -1 : 1;
+        
+        // Base position at player center
+        double baseX = player.getX();
+        double baseY = player.getY() + offsetY; // Adjust Y position with a vertical offset
+        
+        // Apply offset in the direction of the mouse
+        double weaponX = baseX + offsetX * Math.cos(angle) * directionMultiplier;
+        double weaponY = baseY + offsetX * Math.sin(angle);
+
+        ar.setX((int)weaponX);
+        ar.setY((int)weaponY);
+        ar.setRotation(angle);
+        
+        // Set weapon facing direction based on mouse position
+        ar.setFacingLeft(false);
+    }
+    
 
     @Override
     public void mouseDragged(MouseEvent e) {
         mouseX = e.getX();
         mouseY = e.getY();
         updateMouseAngle();
+        updateWeaponPosition();
     }
 
 
@@ -153,6 +212,7 @@ public class InputHandler implements KeyListener, MouseListener, MouseMotionList
         mouseX = e.getX();
         mouseY = e.getY();
         updateMouseAngle();
+        updateWeaponPosition();
     }
 
 

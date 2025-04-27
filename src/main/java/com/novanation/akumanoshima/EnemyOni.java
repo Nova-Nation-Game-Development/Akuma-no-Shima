@@ -116,6 +116,10 @@ public class EnemyOni implements Entity {
         g2.setColor(Color.GREEN);
         int currentHealthWidth = (int)((currentHealth / (float)MAX_HEALTH) * healthBarWidth);
         g2.fillRect((int) healthBarX, (int) healthBarY, currentHealthWidth, healthBarHeight);
+
+        g2.setColor(Color.WHITE);
+        String healthText = currentHealth + "/" + MAX_HEALTH;
+        g2.drawString(healthText, (int)healthBarX, (int)healthBarY - 2);
     }
     
     public String getEnemyID() { return enemyID; }
@@ -143,10 +147,13 @@ public class EnemyOni implements Entity {
 
 
      public void takeDamage(int damage) {
+        System.out.println("EnemyOni taking damage: " + damage + ", Current health: " + currentHealth);
         currentHealth -= damage;
         if(currentHealth <= 0) {
+            currentHealth = 0;
             health.dealDamage(MAX_HEALTH, EntityType.ONI, this);
         }
+        System.out.println("EnemyOni health after damage: " + currentHealth);
     }
 
    /*  private void checkProjectileCollisions() {
@@ -219,15 +226,20 @@ public class EnemyOni implements Entity {
         // Calculate trajectory points
         double startX = xPos + width/2;
         double startY = yPos + height/2;
-        double endX = targetPlayer.getX();
-        double endY = targetPlayer.getY();
+        double playerWorldX = targetPlayer.getWorldX() + targetPlayer.getWidth()/2;
+        double playerScreenX = targetPlayer.getX() + targetPlayer.getWidth()/2;
+        double playerScreenY = targetPlayer.getY() + targetPlayer.getHeight()/2;
         
+        double targetX = playerScreenX;
+        double targetY = playerScreenY;
+
+
         // Calculate control point for arc
-        double controlX = (startX + endX) / 2;
-        double controlY = Math.min(startY, endY) - 200;
+        double controlX = (startX + targetX) / 2;
+        double controlY = Math.min(startY, targetY) - 400;
         
         projectile.spawn(startX, startY, 0);
-        projectile.setTargetPoints(startX, startY, controlX, controlY, endX, endY);
+        projectile.setTargetPoints(startX, startY, controlX, controlY, targetX, targetY);
         projectiles.add(projectile);
     }
 
@@ -236,6 +248,10 @@ public class EnemyOni implements Entity {
         projectiles.removeIf(p -> !p.isActive());
         for (EnemyProjectile projectile : projectiles) {
             projectile.move();
+            //collision
+            if (projectile.isActive() && targetPlayer != null) {
+                projectile.checkCollision(targetPlayer);
+            }
         }
     }
 

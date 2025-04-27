@@ -21,7 +21,7 @@ public class GamePanel extends Scene {
 
     private int worldOffsetX;
 
-    private final int FINAL_LEVEL = 10;
+    private final int FINAL_LEVEL = 1; // TODO: Reset back to 10
     private boolean isEndless = false;
 
     // Parallax background variables
@@ -272,12 +272,13 @@ public class GamePanel extends Scene {
             backgroundManager = new BackgroundManager(this, window, world);
         }
             
-
         tiles = WorldGeneration.getAllTiles();
         tileDepths = WorldGeneration.getAllDepthTiles();
 
         playerEntity = new Player(this, 30, (getHeight() - playerHeight) - (int) (WorldGeneration.getTileLength() * 1.5) - 30, playerWidth, playerHeight);
         playerEntity.setWorldPos((int) playerEntity.getX());
+
+        EnemyManager.setPlayer(playerEntity);
 
         playerInput = new InputHandler(playerEntity);
         camera = new CameraControls(playerEntity, playerInput, backgroundManager);

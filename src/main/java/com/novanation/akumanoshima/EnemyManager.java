@@ -31,6 +31,8 @@ public class EnemyManager {
     private static final int LOWER_HARD = 40;
     private static final int UPPER_HARD = 70;
 
+    private static final double MINION_SCALE = 0.2f;
+
     // Enemy Health
     private static final int HEALTH_EASY = 2;
     private static final int HEALTH_NORMAL = 3;
@@ -38,30 +40,86 @@ public class EnemyManager {
 
     // Boss Fight
     private static boolean isFinalLevel = false;
+    private static Difficulty gameDifficulty;
 
     public static boolean isFinal() { return isFinalLevel; }
+    public static void setPlayer(Player newPlayer) { player = newPlayer; }
+
+    public static void summonMinions()
+    {
+        Random random = new Random();
+
+        int enemyCount = 0;
+        int hellHoundCount = 0;
+
+        switch (gameDifficulty) // TODO: Properly utilize this
+        {
+            case EASY -> {
+                enemyCount = random.nextInt((int) (LOWER_EASY * MINION_SCALE), (int) (UPPER_EASY * MINION_SCALE)) + 1;
+                hellHoundCount = random.nextInt(2); // [0..1]
+            }
+            case NORMAL -> {
+                enemyCount = random.nextInt((int) (LOWER_NORMAL * MINION_SCALE), (int) (UPPER_NORMAL * MINION_SCALE)) + 1;
+                hellHoundCount = random.nextInt(2, 4); // [2..3]
+            }
+            case HARD -> {
+                enemyCount = random.nextInt((int) (LOWER_HARD * MINION_SCALE), (int) (UPPER_HARD * MINION_SCALE)) + 1;
+                hellHoundCount = random.nextInt(5, 8); // [5..7]
+            }
+        }
+
+        for (int i = 0; i < enemyCount; i++)
+        {
+            int enemyWidth;
+            int enemyHeight;
+            
+            GamePanel panel = player.getPanel();
+
+            if (i < hellHoundCount)
+            {
+                enemyWidth = panel.getScaledHeight();
+                enemyHeight = panel.getScaledWidth();
+
+                EnemyHellhound hellhound = new EnemyHellhound(enemyWidth, enemyHeight, panel.getWidth() - enemyWidth - (i * 10), 50, "Enemy " + i, panel);
+                enemies.put(hellhound.getID(), hellhound);
+                enemiesAlive.put(hellhound.getID(), hellhound);
+            }
+            else
+            {
+                enemyWidth = panel.getScaledWidth();
+                enemyHeight = panel.getScaledHeight();
+
+                EnemyOni oni = new EnemyOni(enemyWidth, enemyHeight, panel.getWidth() - enemyWidth - (i * 64), 50, "Enemy " + i, panel);
+                enemies.put(oni.getID(), oni);
+                enemiesAlive.put(oni.getID(), oni);
+            }
+        }
+
+        LevelManager.setTotalEnemies(enemyCount + 1); // To accommodate for Maou
+    }
 
     public static void generateEnemies(Difficulty difficulty, boolean isFinal, GamePanel panel)
     {
         isFinalLevel = isFinal;
         Random random = new Random();
 
+        gameDifficulty = difficulty;
+
         int enemyCount = 0;
         int hellHoundCount = 0;
 
-        switch (difficulty)
+        switch (difficulty) // TODO: Properly utilize this
         {
             case EASY -> {
                 enemyCount = random.nextInt(LOWER_EASY, UPPER_EASY) + 1;
-                hellHoundCount = random.nextInt(2); // [0..1]
             }
             case NORMAL -> {
                 enemyCount = random.nextInt(LOWER_NORMAL, UPPER_NORMAL) + 1;
-                hellHoundCount = random.nextInt(2, 6); // [2..5]
+                hellHoundCount = random.nextInt(0, 3); // [0..2]
             }
             case HARD -> {
                 enemyCount = random.nextInt(LOWER_HARD, UPPER_HARD) + 1;
-                hellHoundCount = random.nextInt(8, 16); // [8..15]
+                hellHoundCount = random.nextInt(4, 7); // [4..6]
             }
         }
 
@@ -73,10 +131,11 @@ public class EnemyManager {
             int bossHeight = (int) (170 * heightScale);
             int bossWidth = (int) (120 * widthScale);
 
-            // TODO: Update Boss y level
             EnemyMaou demonLord = new EnemyMaou(bossWidth, bossHeight, panel.getWidth() - bossWidth - 30, 50, "The Demon Lord", panel);
             enemies.put(demonLord.getEnemyID(), demonLord);
             enemiesAlive.put(demonLord.getEnemyID(), demonLord);
+
+            LevelManager.setTotalEnemies(1);
             return; // Only the demon lord will be initially created
         }
 
@@ -153,30 +212,17 @@ public class EnemyManager {
     public static void killAllEntities()
     {
         for (Entity enemy : enemies.values())
-        {
-            if (enemy instanceof EnemyHellhound enemyHellhound)
-                enemyHellhound.setEnemyID("DESTROYED");
-
-            if (enemy instanceof EnemyOni enemyOni)
-                enemyOni.setEnemyID("DESTROYED");
-
-            if (enemy instanceof EnemyMaou enemyMaou)
-                enemyMaou.setEnemyID("DESTROYED");
-        }
+           enemy.setID("DESTROYED");
 
         LevelManager.update();
     }
 
     public static void destroyEntity(Entity enemy)
     {
-        if (enemy instanceof EnemyHellhound enemyHellhound)
-            enemyHellhound.setEnemyID("DESTROYED");
+        if (enemy == null) return;
 
-        if (enemy instanceof EnemyOni enemyOni)
-            enemyOni.setEnemyID("DESTROYED");
-
-        if (enemy instanceof EnemyMaou enemyMaou)
-            enemyMaou.setEnemyID("DESTROYED");
+        enemy.setID("DESTROYED");
+        enemiesAlive.remove(enemy.getID());
 
         LevelManager.update();
     }
@@ -192,19 +238,8 @@ public class EnemyManager {
     public static HashMap<String, Entity> getAliveList()
     {
         for (Entity entity : enemies.values())
-        {
-            if (entity instanceof EnemyHellhound enemyHellhound)
-                if ("DESTROYED".equals(enemyHellhound.getEnemyID()))
-                    enemiesAlive.put(enemyHellhound.getEnemyID(), enemyHellhound);
-                
-            if (entity instanceof EnemyOni enemyOni)
-                if ("DESTROYED".equals(enemyOni.getEnemyID()))
-                    enemiesAlive.put(enemyOni.getEnemyID(), enemyOni);
-
-            if (entity instanceof EnemyMaou enemyMaou)
-                if ("DESTROYED".equals(enemyMaou.getEnemyID()))
-                    enemiesAlive.put(enemyMaou.getEnemyID(), enemyMaou);
-        }
+            if ("DESTROYED".equals(entity.getID()))
+                enemiesAlive.put(entity.getID(), entity);
 
         return enemiesAlive;
     }
@@ -215,19 +250,8 @@ public class EnemyManager {
         if (enemies.values() == null) return 0;
 
         for (Entity entity : enemies.values())
-        {
-            if (entity instanceof EnemyHellhound enemyHellhound)
-                if (!"DESTROYED".equals(enemyHellhound.getEnemyID()))
-                    remainingEnemies++;
-                
-            if (entity instanceof EnemyOni enemyOni)
-                if (!"DESTROYED".equals(enemyOni.getEnemyID()))
-                    remainingEnemies++;
-
-            if (entity instanceof EnemyMaou enemyMaou)
-                if (!"DESTROYED".equals(enemyMaou.getEnemyID()))
-                    remainingEnemies++;
-        }
+            if (!"DESTROYED".equals(entity.getID()))
+                remainingEnemies++;
 
         return remainingEnemies;
     }
@@ -249,17 +273,8 @@ public class EnemyManager {
 
         for (Entity enemy : enemies.values())
         {
-            if (enemy instanceof EnemyHellhound enemyHellhound)
-                if (!"DESTROYED".equals(enemyHellhound.getEnemyID()))
-                    enemy.draw(g2);
-
-            if (enemy instanceof EnemyOni enemyOni)
-                if (!"DESTROYED".equals(enemyOni.getEnemyID()))
-                    enemy.draw(g2);
-
-            if (enemy instanceof EnemyMaou enemyMaou)
-                if (!"DESTROYED".equals(enemyMaou.getEnemyID()))
-                    enemy.draw(g2);
+            if (!"DESTROYED".equals(enemy.getID()))
+                enemy.draw(g2);
 
             // TODO: Testing purposes
             // g2.setColor(Color.BLUE);

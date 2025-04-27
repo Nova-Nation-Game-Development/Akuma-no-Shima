@@ -13,6 +13,8 @@ public class EnemyMaou implements Entity {
     private int dx;
     private int worldX;
 
+    private String id;
+
     private double vy;
 
     // Location Variables
@@ -47,12 +49,20 @@ public class EnemyMaou implements Entity {
     }
 
     @Override
+    public void setID(String id) { this.id = id; }
+    @Override
+    public String getID() { return id; }
+
+    @Override
     public void update()
     {
         int tileLength = WorldGeneration.getTileLength();
         currentChunk = WorldGeneration.getChunk((((int) xPos) / tileLength) * tileLength);
 
-        entityBounds = new Rectangle2D.Double(xPos, yPos - 2, width, height);
+        if ("DESTROYED".equals(enemyID))
+            entityBounds = null;
+        else
+            entityBounds = new Rectangle2D.Double(xPos, yPos - 2, width, height);
 
         Chunk newChunk = WorldGeneration.getChunk((((int) xPos + tileLength) / tileLength) * tileLength);
         determineChunkTile(newChunk);
@@ -121,7 +131,7 @@ public class EnemyMaou implements Entity {
 
     // Shape
     @Override
-    public Rectangle2D.Double getEntityBounds() { return new Rectangle2D.Double(xPos, yPos, width, height); }
+    public Rectangle2D.Double getEntityBounds() { return entityBounds; }
     @Override
     public Chunk getCurrentChunk() { return currentChunk; }
 

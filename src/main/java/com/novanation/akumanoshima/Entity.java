@@ -19,6 +19,9 @@ public interface Entity {
     public Chunk getPreviousChunk();
     public void update();
 
+    public void setID(String id);
+    public String getID();
+
     public double getX();
     public double getY();
     public double getDY();

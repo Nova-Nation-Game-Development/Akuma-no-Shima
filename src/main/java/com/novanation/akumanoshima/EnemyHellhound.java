@@ -47,12 +47,20 @@ public class EnemyHellhound implements Entity {
     }
 
     @Override
+    public void setID(String id) { this.enemyID = id; }
+    @Override
+    public String getID() { return enemyID; }
+
+    @Override
     public void update()
     {
         int tileLength = WorldGeneration.getTileLength();
         currentChunk = WorldGeneration.getChunk((((int) xPos) / tileLength) * tileLength);
 
-        entityBounds = new Rectangle2D.Double(xPos, yPos - 2, width, height);
+        if ("DESTROYED".equals(enemyID))
+            entityBounds = null;
+        else
+            entityBounds = new Rectangle2D.Double(xPos, yPos - 2, width, height);
 
         Chunk newChunk = WorldGeneration.getChunk((((int) xPos + tileLength) / tileLength) * tileLength);
         determineChunkTile(newChunk);
@@ -75,9 +83,6 @@ public class EnemyHellhound implements Entity {
             }
         }
     }
-
-    public String getEnemyID() { return enemyID; }
-    public void setEnemyID(String enemyID) { this.enemyID = enemyID; }
 
     @Override
     public int getHeight() { return height; }
@@ -120,7 +125,7 @@ public class EnemyHellhound implements Entity {
 
     // Shape
     @Override
-    public Rectangle2D.Double getEntityBounds() { return new Rectangle2D.Double(xPos, yPos, width, height); }
+    public Rectangle2D.Double getEntityBounds() { return entityBounds; }
     @Override
     public Chunk getCurrentChunk() { return currentChunk; }
 

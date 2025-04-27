@@ -33,6 +33,7 @@ public class EndLevel implements Level {
         panelHeight = panel.getHeight() - BASE_HEIGHT - (TILE_LENGTH / 2);
 
         GameWindow window = panel.getGameWindow();
+        
         EnemyManager.generateEnemies(window.getConfig().getDifficulty(), true, panel);
 
         for (int i = 0; i < WORLD_LENGTH; i++)

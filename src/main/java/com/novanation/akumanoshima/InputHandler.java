@@ -66,6 +66,7 @@ public class InputHandler implements KeyListener, MouseListener, MouseMotionList
     public void keyPressed(KeyEvent e) {
         // I will temporarily configure the physics here for the player
         switch (e.getKeyCode()) {
+            // Movement
             case KeyEvent.VK_A -> {
                 isMoving = true;
                 direction = -1;
@@ -82,10 +83,12 @@ public class InputHandler implements KeyListener, MouseListener, MouseMotionList
                 }
             }
 
+            // Mouse
             case KeyEvent.VK_ESCAPE -> {
                 lockingEnabled = !lockingEnabled;
             }
 
+            // Perks
             case KeyEvent.VK_V -> {
                 if(!vandalPerk.isActive()) {
                     vandalPerk.applyEffect(player);
@@ -98,13 +101,13 @@ public class InputHandler implements KeyListener, MouseListener, MouseMotionList
                   vitalityPerk.applyEffect(player);
                    vitalityPerk.setActive(true);
                  }
-        }
-        case KeyEvent.VK_N -> {
-            if (!speedsterPerk.isActive()) {
-                speedsterPerk.applyEffect(player);
+            }
+            case KeyEvent.VK_N -> {
+                if (!speedsterPerk.isActive()) {
+                    speedsterPerk.applyEffect(player);
+                }
             }
         }
-    }
     }
     @Override
     public void keyReleased(KeyEvent e)
@@ -127,6 +130,8 @@ public class InputHandler implements KeyListener, MouseListener, MouseMotionList
             health = 1;
         if (e.getKeyCode() == KeyEvent.VK_ENTER)
             EnemyManager.killAllEntities();
+        if (e.getKeyCode() == KeyEvent.VK_SLASH)
+            EnemyManager.summonMinions();
     }
 
     public boolean getLocking() { return lockingEnabled; }
@@ -248,8 +253,7 @@ private double clampAngle(double rawAngle) {
             int mouseScreenX = e.getXOnScreen();
             int mouseScreenY = e.getYOnScreen();
 
-            // Make a slightly bigger bounds if you want (like 800x800)
-            Rectangle bounds = new Rectangle((int) (player.getPanel().getWidth() / 2) + (int) player.getX(), panelPos.y + 30, 1, 630);
+            Rectangle bounds = new Rectangle((int) (player.getPanel().getWidth() / 3) + (int) player.getX(), panelPos.y + 30, 1, 630);
 
             // Clamp mouse position
             int clampedX = Math.max(bounds.x, Math.min(mouseScreenX, bounds.x + bounds.width - 1));

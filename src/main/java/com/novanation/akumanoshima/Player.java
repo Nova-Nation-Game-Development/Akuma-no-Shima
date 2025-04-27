@@ -18,6 +18,8 @@ public class Player implements Entity {
     private int dx = 0;
     private int dy = 0;
 
+    private String id;
+
     //private double health;
 
     // Physics
@@ -73,6 +75,11 @@ public class Player implements Entity {
 
         this.playerAnimation = new PlayerAnimation(this);
     }
+
+    @Override
+    public void setID(String id) { this.id = id; }
+    @Override
+    public String getID() { return id; }
 
     // Directional mutators
     public void setDX(int newDX) { dx = newDX; }

@@ -72,15 +72,19 @@ public class EnemyOni implements Entity {
     }
 
     @Override
+    public int getWorldX() { return worldX; }
+    @Override
+    public void setWorldX(int x) { this.worldX = x; }
+
+    @Override
     public void setID(String id) { this.enemyID = id; }
     @Override
     public String getID() { return enemyID; }
 
     @Override
-    public void update()
-    {
+    public void update() {
         int tileLength = WorldGeneration.getTileLength();
-        currentChunk = WorldGeneration.getChunk((((int) worldX) / tileLength) * tileLength);
+        currentChunk = WorldGeneration.getChunk(((worldX) / tileLength) * tileLength);
 
         if ("DESTROYED".equals(enemyID))
             entityBounds = null;
@@ -90,7 +94,8 @@ public class EnemyOni implements Entity {
         if (targetPlayer == null)
             targetPlayer = panel.getPlayerEntity();
 
-        Chunk newChunk = WorldGeneration.getChunk((((int) worldX + tileLength) / tileLength) * tileLength);
+        // Use worldX for next chunk calculation
+        Chunk newChunk = WorldGeneration.getChunk(((worldX + tileLength) / tileLength) * tileLength);
         determineChunkTile(newChunk);
     }
 
@@ -142,7 +147,11 @@ public class EnemyOni implements Entity {
     public Health getHealth() { return health; }
 
     @Override
-    public void setWorldPos(int xPos) { worldX += xPos; }
+    public void setWorldPos(int xPos) { 
+        this.worldX = xPos;
+        // Update screen position relative to world offset
+        this.xPos = this.worldX + panel.getWorldOffsetX();
+    }
     @Override
     public void draw(Graphics2D g2) {
 
@@ -171,7 +180,10 @@ public class EnemyOni implements Entity {
 
     // Movement
     @Override
-    public void move(int direction) { xPos += direction; }
+    public void move(int direction) { 
+        xPos += direction; 
+        worldX += direction;
+    }
     @Override
     public void moveY(double dx) { yPos += dx; }
     @Override

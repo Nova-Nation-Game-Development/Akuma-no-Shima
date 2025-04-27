@@ -85,16 +85,14 @@ public class EnemyManager {
 
                 EnemyHellhound hellhound = new EnemyHellhound(enemyWidth, enemyHeight, panel.getWidth() - enemyWidth - (i * 10), 50, "Enemy " + i, panel);
                 enemies.put(hellhound.getID(), hellhound);
-                enemiesAlive.put(hellhound.getID(), hellhound);
             }
             else
             {
-                enemyWidth = panel.getScaledWidth();
+                enemyWidth = panel.getScaledWidth() + 40;
                 enemyHeight = panel.getScaledHeight();
 
                 EnemyOni oni = new EnemyOni(enemyWidth, enemyHeight, panel.getWidth() - enemyWidth - (i * 64), 50, "Enemy " + i, panel);
                 enemies.put(oni.getID(), oni);
-                enemiesAlive.put(oni.getID(), oni);
             }
         }
 
@@ -131,12 +129,11 @@ public class EnemyManager {
             double widthScale = (double) panel.getGameWindow().getConfig().getResolutionWidth() / panel.getGameWindow().getWidth();
             double heightScale = (double) panel.getGameWindow().getConfig().getResolutionHeight() / panel.getGameWindow().getHeight();
 
-            int bossHeight = (int) (170 * heightScale);
-            int bossWidth = (int) (120 * widthScale);
+            int bossHeight = (int) (340 * heightScale);
+            int bossWidth = (int) (280 * widthScale);
 
             EnemyMaou demonLord = new EnemyMaou(bossWidth, bossHeight, panel.getWidth() - bossWidth - 30, 50, "The Demon Lord", panel);
             enemies.put(demonLord.getEnemyID(), demonLord);
-            enemiesAlive.put(demonLord.getEnemyID(), demonLord);
 
             LevelManager.setTotalEnemies(1);
             return; // Only the demon lord will be initially created
@@ -285,14 +282,11 @@ public class EnemyManager {
         return remainingEnemies;
     }
 
-    // TODO: Move based on world speed
-    public static void move(int direction)
-    {
-        for (Entity enemy : enemies.values())
-        {
+    public static void move(int direction) {
+        for (Entity enemy : enemies.values()) {
             enemy.move(direction);
-            // enemy.setWorldPos((int)(direction * 0.1));
-            enemy.setWorldPos(direction);
+            // Update world position separately from screen position
+            enemy.setWorldX(enemy.getWorldX() - direction);
         }
     }
 
@@ -313,10 +307,14 @@ public class EnemyManager {
                         enemyMaou.draw(g2);
                 }
 
-            // TODO: Testing purposes
+            // Testing purposes
             // g2.setColor(Color.BLUE);
             // if (enemy.getCurrentChunk() != null)
             //     g2.fill(enemy.getCurrentChunk().getChunkBounds());
+
+            // g2.setColor(new Color(255, 255, 255, 128));
+            // if (enemy.getEntityBounds() != null)
+            //     g2.fill(enemy.getEntityBounds());
         }
     }
 

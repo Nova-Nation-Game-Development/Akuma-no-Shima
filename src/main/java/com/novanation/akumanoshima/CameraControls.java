@@ -97,7 +97,6 @@ public class CameraControls {
         
         if (playerInput.getDirection() == -1 && playerInput.getIsMoving())
         {
-            player.setWorldPos((int) xPos - player.getWidth());
             if (previousDirection != -1)
             {
                 player.setWidth(-player.getWidth());
@@ -116,8 +115,6 @@ public class CameraControls {
                 previousDirection = 1;
             }
         }
-
-        System.out.println(xPos + " " + player.getX());
 
         if (!player.isColliding(newPlayerSpeed))
         {

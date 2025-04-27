@@ -164,7 +164,7 @@ public class Player implements Entity {
         currentChunk = WorldGeneration.getChunk((((int) worldX) / tileLength) * tileLength);
 
         if (width < 0)
-            playerBounds.setRect(x - Math.abs(width), y - 2, Math.abs(width), height);
+            playerBounds.setRect(x - Math.abs(width) + 5, y - 2, Math.abs(width), height);
         else
             playerBounds.setRect(x, y - 2, Math.abs(width), height);
 

@@ -89,7 +89,7 @@ public class WorldGeneration {
     {
         Random random = new Random();
         int randWorld = random.nextInt(100);
-
+        
         if (randWorld < 40)
             return WorldType.FOREST;
         else

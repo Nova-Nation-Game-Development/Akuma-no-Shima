@@ -69,7 +69,7 @@ public class EnemyManager {
             double widthScale = (double) panel.getGameWindow().getConfig().getResolutionWidth() / panel.getGameWindow().getWidth();
             double heightScale = (double) panel.getGameWindow().getConfig().getResolutionHeight() / panel.getGameWindow().getHeight();
 
-            int bossHeight = (int) (260 * heightScale);
+            int bossHeight = (int) (170 * heightScale);
             int bossWidth = (int) (120 * widthScale);
 
             // TODO: Update Boss y level

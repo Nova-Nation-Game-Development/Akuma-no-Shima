@@ -64,12 +64,11 @@ public class Player implements Entity {
         this.panel = panel;
 
         isJumping = false;
-        playerImage = ImageManager.loadImage("/src/main/resources/gfx/animations/PlayerWalking/playerRight1.jpg");
+        playerImage = ImageManager.loadImage("/gfx/characters/char_noroi.png");
         health = new Health();
         playerBounds = new Rectangle2D.Double(x, y, width, height);
 
         this.playerAnimation = new PlayerAnimation(this);
-        System.out.println("Player created with animation: " + (this.playerAnimation != null));
     }
 
     // Directional mutators
@@ -109,6 +108,7 @@ public class Player implements Entity {
     @Override
     public void moveY(double dx) { y += dx; }
 
+    public void setX(double newX) { x = newX; }
     @Override
     public void setY(double newY) { y = newY; }
 
@@ -162,18 +162,16 @@ public class Player implements Entity {
         int tileLength = WorldGeneration.getTileLength();
         currentChunk = WorldGeneration.getChunk((((int) worldX) / tileLength) * tileLength);
 
-        playerBounds = new Rectangle2D.Double(x, y - 2, width, height);
+        if (width < 0)
+            playerBounds.setRect(x - Math.abs(width) + 5, y - 2, Math.abs(width), height);
+        else
+            playerBounds.setRect(x, y - 2, Math.abs(width), height);
 
         Chunk newChunk = WorldGeneration.getChunk((((int) worldX + tileLength) / tileLength) * tileLength);
         determineChunkTile(newChunk);
-
-        if (playerAnimation != null)
-            playerAnimation.update();
     }
 
-    public void setPlayerAnimation(PlayerAnimation playerAnimation) {
-        this.playerAnimation = playerAnimation;
-    }
+    public PlayerAnimation getPlayerAnimation() { return playerAnimation; }
 
     @Override
     public void move(int direction)
@@ -220,7 +218,7 @@ public class Player implements Entity {
                     System.out.println("In Water!");
                 }
                 case VOLCANIC -> {
-                    System.out.println("In Lava!");
+                    // System.out.println("In Lava!");
                 }
                 case BLIZZARD -> {
                     System.out.println("On Ice!");
@@ -261,18 +259,9 @@ public class Player implements Entity {
     }
 
     @Override
-    public void draw(Graphics2D g2) {
-        if (playerAnimation != null) {
-            // Let the animation handle drawing
-            playerAnimation.setPosition((int)x, (int)y);
-            playerAnimation.draw(g2);
-        } else {
-            // Fallback to static image
-            g2.drawImage(playerImage, (int)x, (int)y, width, height, null);
-        }
-    }  
-
-    public PlayerAnimation getPlayerAnimation() {
-        return this.playerAnimation;
+    public void draw(Graphics2D g2)
+    {
+        if (playerAnimation != null && !playerAnimation.isStillActive())
+            g2.drawImage(playerImage, (int) x, (int) y, width, height, null);
     }
 }

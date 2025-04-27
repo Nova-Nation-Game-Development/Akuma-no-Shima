@@ -13,6 +13,9 @@ public class GamePanel extends Scene {
 
     private final GameWindow window;
 
+    private int playerHeight;
+    private int playerWidth;
+
     private final int finalLevel = 10;
     private int currentLevel = 1;
     private boolean isEndless = false;
@@ -78,6 +81,18 @@ public class GamePanel extends Scene {
             
             if (playerEntity.getHealth() != null)
                 playerEntity.getHealth().draw(imageContext);
+
+            PlayerAnimation playerAnimation = playerEntity.getPlayerAnimation();
+            
+            if (playerInput.getDirection() != 0)
+            {
+                if (!playerAnimation.isStillActive())
+                    playerAnimation.start();
+
+                playerAnimation.draw(imageContext);
+            }
+            else
+                playerAnimation.stop();
 
             // Draw the player's current chunk
             // if (playerEntity.getCurrentChunk() != null)
@@ -194,16 +209,22 @@ public class GamePanel extends Scene {
 
     public Player getPlayerEntity() { return playerEntity; }
 
+    public int getScaledWidth() { return playerWidth; }
+    public int getScaledHeight() { return playerHeight; }
+
     public void createGameEntities()
     {
+        double widthScale = (double) window.getConfig().getResolutionWidth() / window.getWidth();
+        double heightScale = (double) window.getConfig().getResolutionHeight() / window.getHeight();
+
+        playerHeight = (int) (130 * heightScale);
+        playerWidth = (int) (60 * widthScale);
+
         Physics.setPanel(this);
       
         LevelManager.setupToast(this);
         LevelManager.setLevelClear(false);
         LevelManager.setFinal(false);
-
-        int playerHeight = (window.getHeight() / 164) * 40;
-        int playerWidth = (playerHeight / 2);
 
         WorldType world = WorldGeneration.getRandomWorld();
         backgroundManager = new BackgroundManager(this, window, world);
@@ -220,7 +241,6 @@ public class GamePanel extends Scene {
         playerEntity.setWorldPos((int) playerEntity.getX());
 
         playerInput = new InputHandler(playerEntity);
-        EnemyManager.setPlayer(playerEntity); // Set player instance before generating enemies
         camera = new CameraControls(playerEntity, playerInput, backgroundManager);
         ar = new AssualtWeapon(playerEntity);
         ar.setInputHandler(playerInput);

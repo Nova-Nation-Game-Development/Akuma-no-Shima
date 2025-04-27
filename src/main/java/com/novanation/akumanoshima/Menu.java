@@ -30,12 +30,16 @@ public final class Menu extends Scene {
 
     private final GameWindow window;
 
+    private final MenuAnimation menuAnimation;
+
     private final BufferedImage image;
     private final Image loadingImage;
 
     public Menu(GameWindow window)
     {
         this.window = window;
+        menuAnimation = new MenuAnimation(this.window);
+
         setPreferredSize(new Dimension(this.window.getWidth(), this.window.getHeight()));
 
         image = new BufferedImage(this.window.getWidth(), this.window.getHeight(), BufferedImage.TYPE_INT_RGB);
@@ -49,11 +53,13 @@ public final class Menu extends Scene {
         menuThread = new Thread(this);
         menuThread.start();
 
+        menuAnimation.start();
+
         handleButtonListeners();
         window.playAudioClip("Menu", ClipType.MENU, true);
     }
 
-    public void stopThread() { menuThread.interrupt(); window.stopAudioClip("Menu", ClipType.MENU); }
+    public void stopThread() { menuAnimation.stop(); menuThread.interrupt(); window.stopAudioClip("Menu", ClipType.MENU); }
 
     @Override
     protected void paintComponent(Graphics g)
@@ -63,6 +69,7 @@ public final class Menu extends Scene {
 
         Graphics2D g2 = (Graphics2D) g;
         draw(g2);
+        menuAnimation.draw(g2);
 
         g.dispose();
     }
@@ -109,7 +116,7 @@ public final class Menu extends Scene {
     private void startGame()
     {
         // TODO: Check if game save already exists
-
+        
         stopThread();
         window.loadGame();
     }

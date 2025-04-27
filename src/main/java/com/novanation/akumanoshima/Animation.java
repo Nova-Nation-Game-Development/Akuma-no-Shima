@@ -2,9 +2,6 @@ package com.novanation.akumanoshima;
 
 import java.awt.Image;
 import java.util.ArrayList;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-
 
 /**
     The Animation class manages a series of images (frames) and
@@ -19,33 +16,19 @@ public class Animation {
     private long startTime;					// start time of the animation or time since last update
     private long totalDuration;					// total duration of the animation
 
-   private int x;
-   private int y;
-
-   private int width;
-   private int height;
-			
-   private Image alienImage;
-
-   private int dx;		// increment to move along x-axis
-   private int dy;		// increment to move along y-axis
-
+    private boolean loop;
+    private boolean isActive;
 
     /**
         Creates a new, empty Animation.
     */
-    public Animation(GamePanel p) {
-	panel = p;
+    public Animation(boolean loop)
+    {
         frames = new ArrayList<AnimFrame>();
         totalDuration = 0;
-        start();
-
-	x = 5;
-        y = 10;
-        dx = 10;
-        dy = 0;
+        this.loop = loop;
+        isActive = false;
     }
-
 
     /**
         Adds an image to the animation with the specified
@@ -57,69 +40,72 @@ public class Animation {
         frames.add(new AnimFrame(image, totalDuration));
     }
 
-
     /**
         Starts this animation over from the beginning.
     */
-    public synchronized void start() {
-	x = 5;
-	y = 10;
+    public synchronized void start()
+    {
+        isActive = true;
         animTime = 0;						// reset time animation has run for to zero
         currFrameIndex = 0;					// reset current frame to first frame
-	startTime = System.currentTimeMillis();			// reset start time to current time
+        startTime = System.currentTimeMillis();			// reset start time to current time
     }
 
+    /**
+        Terminates this animation.
+    */
+    public synchronized void stop() { isActive = false; }
 
     /**
         Updates this animation's current image (frame), if
         neccesary.
     */
-    public synchronized void update() {
-        long currTime = System.currentTimeMillis();		// find the current time
-	long elapsedTime = currTime - startTime;		// find how much time has elapsed since last update
-	startTime = currTime;					// set start time to current time
+    public synchronized void update()
+    {
+	    if (!isActive)
+	        return;
 
-        if (frames.size() > 1) {
+        long currTime = System.currentTimeMillis();		// find the current time
+        long elapsedTime = currTime - startTime;		// find how much time has elapsed since last update
+        startTime = currTime;					// set start time to current time
+
+        if (frames.size() > 1)
+        {
             animTime += elapsedTime;				// add elapsed time to amount of time animation has run for
-            if (animTime >= totalDuration) {			// if the time animation has run for > total duration
-                animTime = animTime % totalDuration;		//    reset time animation has run for
-                currFrameIndex = 0;				//    reset current frame to first frame
+            if (animTime >= totalDuration)
+            {			// if the time animation has run for > total duration
+                if (loop)
+                {
+                    animTime = animTime % totalDuration;	// reset time animation has run for
+                    currFrameIndex = 0;				// reset current frame to first frame
+                }
+                else { 
+                        isActive = false;				// set to false to terminate animation
+                }
             }
+
+            if (!isActive)
+                return;
 
             while (animTime > getFrame(currFrameIndex).endTime) {
                 currFrameIndex++;				// set frame corresponding to time animation has run for
             }
         }
-	
-	x = x + dx;
+    }
 
-    }
-    public void setPosition(int newX, int newY) {
-        x = newX;
-        y = newY;
-    }
 
     /**
         Gets this Animation's current image. Returns null if this
         animation has no images.
     */
-    public synchronized Image getImage() {
+    public synchronized Image getImage() 
+    {
         if (frames.size() == 0) {
             return null;
         }
         else {
             return getFrame(currFrameIndex).image;
         }
-    }
-
-    public void draw (Graphics2D g2) {				// draw the current frame on the graphics context
- 
-       //Graphics g = panel.getGraphics ();
-       //Graphics2D g2 = (Graphics2D) g;
-
-       g2.drawImage(getImage(), x, y, 150, 150, null);
-  
-       //g2.dispose();
     }
 
     public int getNumFrames() {					// find out how many frames in animation
@@ -130,9 +116,12 @@ public class Animation {
         return frames.get(i);
     }
 
+    public boolean isStillActive () {
+	return isActive;
+    }
 
-    private class AnimFrame {					// inner class for the frames of the animation
-
+    private class AnimFrame // inner class for the frames of the animation
+    {					
         Image image;
         long endTime;
 
@@ -142,6 +131,3 @@ public class Animation {
         }
     }
 }
-
-
-

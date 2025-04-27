@@ -4,6 +4,7 @@ package com.novanation.akumanoshima;
 public class CameraControls {
     
     private final Player player;
+    private final PlayerAnimation playerAnimation;
     private final InputHandler playerInput;
     private final BackgroundManager backgroundManager;
 
@@ -14,7 +15,8 @@ public class CameraControls {
     // Max size of the world = 3840px
     private final int LEFT_THRESHOLD = 600;                 // Defines the area in which the player must enter before the world moves
     private final int RIGHT_THRESHOLD = 3000;               // Defines the area in which the player must leave before the world stops moving
-    // private final float THRESHOLD_SCALE = 10f;              // How much the player speed is reduced when entering the threshold
+
+    private int previousDirection = 0;
     
     // Location
     private double xPos;
@@ -25,6 +27,8 @@ public class CameraControls {
         this.player = player;
         this.playerInput = playerInput;
         this.backgroundManager = backgroundManager;
+
+        this.playerAnimation = this.player.getPlayerAnimation();
 
         xPos = player.getX() + 30;
     }
@@ -93,7 +97,28 @@ public class CameraControls {
             newPlayerSpeed *= 1.5;
             newWorldSpeed *= 1.5;
         }
+        
+        if (playerInput.getDirection() == -1 && playerInput.getIsMoving())
+        {
+            if (previousDirection != -1)
+            {
+                player.setWidth(-player.getWidth());
+                player.setX(player.getX() - player.getWidth() - newPlayerSpeed);
+
+                previousDirection = -1;
+            }
             
+        }
+        if (playerInput.getDirection() == 1 && playerInput.getIsMoving())
+        {
+            if (previousDirection != 1)
+            {
+                player.setWidth(-player.getWidth());
+                player.setX(player.getX() - player.getWidth() - newPlayerSpeed);
+                
+                previousDirection = 1;
+            }
+        }
 
         if (!player.isColliding(newPlayerSpeed))
             updatePlayer(newPlayerSpeed);

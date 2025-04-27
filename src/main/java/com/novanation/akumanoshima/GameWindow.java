@@ -12,8 +12,9 @@ public final class GameWindow extends JFrame {
     private final Container container;
 
     private final JPanel mainPanel;
-    private GamePanel gamePanel;
 
+    // Scenes
+    private GamePanel gamePanel;
     private final LoadingPanel loadingPanel;
     private final Menu menuPanel;
 

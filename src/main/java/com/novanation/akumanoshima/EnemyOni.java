@@ -98,6 +98,14 @@ public class EnemyOni implements Entity {
         if (targetPlayer == null)
             targetPlayer = panel.getPlayerEntity();
 
+        if (entityBounds == null)
+        {
+            for (EnemyProjectile projectile : projectiles) {
+                projectile.setActive(false);
+            }
+        }
+            
+
         // Use worldX for next chunk calculation
         Chunk newChunk = WorldGeneration.getChunk(((worldX + tileLength) / tileLength) * tileLength);
         determineChunkTile(newChunk);

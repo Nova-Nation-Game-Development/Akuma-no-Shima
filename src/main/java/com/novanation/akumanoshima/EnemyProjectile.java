@@ -14,7 +14,7 @@ public class EnemyProjectile implements Projectile {
     private double speed = 0.003; // Speed of projectile movement
     private int size = 30; // Size of projectile
     private boolean active = true;
-    private static final int FIREBALL_DAMAGE = 2; // Damage dealt by the fireball
+    private static final int FIREBALL_DAMAGE = 1; // Damage dealt by the fireball
 
     private double directionX;
     private double directionY;
@@ -32,6 +32,8 @@ public class EnemyProjectile implements Projectile {
     private GamePanel panel;
 
     public void setPanel(GamePanel panel) { this.panel = panel; }
+
+    public void setActive(boolean active) { this.active = active; }
 
     @Override
     public void move() {

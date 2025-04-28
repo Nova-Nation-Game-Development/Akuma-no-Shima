@@ -105,7 +105,7 @@ public class EnemyMaou implements Entity {
         isDead = false;
 
         health = new Health(false);
-        health.setMaxHealth(30);
+        health.setMaxHealth(50);
         health.setCurrentHealth(health.getMaxHealth());
 
         maouImage = ImageManager.loadImage("/gfx/characters/char_maou.png");
@@ -441,7 +441,7 @@ public class EnemyMaou implements Entity {
 
                 if (player.getEntityBounds().intersects(hitBox))
                 {
-                    player.getHealth().dealDamage(2, true, player);
+                    player.getHealth().dealDamage(1, true, player);
                     player.jump();
                 }
             }

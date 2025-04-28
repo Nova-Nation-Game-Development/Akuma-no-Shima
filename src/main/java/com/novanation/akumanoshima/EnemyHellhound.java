@@ -201,7 +201,7 @@ public class EnemyHellhound implements Entity {
             if (entityBounds.intersects(targetPlayer.getEntityBounds())) {
                 long currentTime = System.currentTimeMillis();
                 if (currentTime - lastDamageTime >= DAMAGE_COOLDOWN) {
-                    targetPlayer.getHealth().dealDamage(CONTACT_DAMAGE, true, targetPlayer);
+                    // targetPlayer.getHealth().dealDamage(CONTACT_DAMAGE, true, targetPlayer);
                     lastDamageTime = currentTime;
                 }
             }

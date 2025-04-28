@@ -25,7 +25,7 @@ public class GamePanel extends Scene {
 
     private int worldOffsetX;
 
-    private final int FINAL_LEVEL = 10;
+    private final int FINAL_LEVEL = 3;
     private boolean isEndless = false;
 
     private boolean isPlaying = false;

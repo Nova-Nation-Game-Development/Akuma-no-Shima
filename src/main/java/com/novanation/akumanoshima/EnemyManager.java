@@ -37,9 +37,9 @@ public class EnemyManager {
     private static int frameCount = 0;
 
     // Enemy Health
-    private static final int HEALTH_EASY = 2;
-    private static final int HEALTH_NORMAL = 3;
-    private static final int HEALTH_HARD = 5;
+    private static final int HEALTH_EASY = 1;
+    private static final int HEALTH_NORMAL = 2;
+    private static final int HEALTH_HARD = 4;
 
     // Boss Fight
     private static boolean isFinalLevel = false;

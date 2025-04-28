@@ -16,7 +16,7 @@ public class Bullet implements Projectile{
     private final double width = 15;
     private final double speed = 10;
     private double angle;
-    private static final int BULLET_DAMAGE = 1;
+    private static final int BULLET_DAMAGE = 2;
     private boolean active = true;
 
     @Override
@@ -109,8 +109,4 @@ public class Bullet implements Projectile{
     public Rectangle2D.Double getBounds() {
         return new Rectangle2D.Double(x - width/2, y - height/2, width, height);
     }
-    
-
-
-
 }

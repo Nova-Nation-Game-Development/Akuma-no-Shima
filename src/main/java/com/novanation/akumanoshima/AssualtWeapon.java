@@ -21,7 +21,7 @@ public class AssualtWeapon implements Weapon {
     private AmmoStock ammo;
     private InputHandler inputHandler;
     private Player player;
-    public int ammoCount = 10;
+    public int ammoCount = 20;
     private int currentBulletIndex = 0;
     private ArrayList<Bullet> usableBullets;
 

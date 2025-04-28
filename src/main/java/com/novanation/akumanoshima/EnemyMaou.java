@@ -76,6 +76,10 @@ public class EnemyMaou implements Entity {
     private long lastAttackTime = 0;
     private List<EnemyProjectile> projectiles = new ArrayList<>();
 
+    // Death Positioning
+    private int finalX = 0;
+    private int finalY = 0;
+
     // Animation
     private final EnemyMaouAnimation maouAnimation;
 
@@ -124,6 +128,8 @@ public class EnemyMaou implements Entity {
     @Override
     public void update()
     {
+        if (isDead) return;
+
         int tileLength = WorldGeneration.getTileLength();
         currentChunk = WorldGeneration.getChunk(((worldX) / tileLength) * tileLength);
 
@@ -197,13 +203,12 @@ public class EnemyMaou implements Entity {
     public void draw(Graphics2D g2)
     {
         if (isDead)
-            g2.drawImage(explosionGif, (int) xPos - width, (int) yPos - width, width * 2, height * 2, null);
+            g2.drawImage(explosionGif, (int) finalX - width, (int) finalY - width, width * 2, height * 2, null);
         else
         {
             if (isLanded)
             {
                 if (frameCount == 0)
-                    // TODO: Fix reset
                     landingGif = ImageManager.loadGif("/gfx/animations/maou/gifs/landing.gif").getImage();
                     
                 if (frameCount < LANDING_FRAMES)
@@ -316,8 +321,6 @@ public class EnemyMaou implements Entity {
             public void run()
             {
                 randAction = random.nextInt(1, 5); // [1..4]
-
-                randAction = 4;
 
                 switch (randAction)
                 {
@@ -438,7 +441,7 @@ public class EnemyMaou implements Entity {
 
                 if (player.getEntityBounds().intersects(hitBox))
                 {
-                    player.getHealth().dealDamage(2, true, this);
+                    player.getHealth().dealDamage(2, true, player);
                     player.jump();
                 }
             }
@@ -487,11 +490,7 @@ public class EnemyMaou implements Entity {
             shootTimer--;
     
             if (shootTimer <= 0)
-            {
                 isShooting = false;
-                // TODO: Damage player
-                if (player == null) return;
-            }
         }
     }
 
@@ -541,8 +540,6 @@ public class EnemyMaou implements Entity {
         }
 
         jump();
-
-        
     }
 
     private void updateSlam()
@@ -561,7 +558,7 @@ public class EnemyMaou implements Entity {
 
                 if (player.getEntityBounds().intersects(hitBox) && slamReady)
                 {
-                    player.getHealth().dealDamage(3, true, this);
+                    player.getHealth().dealDamage(3, true, player);
                     player.jump();
                 }
             }
@@ -575,5 +572,12 @@ public class EnemyMaou implements Entity {
 
     public void setSlamReady(boolean ready) { slamReady = ready; }
 
-    public void setDefeated(boolean isDead) { this.isDead = isDead; }
+    public void setDefeated(boolean isDead)
+    {
+        this.isDead = isDead;
+        player.getPanel().getGameWindow().playAudioClip("explosion", ClipType.SFX, false);
+
+        finalX = (int) xPos;
+        finalY = (int) yPos;
+    }
 }

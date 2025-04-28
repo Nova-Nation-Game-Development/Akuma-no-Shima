@@ -35,6 +35,11 @@ public class EnemyHellhound implements Entity {
     private Player targetPlayer;
     private GamePanel panel;
 
+    private static final double MOVE_SPEED = 2.0; // Faster than Oni
+    private static final int CONTACT_DAMAGE = 15;
+    private static final int DAMAGE_COOLDOWN = 1000; // 1 second cooldown
+    private long lastDamageTime = 0;
+
     public EnemyHellhound(int width, int height, int xPos, int yPos, String enemyID, GamePanel panel)
     {
         this.width = width;
@@ -175,5 +180,31 @@ public class EnemyHellhound implements Entity {
     @Override
     public void jump() { }
     @Override
-    public void performAction() { }
+    public void performAction()
+    {
+        if (targetPlayer == null) return;
+        
+        // Calculate distance to player using world coordinates
+        double dx = targetPlayer.getWorldX() - worldX;
+        double dy = targetPlayer.getY() - yPos;
+        double distance = Math.sqrt(dx * dx + dy * dy);
+
+        // Always move towards player
+        double dirX = dx / distance;
+        
+        // Update positions
+        worldX += dirX * MOVE_SPEED;
+        xPos = worldX + panel.getWorldOffsetX();
+
+        // Check for collision with player
+        if (entityBounds != null && targetPlayer.getEntityBounds() != null) {
+            if (entityBounds.intersects(targetPlayer.getEntityBounds())) {
+                long currentTime = System.currentTimeMillis();
+                if (currentTime - lastDamageTime >= DAMAGE_COOLDOWN) {
+                    targetPlayer.getHealth().dealDamage(CONTACT_DAMAGE, true, targetPlayer);
+                    lastDamageTime = currentTime;
+                }
+            }
+        }
+     }
 }

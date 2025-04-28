@@ -91,7 +91,6 @@ public class InputHandler implements KeyListener, MouseListener, MouseMotionList
             // case KeyEvent.VK_V -> {
             //     if(!vandalPerk.isActive()) {
             //         vandalPerk.applyEffect(player);
-            //         System.out.println("Vandal Perk Applied!");
             //         vandalPerk.setActive(true);
             //     }
             // }

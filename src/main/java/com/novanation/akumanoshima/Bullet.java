@@ -39,7 +39,6 @@ public class Bullet implements Projectile{
         
         Rectangle2D.Double enemyBounds = enemy.getEntityBounds();
         if (enemyBounds != null && bulletBounds.intersects(enemyBounds)) {
-            System.out.println("Bullet hit enemy! Dealing " + BULLET_DAMAGE + " damage");
             hit();
             enemy.getHealth().dealDamage(BULLET_DAMAGE, false, enemy);
             return true;

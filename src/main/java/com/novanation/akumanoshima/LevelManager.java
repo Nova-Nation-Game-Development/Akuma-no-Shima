@@ -44,28 +44,27 @@ public class LevelManager {
 
     public static boolean isSetUp() { return setup; }
 
-    public static void setTotalEnemies(int enemyCount) { totalEnemies = enemyCount; previousEnemies = totalEnemies; System.out.println(previousEnemies); }
+    public static void setTotalEnemies(int enemyCount) { totalEnemies = enemyCount; previousEnemies = totalEnemies; }
 
-    public static void update()
+    public static void update() 
     {
         remainingEnemies = EnemyManager.getRemainingEnemies();
-
-        
+    
+        if (totalEnemies == 0) return; // Don't process if no enemies have been set yet
+    
+        // Only update previous enemies count if we have enemies to track
         if (remainingEnemies == 0 && previousEnemies == 0)
             return;
-
+    
         previousEnemies = remainingEnemies;
-
-        if (!isClear && remainingEnemies <= 0) // The clear condition will be limited to kills
-        {
-            System.out.println("yoo");
-
+    
+        if (!isClear && remainingEnemies <= 0 && totalEnemies > 0) {
             // Progress to next level
             if (EnemyManager.isFinal())
                 isFinal = true;
             else
                 isClear = true;
-
+    
             startTime = System.currentTimeMillis();
         }
     }

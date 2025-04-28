@@ -1,5 +1,7 @@
 package com.novanation.akumanoshima;
 
+import java.util.HashMap;
+import java.util.Map;
 
 public class Config {
 
@@ -14,6 +16,12 @@ public class Config {
     private WorldType worldType;
     private String currentWeapon;
     private int currentAmmo;
+    private int playerHealth;
+    private int playerScore;
+    private boolean isEndless;
+    private Map<String, Integer> enemiesDefeated;
+    private Map<String, Boolean> unlockedWeapons;
+    private Map<String, Integer> weaponAmmo;
 
     // Audio settings
     private float sfxVolume;
@@ -36,6 +44,15 @@ public class Config {
         this.menuVolume = 1.0f;
         this.musicVolume = 1.0f;
         this.masterVolume = 1.0f;
+        this.playerHealth = 20;
+        this.playerScore = 0;
+        this.isEndless = false;
+        this.enemiesDefeated = new HashMap<>();
+        this.unlockedWeapons = new HashMap<>();
+        this.weaponAmmo = new HashMap<>();
+
+        unlockedWeapons.put("Assault", true);
+        weaponAmmo.put("Assault", 30);
     }
 
     // Accessors and mutators
@@ -65,6 +82,24 @@ public class Config {
 
     public int getCurrentAmmo() { return currentAmmo; }
     public void setCurrentAmmo(int currentAmmo) { this.currentAmmo = currentAmmo; }
+
+    public int getPlayerHealth() { return playerHealth; }
+    public void setPlayerHealth(int health) { this.playerHealth = health; }
+
+    public int getPlayerScore() { return playerScore; }
+    public void setPlayerScore(int score) { this.playerScore = score; }
+
+    public boolean isEndless() { return isEndless; }
+    public void setEndless(boolean endless) { this.isEndless = endless; }
+
+    public Map<String, Integer> getEnemiesDefeated() { return enemiesDefeated; }
+    public void setEnemiesDefeated(Map<String, Integer> enemies) { this.enemiesDefeated = enemies; }
+
+    public Map<String, Boolean> getUnlockedWeapons() { return unlockedWeapons; }
+    public void setUnlockedWeapons(Map<String, Boolean> weapons) { this.unlockedWeapons = weapons; }
+
+    public Map<String, Integer> getWeaponAmmo() { return weaponAmmo; }
+    public void setWeaponAmmo(Map<String, Integer> ammo) { this.weaponAmmo = ammo; }
 
     // Audio
     public float getSfxVolume() { return sfxVolume; }

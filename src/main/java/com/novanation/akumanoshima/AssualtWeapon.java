@@ -69,16 +69,13 @@ public class AssualtWeapon implements Weapon {
          try {
             weaponImage = ImageIO.read(getClass().getResourceAsStream("/gfx/weapons/weapon_assault.png"));
             // If your image is elsewhere, adjust the path accordingly
-        } catch (IOException e) {
-            System.err.println("Could not load weapon image: " + e.getMessage());
-        }
+        } catch (IOException e) { }
     }
 
     private void initializeAmmo() {
         int totalAmmo = (int)(ammoCount * ammoMultiplier);
         ammo = new AmmoStock(totalAmmo);
         usableBullets = ammo.bullets;
-        System.out.println("Initialized weapon with " + totalAmmo + " bullets");
     }
 
     public void setInputHandler(InputHandler inputHandler) {
@@ -101,7 +98,6 @@ public class AssualtWeapon implements Weapon {
             if(currTime - lastShotTime >= fireRate) {
                 if(currentBulletIndex < ammoCount * ammoMultiplier) {
                     double angle = inputHandler.getAngle();
-                    System.out.println("Firing angle: " + Math.toDegrees(angle));
                     usableBullets.get(currentBulletIndex).spawn(x, y, angle);
                     currentBulletIndex++;
                     lastShotTime = currTime;
@@ -123,7 +119,6 @@ public class AssualtWeapon implements Weapon {
         for(int i = 0; i < currentBulletIndex; i++) {
             Bullet bullet = usableBullets.get(i);
             usableBullets.get(i).move();
-            //System.out.println("Bullet " + i + " position: " + usableBullets.get(i).getX() + ", " + usableBullets.get(i).getY());
 
             if (frameCount <= maxFrameCount && isArFiring() && !isReloading)
             {
@@ -167,16 +162,9 @@ public class AssualtWeapon implements Weapon {
         }
     }
 
-   
-
+    // not in use 
     @Override
-    public void reload() { // not in use
-      //  if (!isReloading && currentBulletIndex > 0) {
-       //     isReloading = true;
-       //     reloadStartTime = System.currentTimeMillis();
-         //   System.out.println("Reloading...");
-       // }
-    }
+    public void reload() { }
 
     public void updateReloading(){
         if (isReloading) {
@@ -189,7 +177,6 @@ public class AssualtWeapon implements Weapon {
                 arIsEmpty = false;
                 arCanFire = true;
                 isReloading = false;
-               // System.out.println("Reload complete! New ammo count: " + usableBullets.size());
             }
         }
     }
@@ -270,7 +257,6 @@ public class AssualtWeapon implements Weapon {
         int totalAmmo = (int)(BASE_AMMO * ammoMultiplier);
         ammo = new AmmoStock(totalAmmo);
         usableBullets = ammo.bullets;
-        System.out.println("Reinitialized weapon with " + totalAmmo + " bullets after multiplier change");
     }
 
     @Override

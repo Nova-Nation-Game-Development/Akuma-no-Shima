@@ -20,14 +20,10 @@ public class SpeedsterPerk implements Perk {
     public void applyEffect(Player player) {
         player.setMoveSpeedMultiplier(SPEED_MULTIPLIER);
         isActive = true;
-        System.out.println("Speedster Perk Applied!");
     }
 
     @Override
-    public void removeEffect(Player player) {
-      //  player.setMoveSpeedMultiplier(1.0); 
-      //  System.out.println("Speedster Perk Removed! Speed reset.");
-    }
+    public void removeEffect(Player player) { }
 
     public boolean isActive() {
         return isActive;

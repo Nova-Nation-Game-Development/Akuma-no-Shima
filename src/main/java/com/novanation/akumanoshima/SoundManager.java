@@ -214,9 +214,6 @@ public final class SoundManager {
 		Clip clip = getClip(title, clipType);
 
 		if (clip != null)
-			System.out.println("Stopped " + title);
-
-		if (clip != null)
 			clip.stop();
     }
 }

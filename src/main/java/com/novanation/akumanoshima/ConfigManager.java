@@ -12,7 +12,23 @@ import com.google.gson.GsonBuilder;
 
 public class ConfigManager {
 
+    // Let's save user progress every 30 seconds
+    // We know this game is kinda difficult
+    private static final long AUTOSAVE_INTERVAL = 30000;
+    private static long lastSaveTime = 0;
+
     private static final Path CONFIG_PATH = Paths.get(System.getProperty("user.dir"), "user-config", "user-settings.config");
+
+    public static void autoSave(Config config)
+    {
+        long currentTime = System.currentTimeMillis();
+
+        if (currentTime - lastSaveTime >= AUTOSAVE_INTERVAL)
+        {
+            saveConfig(config);
+            lastSaveTime = currentTime;
+        }
+    }
 
     public static void saveConfig(Config config)
     {
@@ -35,8 +51,6 @@ public class ConfigManager {
         if (Files.notExists(CONFIG_PATH))
         {
             // Create and save the default config if no file was found
-            System.out.println("Config file not found. Creating default config...");
-            
             Config defaultConfig = new Config();
             saveConfig(defaultConfig);
             return defaultConfig;

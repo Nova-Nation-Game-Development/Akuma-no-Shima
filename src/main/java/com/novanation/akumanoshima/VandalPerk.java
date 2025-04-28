@@ -21,11 +21,9 @@ public class VandalPerk implements Perk{
     @Override
     public void applyEffect(Player player) {
         Weapon weapon = player.getWeapon();
-        if (weapon instanceof AssualtWeapon) {
-            AssualtWeapon assaultWeapon = (AssualtWeapon) weapon;
+        if (weapon instanceof AssualtWeapon assaultWeapon) {
             assaultWeapon.setAmmoMultiplier(ammoMultiplier);
             assaultWeapon.setReloadSpeedMultiplier(reloadSpeedMultiplier);
-            System.out.println("Vandal Perk Applied!");
         }
     }
 

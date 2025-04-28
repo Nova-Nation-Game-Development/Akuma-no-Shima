@@ -245,8 +245,7 @@ public class Player implements Entity {
                     }
                     case VOLCANIC -> {
                         inLiquid = true;
-                        System.out.println("mr lava lava");
-                        // TODO: Deal damage
+                        health.dealDamage(1, true, this);
                     }
                     case BLIZZARD -> {
                         onIce = true;

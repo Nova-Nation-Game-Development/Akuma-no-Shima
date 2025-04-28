@@ -44,7 +44,7 @@ public class LevelManager {
 
     public static boolean isSetUp() { return setup; }
 
-    public static void setTotalEnemies(int enemyCount) { totalEnemies = enemyCount; previousEnemies = totalEnemies; System.out.println(previousEnemies); }
+    public static void setTotalEnemies(int enemyCount) { totalEnemies = enemyCount; previousEnemies = totalEnemies; }
 
     public static void update() 
     {

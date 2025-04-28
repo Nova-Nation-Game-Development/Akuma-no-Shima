@@ -42,6 +42,10 @@ public class EnemyOni implements Entity {
     //Attacking variables
     private static final int ATTACK_RANGE = 400; // Horizontal range to start attacking
     private static final int ATTACK_INTERVAL = 3000; // Milliseconds between shots
+
+    private static final double MOVE_SPEED = 1.0;
+    private static final int MIN_ATTACK_RANGE = 300;
+
     private long lastAttackTime = 0;
     private List<EnemyProjectile> projectiles = new ArrayList<>();
     private Player targetPlayer;
@@ -211,23 +215,30 @@ public class EnemyOni implements Entity {
     public void jump() { }
     @Override
     public void performAction() { 
-        long currentTime = System.currentTimeMillis();
+        if (targetPlayer == null) return;
         
-        // Check attack timing
-        if (currentTime - lastAttackTime >= ATTACK_INTERVAL) {
-            // Use world position for distance check
-            if (targetPlayer != null)
-            {
-                double distanceToPlayer = Math.abs(xPos - targetPlayer.getWorldX());
+        // Calculate distance to player using world coordinates
+        double dx = targetPlayer.getWorldX() - worldX;
+        double dy = targetPlayer.getY() - yPos;
+        double distance = Math.sqrt(dx * dx + dy * dy);
+
+        // If outside attack range, move towards player
+        if (distance > MIN_ATTACK_RANGE) {
+            // Normalize direction vector
+            double dirX = dx / distance;
             
-                if (distanceToPlayer <= ATTACK_RANGE) {
-                    shootFireball();
-                    lastAttackTime = currentTime;
-                }
-            }
+            // Move towards player
+            worldX += dirX * MOVE_SPEED;
+            xPos = worldX + panel.getWorldOffsetX();
+        }
+        
+        // Attack if in range
+        long currentTime = System.currentTimeMillis();
+        if (distance <= ATTACK_RANGE && currentTime - lastAttackTime >= ATTACK_INTERVAL) {
+            shootFireball();
+            lastAttackTime = currentTime;
         }
 
-        // Update active projectiles
         updateProjectiles();
     }
 

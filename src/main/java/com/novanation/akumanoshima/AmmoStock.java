@@ -15,15 +15,10 @@ public class AmmoStock{
         initBullets();
 }
 
-public void initBullets(){
-    for(int i = 0; i < ammoCount; i++){
-        bullets.add(new Bullet());
+    public void initBullets(){
+        for(int i = 0; i < ammoCount; i++){
+            bullets.add(new Bullet());
+        }
+        currAmmoCount = ammoCount;
     }
-    currAmmoCount = ammoCount;
-    System.out.println("Ammo stock initialized with " + ammoCount + " bullets.");
-}
-
-
-
-
 }

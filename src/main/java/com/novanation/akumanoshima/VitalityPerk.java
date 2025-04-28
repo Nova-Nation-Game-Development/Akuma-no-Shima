@@ -22,7 +22,6 @@ public class VitalityPerk implements Perk{
         Health playerHealth = player.getHealth();
         if (playerHealth != null) {
             playerHealth.addHealth(HEALTH_BONUS);
-            System.out.println("Vitality Perk Applied! Health increased.");
         }
     }
 
@@ -31,7 +30,6 @@ public class VitalityPerk implements Perk{
         Health playerHealth = player.getHealth();
         if (playerHealth != null) {
             playerHealth.dealDamage(HEALTH_BONUS, true, player);
-            System.out.println("Vitality Perk Removed! Health decreased.");
         }
     }
 

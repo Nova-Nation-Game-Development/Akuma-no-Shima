@@ -23,6 +23,8 @@ public final class GameWindow extends JFrame {
     private final SoundManager soundManager;
     private final Config config;
 
+    private boolean respawned = false;
+
     public GameWindow()
     {
         // Load Game Files
@@ -75,6 +77,9 @@ public final class GameWindow extends JFrame {
     public void playAudioClip(String title, ClipType clipType, boolean loopable) { soundManager.playClip(title, clipType, loopable); }
     public void stopAudioClip(String title, ClipType clipType) { soundManager.stopClip(title, clipType); }
 
+    public boolean getRespawned() { return respawned; }
+    public void setRespawned(boolean state) { respawned = state; }
+
     public void loadGame()
     {
         SceneLoader.switchScene("LoadingPanel");
@@ -84,6 +89,10 @@ public final class GameWindow extends JFrame {
         stopAudioClip("blizzard", ClipType.AMBIENT);
         stopAudioClip("lava_1", ClipType.AMBIENT);
         stopAudioClip("lava_2", ClipType.AMBIENT);
+
+        int savedLevel = currentLevel;
+        if (respawned)
+            currentLevel = savedLevel; // Preserve level on respawn
 
         mainPanel.remove(gamePanel);
         gamePanel = new GamePanel(this);

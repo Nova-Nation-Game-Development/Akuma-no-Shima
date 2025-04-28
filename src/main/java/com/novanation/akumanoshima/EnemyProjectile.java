@@ -42,17 +42,20 @@ public class EnemyProjectile implements Projectile {
                 endX, endY,
                 t
             );
+            // Update both world and screen positions
             worldX = pos.x;
+            x = worldX + panel.getWorldOffsetX(); // Adjust for world movement
             worldY = pos.y;
+            y = worldY;
             t += speed;
         } else {
             active = false;
         }
     }
 
-    public void moveWithWorld(int worldSpeed)
-    {
+    public void moveWithWorld(int worldSpeed) {
         this.worldSpeed = worldSpeed;
+        x = worldX + panel.getWorldOffsetX();
     }
 
     @Override
@@ -121,14 +124,16 @@ public class EnemyProjectile implements Projectile {
         if (!active) return false;
         
         Rectangle2D.Double projectileBounds = new Rectangle2D.Double(
-            worldX - size/2, worldY - size/2, size, size
+            x - size/2, // Use screen position x instead of worldX
+            y - size/2, 
+            size, 
+            size
         );
         
         Rectangle2D.Double playerBounds = player.getEntityBounds();
         if (projectileBounds.intersects(playerBounds)) {
             hit();
             player.getHealth().dealDamage(FIREBALL_DAMAGE, true, player);
-            System.out.println("Player hit by fireball! Dealing " + FIREBALL_DAMAGE + " damage");
             return true;
         }
         return false;

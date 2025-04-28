@@ -12,6 +12,8 @@ import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 public class GamePanel extends Scene {
@@ -23,7 +25,7 @@ public class GamePanel extends Scene {
 
     private int worldOffsetX;
 
-    private final int FINAL_LEVEL = 10;
+    private final int FINAL_LEVEL = 2;
     private boolean isEndless = false;
 
     private boolean isPlaying = false;
@@ -81,6 +83,31 @@ public class GamePanel extends Scene {
         image = new BufferedImage(this.window.getWidth(), this.window.getHeight(), BufferedImage.TYPE_INT_RGB);
 
         deathImage = ImageManager.loadImage("/gfx/images/ui/player_death.png");
+    }
+
+    private void saveGameState() {
+        Config config = window.getConfig();
+        
+        // Save player state
+        if (playerEntity != null) {
+            config.setPlayerHealth(playerEntity.getHealth().getCurrentHealth());
+            // TODO: Save weapon state
+        }
+
+        // Save level progress
+        config.setLevel(window.getCurrentLevel());
+        config.setEndless(isEndless);
+
+        // Save enemy stats
+        Map<String, Integer> defeatedEnemies = new HashMap<>();
+        for (Entity enemy : EnemyManager.getAllEnemies()) {
+            String enemyType = enemy.getClass().getSimpleName();
+            defeatedEnemies.merge(enemyType, 1, Integer::sum);
+        }
+        config.setEnemiesDefeated(defeatedEnemies);
+
+        // Save to file
+        ConfigManager.saveConfig(config);
     }
 
     public void setWorldOffsetX(int speed) { worldOffsetX += speed; }
@@ -172,7 +199,18 @@ public class GamePanel extends Scene {
                 window.stopAudioClip("end_2", ClipType.MUSIC);
                 window.stopAudioClip("end_3", ClipType.MUSIC);
 
-                window.playAudioClip("game_win", ClipType.SFX, false);
+                window.stopAudioClip("forest", ClipType.AMBIENT);
+                window.stopAudioClip("blizzard", ClipType.AMBIENT);
+                window.stopAudioClip("lava_1", ClipType.AMBIENT);
+                window.stopAudioClip("lava_2", ClipType.AMBIENT);
+
+                window.playAudioClip("round_change", ClipType.SFX, false);
+
+                if (!window.getRespawned())
+                    window.setCurrentLevel(window.getCurrentLevel() + 1);
+                else
+                    window.setRespawned(false);
+
                 isPlaying = true;
             }
 
@@ -185,8 +223,6 @@ public class GamePanel extends Scene {
             }
             else
             {
-                System.out.println("I Changed nothing");
-
                 LevelManager.setSetup(false);
                 LevelManager.setLevelClear(false);
                 startNewLevel();
@@ -204,6 +240,7 @@ public class GamePanel extends Scene {
                 window.stopAudioClip("end_3", ClipType.MUSIC);
 
                 window.playAudioClip("game_win", ClipType.SFX, false);
+                window.setCurrentLevel(1);
                 isPlaying = true;
             }
 
@@ -237,6 +274,8 @@ public class GamePanel extends Scene {
             window.stopAudioClip("lava_1", ClipType.AMBIENT);
             window.stopAudioClip("lava_2", ClipType.AMBIENT);
 
+            window.setRespawned(true);
+
             if (!isPlaying)
                 window.playAudioClip("player_death", ClipType.SFX, false);
         }
@@ -246,15 +285,22 @@ public class GamePanel extends Scene {
 
     public void resetToMenu()
     {
+        saveGameState();
         LevelManager.setFinal(false);
 
         // Return the player to the main menu
         SceneLoader.switchScene("Menu");
+        window.stopAudioClip("round_change", ClipType.SFX);
         window.stopAudioClip("game_win", ClipType.SFX);
+
         window.stopAudioClip("forest", ClipType.AMBIENT);
         window.stopAudioClip("blizzard", ClipType.AMBIENT);
         window.stopAudioClip("lava_1", ClipType.AMBIENT);
         window.stopAudioClip("lava_2", ClipType.AMBIENT);
+
+        window.stopAudioClip("end_1", ClipType.MUSIC);
+        window.stopAudioClip("end_2", ClipType.MUSIC);  
+        window.stopAudioClip("end_3", ClipType.MUSIC);
 
         window.playAudioClip("Menu", ClipType.MENU, true);
         stopGameThread();
@@ -262,9 +308,29 @@ public class GamePanel extends Scene {
 
     public void startNewLevel()
     {
+        saveGameState();
+
         SceneLoader.switchScene("LoadingPanel");
         stopGameThread();
         window.loadGame();
+    }
+
+    private void loadGameState() {
+        Config config = window.getConfig();
+        
+        // Set endless mode
+        isEndless = config.isEndless();
+
+        // Load weapon ammo
+        if (ar != null) {
+            int savedAmmo = config.getWeaponAmmo().getOrDefault("Assault", 30);
+            // TODO: Utilize ammo
+        }
+
+        // Load player health if respawning
+        if (window.getRespawned() && playerEntity != null) {
+            playerEntity.getHealth().setCurrentHealth(config.getPlayerHealth());
+        }
     }
 
     public void updateEntityCalculations()
@@ -277,18 +343,18 @@ public class GamePanel extends Scene {
 
             int randomTrack = random.nextInt(1, 2) + lava;
 
-        //     if (WorldGeneration.getWorldType() == WorldType.VOLCANIC)
-        //     {
-        //         if (randomTrack == 1)
-        //             window.playAudioClip("lava_1", ClipType.AMBIENT, false);
-        //         else
-        //          window.playAudioClip("lava_2", ClipType.AMBIENT, false);
-        //     }
-        //     else if (WorldGeneration.getWorldType() == WorldType.BLIZZARD)
-        //         window.playAudioClip("blizzard", ClipType.AMBIENT, false);
+            if (WorldGeneration.getWorldType() == WorldType.VOLCANIC)
+            {
+                if (randomTrack == 1)
+                    window.playAudioClip("lava_1", ClipType.AMBIENT, false);
+                else
+                 window.playAudioClip("lava_2", ClipType.AMBIENT, false);
+            }
+            else if (WorldGeneration.getWorldType() == WorldType.BLIZZARD)
+                window.playAudioClip("blizzard", ClipType.AMBIENT, false);
             
-        //     sfxFrameCount = 0;
-        //     newRandomAmbient = random.nextInt(LOWER_AMBIENT, UPPER_AMBIENT) + 1;
+            sfxFrameCount = 0;
+            newRandomAmbient = random.nextInt(LOWER_AMBIENT, UPPER_AMBIENT) + 1;
         }
 
         if (playerEntity.getHealth().isDead())
@@ -407,7 +473,9 @@ public class GamePanel extends Scene {
         camera = new CameraControls(playerEntity, playerInput, backgroundManager);
         ar = new AssualtWeapon(playerEntity);
         ar.setInputHandler(playerInput);
-        playerInput.setWeapon(ar);        
+        playerInput.setWeapon(ar);      
+        
+        loadGameState();
 
         addKeyListener(playerInput);
 
@@ -416,7 +484,6 @@ public class GamePanel extends Scene {
         addMouseListener(playerInput);
         addMouseMotionListener(playerInput);
 
-        window.setCurrentLevel(window.getCurrentLevel() + 1);; // Create entities will only be called at the start of a new level
         repaint();
     }
 

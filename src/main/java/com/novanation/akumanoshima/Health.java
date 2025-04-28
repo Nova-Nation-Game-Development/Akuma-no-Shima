@@ -40,6 +40,12 @@ public class Health {
     {
         damage = Math.abs(damage); // In case of damage being negative
 
+        if (isPlayer)
+        {
+            Player newPlayer = (Player) entity;
+            newPlayer.getPanel().getGameWindow().playAudioClip("player_hit", ClipType.SFX, false);
+        }
+
         if (currentHealth > DEFAULT_HP)
             currentHealth -= 2;
         else if (currentHealth - damage <= 0)

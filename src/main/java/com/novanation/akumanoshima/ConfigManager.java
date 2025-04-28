@@ -25,7 +25,7 @@ public class ConfigManager {
 
         if (currentTime - lastSaveTime >= AUTOSAVE_INTERVAL)
         {
-            saveConfig(config);
+            // saveConfig(config); TODO: Reimplement when you have more time
             lastSaveTime = currentTime;
         }
     }

@@ -90,7 +90,7 @@ public class GamePanel extends Scene {
         
         // Save player state
         if (playerEntity != null) {
-            config.setPlayerHealth(playerEntity.getHealth().getCurrentHealth());
+            // config.setPlayerHealth(playerEntity.getHealth().getCurrentHealth());
             // TODO: Save weapon state
         }
 

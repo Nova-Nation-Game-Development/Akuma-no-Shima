@@ -266,50 +266,42 @@ public class EnemyManager {
         return enemiesAlive;
     }
 
-    public static int getRemainingEnemies()
-    {
-        int remainingEnemies = 0;
-        if (enemies.values() == null) return 0;
-
-        // Save List
-        HashMap<String, Entity> newEnemies = new HashMap<>();
-
-        for (Entity entity : enemies.values())
-            newEnemies.put(entity.getID(), entity);
-
-        for (Entity entity : newEnemies.values())
-            if (!"DESTROYED".equals(entity.getID()))
-                remainingEnemies++;
-
-        return remainingEnemies;
+    public static int getRemainingEnemies() {
+        if (enemies == null || enemies.values() == null) return 0;
+        
+        return (int) enemies.values().stream()
+            .filter(entity -> !"DESTROYED".equals(entity.getID()))
+            .count();
     }
 
     public static void move(int direction) {
-        for (Entity enemy : enemies.values()) {
+        if (enemies == null) return;
+        ArrayList<Entity> enemyList = new ArrayList<>(enemies.values());
+        
+        for (Entity enemy : enemyList) {
             enemy.move(direction);
-            // Update world position separately from screen position
             enemy.setWorldX(enemy.getWorldX() - direction);
         }
     }
 
-    public static void draw(Graphics2D g2)
-    {
+    public static void draw(Graphics2D g2) {
         if (enemies == null) return;
 
-        for (Entity enemy : enemies.values())
-        {
-            if (!"DESTROYED".equals(enemy.getID()))
+        // Create a copy of the enemies collection to avoid concurrent modification
+        ArrayList<Entity> enemyList = new ArrayList<>(enemies.values());
+
+        for (Entity enemy : enemyList) {
+            if (!"DESTROYED".equals(enemy.getID())) {
                 enemy.draw(g2);
-            else
-                if (enemy instanceof EnemyMaou enemyMaou)
-                {
-                    frameCount++;
-
-                    if (frameCount < EXPLOSION_FRAMES)
-                        enemyMaou.draw(g2);
+            } else if (enemy instanceof EnemyMaou enemyMaou) {
+                frameCount++;
+                if (frameCount < EXPLOSION_FRAMES) {
+                    enemyMaou.draw(g2);
                 }
+            }
+        }
 
-            // Testing purposes
+        // Testing purposes
             // g2.setColor(Color.BLUE);
             // if (enemy.getCurrentChunk() != null)
             //     g2.fill(enemy.getCurrentChunk().getChunkBounds());
@@ -317,8 +309,8 @@ public class EnemyManager {
             // g2.setColor(new Color(255, 255, 255, 128));
             // if (enemy.getEntityBounds() != null)
             //     g2.fill(enemy.getEntityBounds());
-        }
     }
+    
 
     public static Collection<Entity> getAllEnemies() {
     return enemies.values();

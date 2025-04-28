@@ -25,7 +25,7 @@ public class GamePanel extends Scene {
 
     private int worldOffsetX;
 
-    private final int FINAL_LEVEL = 2;
+    private final int FINAL_LEVEL = 1;
     private boolean isEndless = false;
 
     private boolean isPlaying = false;
@@ -380,24 +380,22 @@ public class GamePanel extends Scene {
         Physics.applyGravity(playerEntity, playerEntity.getX(), playerEntity.getY());
 
         // Add entities to a separate list to prevent modification during iteration
-        ArrayList<Entity> entityList = new ArrayList<>();
-        for (Entity entity : EnemyManager.getEnemies().values())
-            entityList.add(entity);
-
-        for (Entity entity : entityList)
-        {
+        ArrayList<Entity> entityList = new ArrayList<>(EnemyManager.getEnemies().values());
+        
+        for (Entity entity : entityList) {
             Physics.applyGravity(entity, entity.getX(), entity.getY());
             entity.update();
         }
             
         playerEntity.update();
         
-        for (Entity enemy : EnemyManager.getAllEnemies()) {
+        // Create another copy for performAction
+        entityList = new ArrayList<>(EnemyManager.getAllEnemies());
+        for (Entity enemy : entityList) {
             if (enemy instanceof EnemyOni oni) {
                 oni.performAction();
             }
         }
-
         // This will keep track of the world and player and update their locations accordingly
         camera.update();
         if(ar != null) {

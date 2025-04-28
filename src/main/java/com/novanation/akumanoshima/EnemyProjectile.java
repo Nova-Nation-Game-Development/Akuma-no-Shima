@@ -14,7 +14,7 @@ public class EnemyProjectile implements Projectile {
     private double speed = 0.003; // Speed of projectile movement
     private int size = 30; // Size of projectile
     private boolean active = true;
-    private static final int FIREBALL_DAMAGE = 10; // Damage dealt by the fireball
+    private static final int FIREBALL_DAMAGE = 2; // Damage dealt by the fireball
 
     private double directionX;
     private double directionY;
@@ -121,7 +121,7 @@ public class EnemyProjectile implements Projectile {
         if (!active) return false;
         
         Rectangle2D.Double projectileBounds = new Rectangle2D.Double(
-            x - size/2, y - size/2, size, size
+            worldX - size/2, worldY - size/2, size, size
         );
         
         Rectangle2D.Double playerBounds = player.getEntityBounds();

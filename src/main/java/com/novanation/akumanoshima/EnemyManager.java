@@ -101,6 +101,9 @@ public class EnemyManager {
 
     public static void generateEnemies(Difficulty difficulty, boolean isFinal, GamePanel panel)
     {
+        enemies.clear();
+        enemiesAlive.clear();
+
         isFinalLevel = isFinal;
         Random random = new Random();
 
@@ -140,7 +143,6 @@ public class EnemyManager {
         }
 
         LevelManager.setTotalEnemies(enemyCount);
-        LevelManager.update();
 
         List<String> enemyTypes = new ArrayList<>();
 
@@ -329,6 +331,4 @@ public class EnemyManager {
     public static void clearEnemies() {
         enemies.clear();
     }
-
-    
 }

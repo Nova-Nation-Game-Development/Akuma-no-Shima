@@ -80,6 +80,11 @@ public final class GameWindow extends JFrame {
         SceneLoader.switchScene("LoadingPanel");
         WorldGeneration.reset();
 
+        stopAudioClip("forest", ClipType.AMBIENT);
+        stopAudioClip("blizzard", ClipType.AMBIENT);
+        stopAudioClip("lava_1", ClipType.AMBIENT);
+        stopAudioClip("lava_2", ClipType.AMBIENT);
+
         mainPanel.remove(gamePanel);
         gamePanel = new GamePanel(this);
 

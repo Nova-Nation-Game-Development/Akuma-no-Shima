@@ -221,7 +221,7 @@ public class Player implements Entity {
         else if (dx < 0)
         {
             previousChunk = WorldGeneration.getChunk((((int) worldX + (tileLength * (Math.abs(width) / width))) / tileLength) * tileLength);
-            if (previousChunk != null && nextChunk.getTileType() != TileType.TERTIARY) // Previous chunk is not air and exists
+            if (previousChunk != null && previousChunk.getTileType() != TileType.TERTIARY) // Previous chunk is not air and exists
                 return getCollision(previousChunk);
         }
 

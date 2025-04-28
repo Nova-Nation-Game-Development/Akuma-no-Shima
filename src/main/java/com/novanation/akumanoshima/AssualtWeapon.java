@@ -15,7 +15,7 @@ import javax.imageio.ImageIO;
 
 public class AssualtWeapon implements Weapon {
 
-    private final int fireRate = 200;
+    private final int fireRate = 400;
     private final int BASE_AMMO = 10;
     
     private AmmoStock ammo;
@@ -32,7 +32,7 @@ public class AssualtWeapon implements Weapon {
     private long lastShotTime;
     private long reloadStartTime;
     private boolean isReloading;
-    private double reloadSpeedMultiplier = 1.0;
+    private double reloadSpeedMultiplier = 1.4;
     private double ammoMultiplier = 1.0;
     private double damageMultiplier = 1.0;
 
@@ -45,13 +45,18 @@ public class AssualtWeapon implements Weapon {
     new Color(255, 255, 200, 255), // Bright center
     new Color(255, 140, 0, 180),   // Orange middle
     new Color(255, 69, 0, 0)       // Transparent outer
-};
+    };
+
+    private int frameCount;
+    private int maxFrameCount = 500;
 
     //Rendering
     private BufferedImage weaponImage;
     private int x, y; 
     private double rotation; 
     private boolean facingLeft = false;
+
+    private boolean canFire = false;
 
     public AssualtWeapon(Player player){
         this.player = player;
@@ -67,7 +72,6 @@ public class AssualtWeapon implements Weapon {
         } catch (IOException e) {
             System.err.println("Could not load weapon image: " + e.getMessage());
         }
-
     }
 
     private void initializeAmmo() {
@@ -81,16 +85,16 @@ public class AssualtWeapon implements Weapon {
         this.inputHandler = inputHandler;
     }
 
-
-
-
     @Override
     public void updateShooting(){
         long currTime = System.currentTimeMillis();
+        frameCount++;
 
         // Update muzzle flash visibility
         if (showMuzzleFlash && currTime - muzzleFlashStartTime > MUZZLE_FLASH_DURATION) {
             showMuzzleFlash = false;
+
+            // player.getPanel().getGameWindow().stopAudioClip("explosion", ClipType.SFX);
         }
     
         if(arFiring && arCanFire && !isReloading) {
@@ -111,16 +115,36 @@ public class AssualtWeapon implements Weapon {
                     arCanFire = false;
                     isReloading = true;
                     reloadStartTime = System.currentTimeMillis();
-                    System.out.println("Out of ammo! Reloading...");
+                    player.getPanel().getGameWindow().playAudioClip("weapon_reload", ClipType.SFX, false);
                 }
             }
         }
 
-        
         for(int i = 0; i < currentBulletIndex; i++) {
             Bullet bullet = usableBullets.get(i);
             usableBullets.get(i).move();
             //System.out.println("Bullet " + i + " position: " + usableBullets.get(i).getX() + ", " + usableBullets.get(i).getY());
+
+            if (frameCount <= maxFrameCount && isArFiring() && !isReloading)
+            {
+                if (!canFire && frameCount < 60)
+                {
+                    player.getPanel().getGameWindow().playAudioClip("weapon_shoot", ClipType.SFX, true);
+                    canFire = true;
+                }
+            }
+            else
+            {
+                if (canFire && frameCount > 60)
+                {
+                    player.getPanel().getGameWindow().stopAudioClip("weapon_shoot", ClipType.SFX);
+                    canFire = false;
+                }
+
+                if (frameCount > 60)
+                    frameCount = 0;
+            }
+                
 
             if (bullet.isActive()) {
                 for (Entity enemy : EnemyManager.getAllEnemies()) {

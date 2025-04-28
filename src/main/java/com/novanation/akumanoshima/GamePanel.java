@@ -12,6 +12,7 @@ import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Random;
 
 public class GamePanel extends Scene {
 
@@ -22,8 +23,10 @@ public class GamePanel extends Scene {
 
     private int worldOffsetX;
 
-    private final int FINAL_LEVEL = 10; // TODO: Reset back to 10
+    private final int FINAL_LEVEL = 10;
     private boolean isEndless = false;
+
+    private boolean isPlaying = false;
 
     // Parallax background variables
     private final BufferedImage image;
@@ -52,10 +55,20 @@ public class GamePanel extends Scene {
 
     private final Image deathImage;
 
+    private int sfxFrameCount = 0;
+    private int newRandomAmbient = 0;
+
+    private final int LOWER_AMBIENT = 300;
+    private final int UPPER_AMBIENT = 500;
+
+    private Random random = new Random();
+
     public GamePanel(GameWindow window)
     {
         this.window = window;
         setPreferredSize(new Dimension(this.window.getWidth(), this.window.getHeight()));
+
+        newRandomAmbient = random.nextInt(LOWER_AMBIENT, UPPER_AMBIENT) + 1;
 
         worldOffsetX = 0;
 
@@ -90,15 +103,6 @@ public class GamePanel extends Scene {
 
         if (backgroundManager != null)
             backgroundManager.draw(imageContext);
-
-        // TODO: Temp
-        if (tiles != null)
-            for (Tile tile : tiles)
-                tile.draw(imageContext);
-
-        if (tileDepths != null)
-            for (Tile tile : tileDepths)
-                tile.draw(imageContext);
         
         if(ar != null) {
             ar.render(imageContext);
@@ -162,6 +166,16 @@ public class GamePanel extends Scene {
         if (LevelManager.showLevelClear() && LevelManager.isSetUp())
         {
             long elapsed = System.currentTimeMillis() - LevelManager.levelClearStartTime();
+            if (!isPlaying)
+            {
+                window.stopAudioClip("end_1", ClipType.MUSIC);
+                window.stopAudioClip("end_2", ClipType.MUSIC);
+                window.stopAudioClip("end_3", ClipType.MUSIC);
+
+                window.playAudioClip("game_win", ClipType.SFX, false);
+                isPlaying = true;
+            }
+
             if (elapsed <= 3000)
             {
                 int x = LevelManager.getImgClearX();
@@ -182,6 +196,17 @@ public class GamePanel extends Scene {
         if (LevelManager.isFinalLevel() && LevelManager.isSetUp())
         {
             long elapsed = System.currentTimeMillis() - LevelManager.levelClearStartTime();
+            
+            if (!isPlaying)
+            {
+                window.stopAudioClip("end_1", ClipType.MUSIC);
+                window.stopAudioClip("end_2", ClipType.MUSIC);
+                window.stopAudioClip("end_3", ClipType.MUSIC);
+
+                window.playAudioClip("game_win", ClipType.SFX, false);
+                isPlaying = true;
+            }
+
             if (elapsed <= 5000)
             {
                 int x = LevelManager.getImgWinX();
@@ -194,16 +219,27 @@ public class GamePanel extends Scene {
         }
 
         // Draw the tiles last to ensure that the lava or water is over the player
-        // if (tiles != null)
-        //     for (Tile tile : tiles)
-        //         tile.draw(imageContext);
+        if (tiles != null)
+            for (Tile tile : tiles)
+                tile.draw(imageContext);
 
-        // if (tileDepths != null)
-        //     for (Tile tile : tileDepths)
-        //         tile.draw(imageContext);
+        if (tileDepths != null)
+            for (Tile tile : tileDepths)
+                tile.draw(imageContext);
 
         if (playerEntity.getHealth().isDead())
+        {
             imageContext.drawImage(deathImage, 0, 0, null);
+
+            window.stopAudioClip("game_win", ClipType.SFX);
+            window.stopAudioClip("forest", ClipType.AMBIENT);
+            window.stopAudioClip("blizzard", ClipType.AMBIENT);
+            window.stopAudioClip("lava_1", ClipType.AMBIENT);
+            window.stopAudioClip("lava_2", ClipType.AMBIENT);
+
+            if (!isPlaying)
+                window.playAudioClip("player_death", ClipType.SFX, false);
+        }
 
         imageContext.dispose();
     }
@@ -214,6 +250,12 @@ public class GamePanel extends Scene {
 
         // Return the player to the main menu
         SceneLoader.switchScene("Menu");
+        window.stopAudioClip("game_win", ClipType.SFX);
+        window.stopAudioClip("forest", ClipType.AMBIENT);
+        window.stopAudioClip("blizzard", ClipType.AMBIENT);
+        window.stopAudioClip("lava_1", ClipType.AMBIENT);
+        window.stopAudioClip("lava_2", ClipType.AMBIENT);
+
         window.playAudioClip("Menu", ClipType.MENU, true);
         stopGameThread();
     }
@@ -227,6 +269,28 @@ public class GamePanel extends Scene {
 
     public void updateEntityCalculations()
     {
+        sfxFrameCount++;
+
+        if (sfxFrameCount >= newRandomAmbient)
+        {
+            int lava = WorldGeneration.getWorldType() == WorldType.VOLCANIC ? 1 : 0;
+
+            int randomTrack = random.nextInt(1, 2) + lava;
+
+        //     if (WorldGeneration.getWorldType() == WorldType.VOLCANIC)
+        //     {
+        //         if (randomTrack == 1)
+        //             window.playAudioClip("lava_1", ClipType.AMBIENT, false);
+        //         else
+        //          window.playAudioClip("lava_2", ClipType.AMBIENT, false);
+        //     }
+        //     else if (WorldGeneration.getWorldType() == WorldType.BLIZZARD)
+        //         window.playAudioClip("blizzard", ClipType.AMBIENT, false);
+            
+        //     sfxFrameCount = 0;
+        //     newRandomAmbient = random.nextInt(LOWER_AMBIENT, UPPER_AMBIENT) + 1;
+        }
+
         if (playerEntity.getHealth().isDead())
         {
             frameCount++;
@@ -274,6 +338,8 @@ public class GamePanel extends Scene {
             ar.updateShooting();
             ar.updateReloading();
         }
+
+        LevelManager.update();
     }
 
     public GameWindow getGameWindow() { return window; }
@@ -302,11 +368,25 @@ public class GamePanel extends Scene {
         if (window.getCurrentLevel() >= FINAL_LEVEL && !isEndless)
         {
             WorldGeneration.generateLevel(this, WorldType.END);
+
+            int randomTrack = random.nextInt(1, 4);
+
+            switch (randomTrack)
+            {
+                case 1 -> window.playAudioClip("end_1", ClipType.MUSIC, true);
+                case 2 -> window.playAudioClip("end_2", ClipType.MUSIC, true);
+                case 3 -> window.playAudioClip("end_3", ClipType.MUSIC, true);
+            }
+
             backgroundManager = new BackgroundManager(this, window, WorldType.END);
         }
         else
         {
             WorldGeneration.generateLevel(this, world);
+
+            // if (WorldGeneration.getWorldType() == WorldType.FOREST)
+            //     window.playAudioClip("forest", ClipType.AMBIENT, true);
+
             backgroundManager = new BackgroundManager(this, window, world);
         }
             
@@ -317,6 +397,11 @@ public class GamePanel extends Scene {
         playerEntity.setWorldPos((int) playerEntity.getX());
 
         EnemyManager.setPlayer(playerEntity);
+
+        if (window.getCurrentLevel() >= FINAL_LEVEL && !isEndless)
+            EnemyManager.generateEnemies(window.getConfig().getDifficulty(), true, this);
+        else
+            EnemyManager.generateEnemies(window.getConfig().getDifficulty(), false, this);
 
         playerInput = new InputHandler(playerEntity);
         camera = new CameraControls(playerEntity, playerInput, backgroundManager);

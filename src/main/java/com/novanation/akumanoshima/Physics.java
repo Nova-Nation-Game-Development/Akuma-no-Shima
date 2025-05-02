@@ -6,8 +6,6 @@ import java.awt.geom.Rectangle2D;
 
 public class Physics {
     
-    private static final double GRAVITY = 1;
-    private static final double INITIAL_VERTICAL_VELOCITY = -12.0;
     private static final double INITIAL_HORIZONTAL_VELOCITY = 5.0;
 
     private static final int JUMP_INTERVAL = 7; // In milliseconds (ms) // Influences jump smoothness
@@ -17,8 +15,8 @@ public class Physics {
 
     public static GamePanel panel;
 
-    private static double gravity = 0.5f; // gravity = 9.8 m/s
-    private static double terminalVelocity = 10;
+    private static final double GRAVITY = 0.5f; // gravity = 9.8 m/s
+    private static final double TERMINAL_VELOCITY = 10;
 
     public boolean isJumping = false;
     private double currTime = 0;
@@ -31,11 +29,9 @@ public class Physics {
     public static int getMaxStep() { return MAX_STEP_COUNT; }
     public static double getCountScale() { return COUNT_SCALE; }
     public static double getSpeedScale() { return SPEED_SCALE; }
-    public static double getGravity() { return gravity; }
+    public static double getGravity() { return GRAVITY; }
 
     // Functions
-    
-    private static int count;
 
     public static void setPanel(GamePanel gamePanel) { panel = gamePanel; }
 
@@ -46,54 +42,59 @@ public class Physics {
         // Apply gravity
         if (!entity.isGrounded())
         {
-            double newVelocityY = Math.min(entity.getVelocityY() + gravity, terminalVelocity);
+            double newVelocityY = Math.min(entity.getVelocityY() + GRAVITY, TERMINAL_VELOCITY);
             entity.setVelocityY(newVelocityY);
         }
 
         entity.moveY(entity.getVelocityY());
 
         // Check if player is landing
-        Rectangle2D.Double chunkBounds = entity.getCurrentChunk() != null
-            ? entity.getCurrentChunk().getChunkBounds()
-            : null;
+        Rectangle2D.Double chunkBounds = null;
+        
+        if (entity.getCurrentChunk() != null)
+            chunkBounds = entity.getCurrentChunk().getChunkBounds();
+        else
+            entity.setGrounded(false); // Make them fall if they are over an air gap
 
-            if (chunkBounds != null) {
-                int sinkDepth = 0;
-        
-                if (entity.getNextChunk() != null && entity.getNextChunk().getTileType() == TileType.TERTIARY) {
-                    if (entity.getNextChunk().getWorldType() == WorldType.FOREST || 
-                        entity.getNextChunk().getWorldType() == WorldType.VOLCANIC)
-                        sinkDepth = WorldGeneration.getTileLength();
-                }
-        
-                double entityBottom = entity.getY() + entity.getHeight();
-                double groundY = chunkBounds.getY() + sinkDepth;
-        
-                // Check if EnemyMaou is about to land (within 5 pixels of ground)
-                if (entity instanceof EnemyMaou enemyMaou) {
-                    if (entityBottom + 2 >= groundY && entity.getVelocityY() < 0) {
-                        enemyMaou.setSlamReady(true);
-                    }
-                }
-        
-                // Only snap the entity to the ground if they are falling on the ground (not air gap)
-                if (entityBottom >= groundY && entity.getVelocityY() >= 0) {
-                    entity.setY(groundY - entity.getHeight());
-                    entity.setGrounded(true);
-                    entity.setVelocityY(0);
-        
-                    // Check if entity is EnemyMaou and just landed
-                    if (entity instanceof EnemyMaou enemyMaou) {
-                        if (!enemyMaou.isLanded()) {
-                            enemyMaou.setLanded(true);
-                            enemyMaou.resetFrames();
-                        }
-                    }
-                }
-                else
-                    entity.setGrounded(false);
+        if (chunkBounds != null)
+        {
+            int sinkDepth = 0;
+    
+            if (entity.getNextChunk() != null && entity.getNextChunk().getTileType() == TileType.TERTIARY) {
+                if (entity.getNextChunk().getWorldType() == WorldType.FOREST || 
+                    entity.getNextChunk().getWorldType() == WorldType.VOLCANIC)
+                    sinkDepth = WorldGeneration.getTileLength();
             }
+    
+            double entityBottom = entity.getY() + entity.getHeight();
+            double groundY = chunkBounds.getY() + sinkDepth;
+    
+            // Check if EnemyMaou is about to land (within 5 pixels of ground)
+            if (entity instanceof EnemyMaou enemyMaou) {
+                if (entityBottom + 2 >= groundY && entity.getVelocityY() < 0) {
+                    enemyMaou.setSlamReady(true);
+                }
+            }
+    
+            // Only snap the entity to the ground if they are falling on the ground (not air gap)
+            if (entityBottom >= groundY && entity.getVelocityY() >= 0) {
+                entity.setY(groundY - entity.getHeight());
+                entity.setGrounded(true);
+                entity.setVelocityY(0);
+    
+                // Check if entity is EnemyMaou and just landed
+                if (entity instanceof EnemyMaou enemyMaou) {
+                    if (!enemyMaou.isLanded()) {
+                        enemyMaou.setLanded(true);
+                        enemyMaou.resetFrames();
+                    }
+                }
+            }
+            else
+                entity.setGrounded(false);
+        }
 
+        // Kill entity if they fall below the panel
         if (entity.getY() > panel.getHeight())
         {
             if (entity instanceof Player)

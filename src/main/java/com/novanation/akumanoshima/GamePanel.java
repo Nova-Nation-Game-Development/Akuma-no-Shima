@@ -75,7 +75,7 @@ public class GamePanel extends Scene {
         newRandomAmbient = random.nextInt(LOWER_AMBIENT, UPPER_AMBIENT) + 1;
 
         worldOffsetX = 0;
-        canDraw = false;
+        canDraw = true;
 
         cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
         blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(
@@ -297,7 +297,7 @@ public class GamePanel extends Scene {
                 playerEntity.getEntityBounds().x = playerEntity.getX() - Math.abs(playerEntity.getWidth());
             else
                 playerEntity.getEntityBounds().x = playerEntity.getX();
-                
+
             g2.fill(playerEntity.getEntityBounds());
         }
     }

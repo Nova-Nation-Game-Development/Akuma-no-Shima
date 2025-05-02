@@ -181,9 +181,6 @@ public class Player implements Entity {
 
         if (currentChunk != null)
             determineChunkTile(currentChunk);
-
-        // Chunk newChunk = WorldGeneration.getChunk((((int) worldX + (tileLength * (width / Math.abs(width)))) / tileLength) * tileLength);
-        // determineChunkTile(newChunk);
     }
 
     public PlayerAnimation getPlayerAnimation() { return playerAnimation; }
@@ -265,6 +262,7 @@ public class Player implements Entity {
     {
         // Check collision
         chunk = newChunk.getChunkBounds();
+
         return playerBounds.intersects(chunk) || chunk.contains(playerBounds);
     }
 

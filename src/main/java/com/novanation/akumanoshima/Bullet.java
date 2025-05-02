@@ -19,6 +19,8 @@ public class Bullet implements Projectile{
     private static final int BULLET_DAMAGE = 2;
     private boolean active = true;
 
+    private Rectangle2D.Double bulletBounds;
+
     @Override
     public void move() {
        x += speed * Math.cos(angle);
@@ -30,12 +32,10 @@ public class Bullet implements Projectile{
         active = false;
     }
 
-    public boolean checkCollision(Entity enemy) {
+    public boolean checkCollision(Entity enemy)
+    {
         if (!active) return false;
-        
-        Rectangle2D.Double bulletBounds = new Rectangle2D.Double(
-            x - width/2, y - height/2, width, height
-        );
+        if (bulletBounds == null) bulletBounds = new Rectangle2D.Double(x - width/2, y - height/2, width, height);
         
         Rectangle2D.Double enemyBounds = enemy.getEntityBounds();
         if (enemyBounds != null && bulletBounds.intersects(enemyBounds)) {
@@ -43,12 +43,16 @@ public class Bullet implements Projectile{
             enemy.getHealth().dealDamage(BULLET_DAMAGE, false, enemy);
             return true;
         }
+
         return false;
     }
 
     @Override
-    public void draw(Graphics2D g2) {
+    public void draw(Graphics2D g2)
+    {
         if (!active) return;
+
+        bulletBounds = new Rectangle2D.Double(x - width/2, y - height/2, width, height);
 
         // Save the original transform
         AffineTransform oldTransform = g2.getTransform();
@@ -87,7 +91,7 @@ public class Bullet implements Projectile{
     @Override
     public void spawn(double x, double y, double angle) {
         this.x = x;
-        this.y = y;
+        this.y = y - 30;
         this.angle = angle;
     }
 
@@ -106,7 +110,5 @@ public class Bullet implements Projectile{
         return active;
     }
 
-    public Rectangle2D.Double getBounds() {
-        return new Rectangle2D.Double(x - width/2, y - height/2, width, height);
-    }
+    public Rectangle2D.Double getBounds() { return bulletBounds; }
 }

@@ -5,8 +5,6 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
 public class Physics {
-    
-    private static final double INITIAL_HORIZONTAL_VELOCITY = 5.0;
 
     private static final int JUMP_INTERVAL = 7; // In milliseconds (ms) // Influences jump smoothness
     private static final int MAX_STEP_COUNT = 230; // Maximum steps for calculating the jump // Influences jump height
@@ -19,9 +17,6 @@ public class Physics {
     private static final double TERMINAL_VELOCITY = 10;
 
     public boolean isJumping = false;
-    private double currTime = 0;
-    private double initY = 0;
-    private double initX = 0;
 
     // Accessors
 
@@ -132,32 +127,5 @@ public class Physics {
         double dy = 2 * u * (controlY - startY) + 2 * t * (endY - controlY);
 
         return new Point2D.Double(dx, dy);
-    }
-
-
-    // kinematics 
-    // s = ut + 1/2at^2
-    public static double calculateVertComponent(double initialVelocity, double timeElapsed) 
-    {
-        return(initialVelocity * timeElapsed - 0.5 * GRAVITY * timeElapsed * timeElapsed);
-    }
-
-    public static double calculateHorizComponent(double direction, double timeElapsed)
-    {
-        return INITIAL_HORIZONTAL_VELOCITY * direction + timeElapsed;
-    }
-
-    public void startJump(double startY, double startX)
-    {
-        isJumping = true;
-        currTime = 0;
-        initY = startY;
-        initX = startX;
-    }
-
-    public void resetJumpPos()
-    {
-        isJumping = false;
-        currTime = 0;
     }
 }

@@ -184,55 +184,51 @@ public class AssualtWeapon implements Weapon {
     public void render(Graphics2D g) {
        if (weaponImage == null) return;
     
-    // Save the current transform
-    AffineTransform oldTransform = g.getTransform();
-    
-    // Create a new transform for the weapon
-    AffineTransform transform = new AffineTransform();
-    transform.translate(x, y);
-    transform.rotate(rotation);
-    
-    // If facing left, flip the image horizontally
-    if (facingLeft) {
-        transform.scale(1, -1);
-    }
-
-    // Apply the transform
-    g.setTransform(transform);
-    
-    // Draw the weapon image centered at origin point
-    g.drawImage(weaponImage, -weaponImage.getWidth()/2, -weaponImage.getHeight()/2, null);
-    
-    // Draw muzzle flash if active
-    if (showMuzzleFlash) {
-        // Calculate muzzle position (at the end of the weapon)
-        int muzzleX = weaponImage.getWidth()/2 + 10;
-        int muzzleY = 0;
+        // Save the current transform
+        AffineTransform oldTransform = g.getTransform();
         
-        // Create gradient for muzzle flash
-        Point2D center = new Point2D.Float(muzzleX, muzzleY);
-        float radius = 20.0f;
-
-
-        RadialGradientPaint gradient = new RadialGradientPaint(
-            center,
-            radius,
-            FLASH_FRACTIONS,
-            FLASH_COLORS,
-            CycleMethod.NO_CYCLE
-        );
+        // Create a new transform for the weapon
+        AffineTransform transform = new AffineTransform();
+        transform.translate(x, y);
+        transform.rotate(rotation);
         
-        // Draw the muzzle flash
-        g.setPaint(gradient);
-        g.fillOval(muzzleX - (int)radius, muzzleY - (int)radius, 
-                  (int)radius * 2, (int)radius * 2);
-    }
+        // If facing left, flip the image horizontally
+        if (facingLeft) {
+            transform.scale(1, -1);
+        }
+
+        // Apply the transform
+        g.setTransform(transform);
+        
+        // Draw the weapon image centered at origin point
+        g.drawImage(weaponImage, -weaponImage.getWidth()/2 - 30, (-weaponImage.getHeight()/2) - 20, null);
+        
+        // Draw muzzle flash if active
+        if (showMuzzleFlash) {
+            // Calculate muzzle position (at the end of the weapon)
+            int muzzleX = weaponImage.getWidth()/2 - 30;
+            int muzzleY = -30;
+            
+            // Create gradient for muzzle flash
+            Point2D center = new Point2D.Float(muzzleX, muzzleY);
+            float radius = 20.0f;
+
+            RadialGradientPaint gradient = new RadialGradientPaint(
+                center,
+                radius,
+                FLASH_FRACTIONS,
+                FLASH_COLORS,
+                CycleMethod.NO_CYCLE
+            );
+            
+            // Draw the muzzle flash
+            g.setPaint(gradient);
+            g.fillOval(muzzleX - (int)radius, muzzleY - (int)radius, (int)radius * 2, (int)radius * 2);
+        }
     
-    // Restore the original transform
-    g.setTransform(oldTransform);
-     }
-
-
+        // Restore the original transform
+        g.setTransform(oldTransform);
+    }
 
     public boolean isArFiring() {
         return arFiring;

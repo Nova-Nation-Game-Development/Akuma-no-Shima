@@ -7,14 +7,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
 public class EnemyManager {
     
-    private static HashMap<String, Entity> enemies = new HashMap<>();
-    private static HashMap<String, Entity> enemiesAlive = new HashMap<>();
+    private static final HashMap<String, Entity> enemies = new HashMap<>();
+    private static final HashMap<String, Entity> enemiesAlive = new HashMap<>();
     private static int worldWidth;
 
     private static Player player;
@@ -208,19 +207,6 @@ public class EnemyManager {
         }
 
         return HEALTH_NORMAL;
-    }
-
-    public static void moveProjectileWithWorld(int worldSpeed)
-    {
-        if (enemies == null) return;
-
-        for (Map.Entry<String, Entity> entry : enemies.entrySet())
-        {
-            Entity entity = entry.getValue();
-
-            if (entity instanceof EnemyOni enemyOni)
-                enemyOni.moveWithWorld(worldSpeed);
-        }
     }
 
     public static HashMap<String, Entity> getEnemies() { return enemies; }

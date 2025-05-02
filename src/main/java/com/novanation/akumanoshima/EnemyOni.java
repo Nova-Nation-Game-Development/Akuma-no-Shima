@@ -276,14 +276,6 @@ public class EnemyOni implements Entity {
         projectiles.add(projectile);
     }
 
-    public void moveWithWorld(int worldSpeed)
-    {
-        if (projectiles == null) return;
-
-        for (EnemyProjectile proj : projectiles)
-            proj.moveWithWorld(worldSpeed);
-    }
-
     private void updateProjectiles() {
         projectiles.removeIf(p -> !p.isActive());
         for (EnemyProjectile projectile : projectiles) {

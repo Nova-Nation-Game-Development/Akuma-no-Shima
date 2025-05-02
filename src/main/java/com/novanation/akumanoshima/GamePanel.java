@@ -48,12 +48,14 @@ public class GamePanel extends Scene {
     private CameraControls camera;
     private AssualtWeapon ar;
 
+    private boolean canDraw;
+
     private Collection<Tile> tiles;
     private Collection<Tile> tileDepths;
 
     //cursor
-    private Cursor blankCursor;
-    private BufferedImage cursorImg;
+    private final Cursor blankCursor;
+    private final BufferedImage cursorImg;
 
     private final Image deathImage;
 
@@ -63,7 +65,7 @@ public class GamePanel extends Scene {
     private final int LOWER_AMBIENT = 300;
     private final int UPPER_AMBIENT = 500;
 
-    private Random random = new Random();
+    private final Random random = new Random();
 
     public GamePanel(GameWindow window)
     {
@@ -73,6 +75,7 @@ public class GamePanel extends Scene {
         newRandomAmbient = random.nextInt(LOWER_AMBIENT, UPPER_AMBIENT) + 1;
 
         worldOffsetX = 0;
+        canDraw = false;
 
         cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
         blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(
@@ -124,6 +127,9 @@ public class GamePanel extends Scene {
         g.dispose();
     }
 
+    public boolean getCanDraw() { return canDraw; }
+    public void canDraw(boolean canDraw) { this.canDraw = canDraw; }
+
     private void doubleBufferBackground()
     {
         Graphics2D imageContext = (Graphics2D) image.getGraphics();
@@ -153,15 +159,6 @@ public class GamePanel extends Scene {
             }
             else
                 playerAnimation.stop();
-
-            // Draw the player's current chunk
-            // if (playerEntity.getCurrentChunk() != null)
-            //     playerEntity.getCurrentChunk().showChunkBounds(imageContext);
-
-            // Draw the player collider
-            // imageContext.setColor(new Color(255, 255, 255, 128));
-            // if (playerEntity.getEntityBounds() != null)
-            //     imageContext.fill(playerEntity.getEntityBounds());
 
              // Draw custom crosshair at clamped position
             if (playerInput != null) {
@@ -264,6 +261,9 @@ public class GamePanel extends Scene {
             for (Tile tile : tileDepths)
                 tile.draw(imageContext);
 
+        if (canDraw)
+            drawEntityCollider(imageContext);
+
         if (playerEntity.getHealth().isDead())
         {
             imageContext.drawImage(deathImage, 0, 0, null);
@@ -281,6 +281,25 @@ public class GamePanel extends Scene {
         }
 
         imageContext.dispose();
+    }
+
+    public void drawEntityCollider(Graphics2D g2)
+    {
+        // Draw the player's current chunk
+        if (playerEntity.getCurrentChunk() != null)
+            playerEntity.getCurrentChunk().showChunkBounds(g2);
+
+        //Draw the player collider
+        g2.setColor(new Color(255, 255, 255, 128));
+        if (playerEntity.getEntityBounds() != null)
+        {
+            if (playerEntity.getWidth() < 0)
+                playerEntity.getEntityBounds().x = playerEntity.getX() - Math.abs(playerEntity.getWidth());
+            else
+                playerEntity.getEntityBounds().x = playerEntity.getX();
+                
+            g2.fill(playerEntity.getEntityBounds());
+        }
     }
 
     public void resetToMenu()
@@ -323,7 +342,7 @@ public class GamePanel extends Scene {
 
         // Load weapon ammo
         if (ar != null) {
-            int savedAmmo = config.getWeaponAmmo().getOrDefault("Assault", 30);
+            // int savedAmmo = config.getWeaponAmmo().getOrDefault("Assault", 30);
             // TODO: Utilize ammo
         }
 

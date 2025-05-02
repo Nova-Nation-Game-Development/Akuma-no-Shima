@@ -4,7 +4,6 @@ package com.novanation.akumanoshima;
 public class CameraControls {
     
     private final Player player;
-    private final PlayerAnimation playerAnimation;
     private final InputHandler playerInput;
     private final BackgroundManager backgroundManager;
 
@@ -20,15 +19,12 @@ public class CameraControls {
     
     // Location
     private double xPos;
-    private boolean inThreshold = false;
-
+    
     public CameraControls(Player player, InputHandler playerInput, BackgroundManager backgroundManager)
     {
         this.player = player;
         this.playerInput = playerInput;
         this.backgroundManager = backgroundManager;
-
-        this.playerAnimation = this.player.getPlayerAnimation();
 
         xPos = player.getX() + 30;
     }
@@ -159,7 +155,6 @@ public class CameraControls {
                 WorldGeneration.move(newWorldSpeed);
                 
                 EnemyManager.move(newWorldSpeed);
-                EnemyManager.moveProjectileWithWorld(Math.abs(newWorldSpeed));
             }
         }
     }

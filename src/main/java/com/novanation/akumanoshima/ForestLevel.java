@@ -215,8 +215,6 @@ public class ForestLevel implements Level {
 
         panelHeight = panel.getHeight() - BASE_HEIGHT - (TILE_LENGTH / 2);
 
-        GameWindow window = panel.getGameWindow();
-
         EnemyManager.setWorldWidth(getMaxWorld());
         // EnemyManager.generateEnemies(window.getConfig().getDifficulty(), false, panel);
 

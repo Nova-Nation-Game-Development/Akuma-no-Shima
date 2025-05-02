@@ -23,15 +23,12 @@ public class Player implements Entity {
     //private double health;
 
     // Physics
-    private double timeElapsed = 0;
-    private double startY;
-    private boolean isJumping;
     private boolean canJump;
     private boolean onGround;
 
     private double vy;
 
-    private Health health;
+    private final Health health;
    
     // Shape and Collisions
     private int width;
@@ -52,7 +49,7 @@ public class Player implements Entity {
     private final GamePanel panel;
 
     //Perks
-    private List<Perk> activePerks = new ArrayList<>();
+    private final List<Perk> activePerks = new ArrayList<>();
     private double moveSpeedMultiplier = 1.0;
     private Weapon currentWeapon;
 
@@ -68,7 +65,6 @@ public class Player implements Entity {
 
         this.panel = panel;
 
-        isJumping = false;
         playerImage = ImageManager.loadImage("/gfx/characters/char_noroi.png");
         health = new Health(true);
         playerBounds = new Rectangle2D.Double(x, y, width, height);

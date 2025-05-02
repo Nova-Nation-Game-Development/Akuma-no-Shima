@@ -56,6 +56,7 @@ public class EnemyMaou implements Entity {
     private boolean isCharging = false;
     private boolean isShooting = false;
     private boolean isSlamming = false;
+    private boolean isSummoning = false;
     private boolean slamReady = false;
 
     private int backingAwayTimer = 0;
@@ -85,7 +86,7 @@ public class EnemyMaou implements Entity {
 
     private boolean wasReset = false;
 
-    private GamePanel panel;
+    private final GamePanel panel;
     private Player player;
 
     public EnemyMaou(int width, int height, int xPos, int yPos, String enemyID, GamePanel panel)
@@ -230,6 +231,9 @@ public class EnemyMaou implements Entity {
             if (!isBackingAway && !isCharging)
                 g2.drawImage(maouImage, (int) xPos, (int) yPos, width, height, null);
 
+            if (isSummoning)
+                g2.drawImage(maouImage, (int) xPos, (int) yPos, width, height, null);
+
             drawHealthBar(g2);
         }
     }
@@ -344,6 +348,7 @@ public class EnemyMaou implements Entity {
         {
             isBackingAway = true;
             backingAwayTimer = MAX_BACKING_AWAY_TIME;
+            isSummoning = true;
         }
 
         EnemyManager.summonMinions();
@@ -373,7 +378,10 @@ public class EnemyMaou implements Entity {
             backingAwayTimer--;
     
             if (backingAwayTimer <= 0)
+            {
                 isBackingAway = false;
+                isSummoning = false;
+            }
         }
     }
 
@@ -499,7 +507,7 @@ public class EnemyMaou implements Entity {
         EnemyProjectile projectile = new EnemyProjectile();
         
         // Calculate trajectory points
-        double startX = worldX + width/2;
+        double startX = xPos + width/2;
         double startY = yPos;
 
         double playerScreenX = player.getX() + player.getWidth()/2;

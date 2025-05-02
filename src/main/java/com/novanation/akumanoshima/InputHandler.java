@@ -82,6 +82,10 @@ public class InputHandler implements KeyListener, MouseListener, MouseMotionList
                 }
             }
 
+            case KeyEvent.VK_ENTER -> {
+                player.getPanel().canDraw(!player.getPanel().getCanDraw());
+            }
+
             // Mouse
             case KeyEvent.VK_ESCAPE -> {
                 lockingEnabled = !lockingEnabled;

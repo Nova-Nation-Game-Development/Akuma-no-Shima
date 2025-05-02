@@ -9,16 +9,12 @@ import javax.swing.ImageIcon;
 
 public class EnemyProjectile implements Projectile {
 
-    private double x, y;
+    private double y;
     private double t = 0; // Time parameter for bezier curve (0 to 1)
-    private double speed = 0.003; // Speed of projectile movement
-    private int size = 30; // Size of projectile
+    private final double speed = 0.005; // Speed of projectile movement
+    private final int size = 20; // Size of projectile
     private boolean active = true;
     private static final int FIREBALL_DAMAGE = 1; // Damage dealt by the fireball
-
-    private double directionX;
-    private double directionY;
-    private double targetX, targetY;
    
     private double worldX, worldY;
 
@@ -26,8 +22,6 @@ public class EnemyProjectile implements Projectile {
     private double startX, startY;
     private double controlX, controlY;
     private double endX, endY;
-
-    private int worldSpeed;
 
     private GamePanel panel;
 
@@ -46,7 +40,6 @@ public class EnemyProjectile implements Projectile {
             );
             // Update both world and screen positions
             worldX = pos.x;
-            x = worldX + panel.getWorldOffsetX(); // Adjust for world movement
             worldY = pos.y;
             y = worldY;
             t += speed;
@@ -55,15 +48,8 @@ public class EnemyProjectile implements Projectile {
         }
     }
 
-    public void moveWithWorld(int worldSpeed) {
-        this.worldSpeed = worldSpeed;
-        x = worldX + panel.getWorldOffsetX();
-    }
-
     @Override
-    public void hit() {
-        active = false;
-    }
+    public void hit() { active = false; }
 
     @Override
     public void draw(Graphics2D g2) {
@@ -101,7 +87,6 @@ public class EnemyProjectile implements Projectile {
 
     @Override
     public void spawn(double x, double y, double angle) {
-        this.x = x;
         this.y = y;
         this.startX = x;
         this.startY = y;

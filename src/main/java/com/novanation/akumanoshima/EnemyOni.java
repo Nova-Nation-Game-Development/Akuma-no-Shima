@@ -226,8 +226,8 @@ public class EnemyOni implements Entity {
         if (targetPlayer == null) return;
         
         // Calculate distance to player using world coordinates
-        double dx = targetPlayer.getWorldX() - worldX;
-        double dy = targetPlayer.getY() - yPos;
+        dx = targetPlayer.getWorldX() - worldX;
+        dy = (int) targetPlayer.getY() - (int) yPos;
         double distance = Math.sqrt(dx * dx + dy * dy);
 
         // If outside attack range, move towards player
@@ -235,9 +235,9 @@ public class EnemyOni implements Entity {
             // Normalize direction vector
             double dirX = dx / distance;
             
-            // Move towards player
-            worldX += dirX * MOVE_SPEED;
-            xPos = worldX + panel.getWorldOffsetX();
+            // TODO: Move towards player
+            // worldX += dirX * MOVE_SPEED;
+            // xPos = worldX + panel.getWorldOffsetX();
         }
         
         // Attack if in range
@@ -255,10 +255,10 @@ public class EnemyOni implements Entity {
         EnemyProjectile projectile = new EnemyProjectile();
         
         // Calculate trajectory points
-        double startX = xPos + width/2;
-        double startY = yPos + height/2;
+        double startX = worldX + width/2;
+        double startY = yPos;
 
-        double playerScreenX = targetPlayer.getX() + targetPlayer.getWidth()/2;
+        double playerScreenX = targetPlayer.getWorldX() + targetPlayer.getWidth()/2;
         double playerScreenY = targetPlayer.getY() + targetPlayer.getHeight()/2;
         
         double targetX = playerScreenX;

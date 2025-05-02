@@ -124,15 +124,17 @@ public class EnemyProjectile implements Projectile {
 
     public boolean checkCollision(Player player) {
         if (!active) return false;
-        
+
         Rectangle2D.Double projectileBounds = new Rectangle2D.Double(
-            x - size/2, // Use screen position x instead of worldX
+            worldX - size/2, // Use screen position x instead of worldX
             y - size/2, 
             size, 
             size
         );
         
         Rectangle2D.Double playerBounds = player.getEntityBounds();
+        playerBounds.x = player.getWorldX();
+
         if (projectileBounds.intersects(playerBounds)) {
             hit();
             player.getHealth().dealDamage(FIREBALL_DAMAGE, true, player);

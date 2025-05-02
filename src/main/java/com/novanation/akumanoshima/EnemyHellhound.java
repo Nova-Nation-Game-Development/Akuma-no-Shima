@@ -185,8 +185,8 @@ public class EnemyHellhound implements Entity {
         if (targetPlayer == null) return;
         
         // Calculate distance to player using world coordinates
-        double dx = targetPlayer.getWorldX() - worldX;
-        double dy = targetPlayer.getY() - yPos;
+        dx = targetPlayer.getWorldX() - worldX;
+        dy = (int) targetPlayer.getY() - (int) yPos;
         double distance = Math.sqrt(dx * dx + dy * dy);
 
         // Always move towards player

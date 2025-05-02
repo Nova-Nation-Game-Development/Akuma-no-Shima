@@ -499,8 +499,8 @@ public class EnemyMaou implements Entity {
         EnemyProjectile projectile = new EnemyProjectile();
         
         // Calculate trajectory points
-        double startX = xPos + width/2;
-        double startY = yPos + height/2;
+        double startX = worldX + width/2;
+        double startY = yPos;
 
         double playerScreenX = player.getX() + player.getWidth()/2;
         double playerScreenY = player.getY() + player.getHeight()/2;

@@ -46,7 +46,6 @@ public class EnemyMaou implements Entity {
     private final Image maouImage;
 
     private final Image explosionGif;
-    private Image landingGif;
 
     private final int LANDING_FRAMES = 250;
     private int frameCount = 0;
@@ -111,7 +110,6 @@ public class EnemyMaou implements Entity {
 
         maouImage = ImageManager.loadImage("/gfx/characters/char_maou.png");
         explosionGif = (ImageManager.loadGif("/gfx/animations/maou/gifs/explosion.gif")).getImage();
-        landingGif = (ImageManager.loadGif("/gfx/animations/maou/gifs/landing.gif")).getImage();
     }
 
     @Override
@@ -194,9 +192,9 @@ public class EnemyMaou implements Entity {
     public Health getHealth() { return health; }
 
     @Override
-    public void setWorldPos(int xPos) { 
+    public void setWorldPos(int xPos)
+    { 
         this.worldX = xPos;
-        // Update screen position relative to world offset
         this.xPos = this.worldX + panel.getWorldOffsetX();
     }
 
@@ -209,14 +207,11 @@ public class EnemyMaou implements Entity {
         {
             if (isLanded)
             {
-                if (frameCount == 0)
-                    landingGif = ImageManager.loadGif("/gfx/animations/maou/gifs/landing.gif").getImage();
+                if (frameCount == 0 && !maouAnimation.isDustStillActive())
+                    maouAnimation.startDust();
                     
                 if (frameCount < LANDING_FRAMES)
-                {
                     frameCount++;
-                    g2.drawImage(landingGif, (int) xPos + (Math.abs(width) / 2) - 300, (int) yPos + 120, Math.abs(width) + 300, height, null);
-                }
             }
 
             for (int i = 0; i < projectiles.size(); i++)
@@ -224,6 +219,9 @@ public class EnemyMaou implements Entity {
                 EnemyProjectile projectile = projectiles.get(i);
                 projectile.draw(g2);
             }
+
+            if (maouAnimation.isDustStillActive())
+                maouAnimation.draw(g2);
 
             if (isCharging || isBackingAway)
                 maouAnimation.draw(g2);
